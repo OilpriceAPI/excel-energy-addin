@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - Excel Energy Price Comparison Add-in</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+            line-height: 1.6;
+            color: #333;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #2c3e50;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        h3 {
+            color: #34495e;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .highlight {
+            background: #e8f4f8;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            margin: 20px 0;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
+            color: #95a5a6;
+            font-size: 14px;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+        li {
+            margin: 8px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background: #3498db;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Privacy Policy</h1>
+        <p><strong>Excel Energy Price Comparison Add-in</strong></p>
+        <p><strong>Effective Date:</strong> October 7, 2025</p>
+        <p><strong>Last Updated:</strong> October 7, 2025</p>
+
+        <div class="highlight">
+            <p><strong>Summary:</strong> This add-in stores your API key locally in your browser and uses it to fetch energy commodity prices from OilPriceAPI. We do not collect, store, or transmit any personal information to our servers.</p>
+        </div>
+
+        <h2>1. Information We Collect</h2>
+        
+        <h3>1.1 Information You Provide</h3>
+        <ul>
+            <li><strong>API Key:</strong> When you configure the add-in, you provide an OilPriceAPI API key. This key is stored locally in your browser's localStorage and is never transmitted to us.</li>
+            <li><strong>Commodity Selections:</strong> Your choices of which commodities to fetch (e.g., Brent, WTI, Natural Gas) are stored locally in your browser.</li>
+        </ul>
+
+        <h3>1.2 Automatically Collected Information</h3>
+        <ul>
+            <li><strong>API Usage Logs:</strong> When you use the add-in to fetch prices, OilPriceAPI logs your API requests (IP address, timestamp, endpoint accessed) as part of our standard API service. This is governed by the <a href="https://www.oilpriceapi.com/privacy">OilPriceAPI Privacy Policy</a>.</li>
+            <li><strong>No Analytics:</strong> This add-in does not use Google Analytics, Microsoft Application Insights, or any other tracking service.</li>
+        </ul>
+
+        <h3>1.3 Information We Do NOT Collect</h3>
+        <ul>
+            <li>Personal identification information (name, email, phone)</li>
+            <li>Spreadsheet data or formulas</li>
+            <li>File names or workbook contents</li>
+            <li>Device information beyond standard HTTP headers</li>
+            <li>Location data</li>
+        </ul>
+
+        <h2>2. How We Use Your Information</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Data Type</th>
+                    <th>Purpose</th>
+                    <th>Storage Location</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>API Key</td>
+                    <td>Authenticate requests to OilPriceAPI</td>
+                    <td>Your browser's localStorage (local only)</td>
+                </tr>
+                <tr>
+                    <td>Commodity Preferences</td>
+                    <td>Remember your selected commodities</td>
+                    <td>Your browser's localStorage (local only)</td>
+                </tr>
+                <tr>
+                    <td>API Request Logs</td>
+                    <td>Monitor usage, prevent abuse, improve service</td>
+                    <td>OilPriceAPI servers (see OilPriceAPI Privacy Policy)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>3. Data Storage and Security</h2>
+
+        <h3>3.1 Local Storage</h3>
+        <p>Your API key and preferences are stored in your browser's localStorage. This data:</p>
+        <ul>
+            <li>Remains on your device only</li>
+            <li>Is not transmitted to our servers</li>
+            <li>Persists until you clear your browser cache or uninstall the add-in</li>
+            <li>Can be deleted at any time through browser settings</li>
+        </ul>
+
+        <h3>3.2 Data Transmission</h3>
+        <p>When you fetch commodity prices, the add-in makes HTTPS requests to:</p>
+        <ul>
+            <li><code>https://api.oilpriceapi.com/v1/prices/latest</code></li>
+        </ul>
+        <p>These requests include your API key in the Authorization header. All communication uses industry-standard TLS 1.2+ encryption.</p>
+
+        <h3>3.3 Third-Party Services</h3>
+        <p>This add-in integrates with:</p>
+        <ul>
+            <li><strong>OilPriceAPI</strong> - Commodity price data provider. See <a href="https://www.oilpriceapi.com/privacy">OilPriceAPI Privacy Policy</a>.</li>
+            <li><strong>Azure Static Web Apps</strong> - Hosting provider (Microsoft). See <a href="https://privacy.microsoft.com/en-us/privacystatement">Microsoft Privacy Statement</a>.</li>
+        </ul>
+
+        <h2>4. Data Retention</h2>
+
+        <ul>
+            <li><strong>Local Data:</strong> Your API key and preferences are retained indefinitely in localStorage until you manually delete them.</li>
+            <li><strong>API Logs:</strong> OilPriceAPI retains request logs for 90 days for security and billing purposes.</li>
+        </ul>
+
+        <h2>5. Your Rights and Choices</h2>
+
+        <h3>5.1 Access and Deletion</h3>
+        <p>You can:</p>
+        <ul>
+            <li><strong>View your API key:</strong> Open the add-in Settings panel</li>
+            <li><strong>Delete your API key:</strong> Clear it in Settings or clear your browser's localStorage</li>
+            <li><strong>Request API log deletion:</strong> Contact <a href="mailto:privacy@oilpriceapi.com">privacy@oilpriceapi.com</a></li>
+        </ul>
+
+        <h3>5.2 Opt-Out</h3>
+        <p>To stop data collection, simply uninstall the add-in from Excel.</p>
+
+        <h2>6. Children's Privacy</h2>
+        <p>This add-in is not intended for children under 13 years of age. We do not knowingly collect personal information from children.</p>
+
+        <h2>7. International Data Transfers</h2>
+        <p>OilPriceAPI servers are located in the United States. By using this add-in, you consent to the transfer of your API request data to the United States.</p>
+
+        <h2>8. Changes to This Privacy Policy</h2>
+        <p>We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated "Last Updated" date. Continued use of the add-in after changes constitutes acceptance of the updated policy.</p>
+
+        <h2>9. Compliance</h2>
+        <p>This add-in complies with:</p>
+        <ul>
+            <li>Microsoft AppSource Privacy Requirements</li>
+            <li>California Consumer Privacy Act (CCPA)</li>
+            <li>General Data Protection Regulation (GDPR) - EU users</li>
+        </ul>
+
+        <h2>10. Contact Information</h2>
+        <p>If you have questions about this Privacy Policy or data practices, contact us:</p>
+        <ul>
+            <li><strong>Email:</strong> <a href="mailto:privacy@oilpriceapi.com">privacy@oilpriceapi.com</a></li>
+            <li><strong>Support:</strong> <a href="mailto:support@oilpriceapi.com">support@oilpriceapi.com</a></li>
+            <li><strong>Website:</strong> <a href="https://www.oilpriceapi.com">https://www.oilpriceapi.com</a></li>
+            <li><strong>Mailing Address:</strong><br>
+                OilPriceAPI<br>
+                Privacy Department<br>
+                [Your Business Address]
+            </li>
+        </ul>
+
+        <h2>11. Data Subject Rights (GDPR/CCPA)</h2>
+        <p>If you are a resident of the European Economic Area or California, you have the right to:</p>
+        <ul>
+            <li><strong>Access:</strong> Request a copy of your data</li>
+            <li><strong>Rectification:</strong> Correct inaccurate data</li>
+            <li><strong>Erasure:</strong> Request deletion of your data</li>
+            <li><strong>Portability:</strong> Receive your data in a structured format</li>
+            <li><strong>Object:</strong> Object to processing of your data</li>
+        </ul>
+        <p>To exercise these rights, contact <a href="mailto:privacy@oilpriceapi.com">privacy@oilpriceapi.com</a>.</p>
+
+        <div class="footer">
+            <p>© 2025 OilPriceAPI. All rights reserved.</p>
+            <p>
+                <a href="https://www.oilpriceapi.com">Home</a> | 
+                <a href="https://www.oilpriceapi.com/terms">Terms of Service</a> | 
+                <a href="https://docs.oilpriceapi.com">Documentation</a> | 
+                <a href="mailto:support@oilpriceapi.com">Contact Support</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

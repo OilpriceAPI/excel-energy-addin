@@ -30,6 +30,13 @@
   <!-- Support URL -->
   <SupportUrl DefaultValue="https://www.oilpriceapi.com/tools/excel-energy-comparison"/>
 
+  <!-- App Domains -->
+  <AppDomains>
+    <AppDomain>https://calm-bush-0e3aadf10.2.azurestaticapps.net</AppDomain>
+    <AppDomain>https://www.oilpriceapi.com</AppDomain>
+    <AppDomain>https://api.oilpriceapi.com</AppDomain>
+  </AppDomains>
+
   <!-- Hosts -->
   <Hosts>
     <Host Name="Workbook"/>
