@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Energy Price Comparison</title>
+
+  <!-- Office.js -->
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="taskpane.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <h1>Energy Price Comparison</h1>
+      <p class="subtitle">Compare commodities in equivalent energy units</p>
+    </header>
+
+    <!-- Settings Section -->
+    <section class="settings-section" id="settings-section">
+      <h2>Settings</h2>
+      <div class="form-group">
+        <label for="api-key">API Key</label>
+        <input
+          type="password"
+          id="api-key"
+          placeholder="Enter your OilPriceAPI key"
+          autocomplete="off"
+        >
+        <button id="save-key-btn" class="btn-secondary">Save</button>
+      </div>
+      <div class="form-group">
+        <button id="test-connection-btn" class="btn-secondary">Test Connection</button>
+        <span id="connection-status" class="status-text"></span>
+      </div>
+    </section>
+
+    <!-- Main Actions -->
+    <section class="actions-section">
+      <h2>Actions</h2>
+
+      <div class="action-card">
+        <h3>1. Fetch Prices</h3>
+        <p>Get latest spot prices for selected commodities</p>
+        <div class="commodity-checkboxes" id="commodity-list">
+          <label><input type="checkbox" value="BRENT_CRUDE_USD" checked> Brent Crude</label>
+          <label><input type="checkbox" value="WTI_USD" checked> WTI Crude</label>
+          <label><input type="checkbox" value="NATURAL_GAS_USD" checked> Natural Gas (US)</label>
+          <label><input type="checkbox" value="NATURAL_GAS_GBP" checked> Natural Gas (UK)</label>
+          <label><input type="checkbox" value="DUTCH_TTF_EUR" checked> Dutch TTF Gas</label>
+          <label><input type="checkbox" value="COAL_USD" checked> Coal</label>
+        </div>
+        <button id="fetch-prices-btn" class="btn-primary">Fetch Prices</button>
+      </div>
+
+      <div class="action-card">
+        <h3>2. Convert to MBtu</h3>
+        <p>Convert prices to $/MBtu for direct comparison</p>
+        <button id="convert-btn" class="btn-primary">Convert to MBtu</button>
+      </div>
+
+      <div class="action-card">
+        <h3>3. Create Dashboard</h3>
+        <p>Generate Tufte-style visualization dashboard</p>
+        <button id="dashboard-btn" class="btn-primary" disabled>Create Dashboard</button>
+        <small class="help-text">Coming soon</small>
+      </div>
+    </section>
+
+    <!-- Status Section -->
+    <section class="status-section">
+      <div id="status-message" class="status-message"></div>
+      <div id="error-message" class="error-message"></div>
+    </section>
+
+    <!-- Help Section -->
+    <section class="help-section">
+      <details>
+        <summary>Need help?</summary>
+        <div class="help-content">
+          <p><strong>Get an API Key:</strong> Visit <a href="https://www.oilpriceapi.com" target="_blank">oilpriceapi.com</a></p>
+          <p><strong>Supported Commodities:</strong> Crude oil (Brent, WTI), Natural gas, Coal, LNG</p>
+          <p><strong>Units:</strong> Currently supports MBtu conversions. Additional units coming soon.</p>
+        </div>
+      </details>
+    </section>
+  </div>
+
+  <!-- App Bundle -->
+  <script src="bundle.js"></script>
+  <script src="taskpane.js"></script>
+</body>
+</html>

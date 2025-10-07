@@ -1,0 +1,1 @@
+Icon files needed: 16x16, 32x32, 64x64, 80x80 PNG files

@@ -1,0 +1,41 @@
+{
+  "name": "excel-energy-addin",
+  "version": "1.0.0",
+  "description": "Excel add-in for comparing energy commodity prices across units and currencies",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "build": "webpack --mode production",
+    "dev": "webpack serve --config webpack.dev.js",
+    "start": "npm run dev"
+  },
+  "keywords": [
+    "excel",
+    "energy",
+    "commodities",
+    "prices",
+    "oil",
+    "gas",
+    "coal"
+  ],
+  "author": "OilPriceAPI",
+  "license": "MIT",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/office-js": "^1.0.544",
+    "copy-webpack-plugin": "^13.0.1",
+    "jest": "^30.2.0",
+    "office-addin-debugging": "^6.0.3",
+    "office-addin-dev-certs": "^2.0.3",
+    "office-addin-manifest": "^2.0.3",
+    "ts-jest": "^29.4.4",
+    "ts-loader": "^9.5.4",
+    "typescript": "^5.9.3",
+    "webpack": "^5.102.0",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.2"
+  }
+}
