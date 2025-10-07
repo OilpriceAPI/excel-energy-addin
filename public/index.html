@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel Energy Price Comparison Add-in - OilPriceAPI</title>
+    <meta name="description" content="Compare energy commodity prices across units and currencies using OilPriceAPI. Free Excel add-in for analyzing oil, gas, and coal prices.">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+        .button {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .button:hover {
+            background: #2980b9;
+        }
+        .feature {
+            margin: 20px 0;
+            padding-left: 20px;
+        }
+        .feature li {
+            margin: 10px 0;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
+            color: #95a5a6;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Excel Energy Price Comparison Add-in</h1>
+        <p class="subtitle">Compare energy commodity prices across units and currencies</p>
+        
+        <p>This Excel add-in allows analysts to fetch real-time energy commodity prices and convert them to equivalent energy units for direct comparison.</p>
+        
+        <div style="margin: 30px 0;">
+            <a href="https://www.oilpriceapi.com" class="button">Get API Key (Free)</a>
+            <a href="https://github.com/OilpriceAPI/excel-energy-addin" class="button">View on GitHub</a>
+            <a href="https://docs.oilpriceapi.com" class="button">Documentation</a>
+        </div>
+        
+        <h2>Features</h2>
+        <ul class="feature">
+            <li>✅ Real-time price fetching from OilPriceAPI</li>
+            <li>✅ Energy unit conversions ($/MMBtu)</li>
+            <li>✅ Support for Brent, WTI, Natural Gas, Coal, and more</li>
+            <li>✅ Multi-currency support (USD, GBP, EUR)</li>
+            <li>✅ Data export for analysis</li>
+        </ul>
+        
+        <h2>Installation</h2>
+        <ol class="feature">
+            <li>Download the manifest file from <a href="https://github.com/OilpriceAPI/excel-energy-addin">GitHub</a></li>
+            <li>Open Microsoft Excel (2016 or later)</li>
+            <li>Go to Insert → Get Add-ins → Upload My Add-in</li>
+            <li>Select the manifest.xml file</li>
+            <li>Get your free API key from <a href="https://www.oilpriceapi.com">OilPriceAPI.com</a></li>
+        </ol>
+        
+        <div class="footer">
+            <p>Built with ❤️ by the <a href="https://www.oilpriceapi.com">OilPriceAPI</a> team</p>
+            <p>Free for personal and commercial use | <a href="https://github.com/OilpriceAPI/excel-energy-addin">MIT License</a></p>
+        </div>
+    </div>
+</body>
+</html>
