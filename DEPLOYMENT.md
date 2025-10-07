@@ -23,8 +23,8 @@
    - **Plan**: Free (F0)
    - **Region**: Choose closest to users
    - **Deployment**: GitHub
-   - **Organization**: karlwaldman (or your org)
-   - **Repository**: oilpriceapi
+   - **Organization**: OilpriceAPI
+   - **Repository**: excel-energy-addin
    - **Branch**: main
    - **Build Presets**: Custom
    - **App location**: /
@@ -53,7 +53,7 @@ az group create \
 az staticwebapp create \
   --name excel-energy-addin \
   --resource-group excel-addin-rg \
-  --source https://github.com/karlwaldman/oilpriceapi \
+  --source https://github.com/OilpriceAPI/excel-energy-addin \
   --location eastus \
   --branch main \
   --app-location "/" \
@@ -101,7 +101,7 @@ git commit -m "Configure Azure Static Web Apps"
 git push origin main
 
 # Check deployment status
-# Go to: https://github.com/karlwaldman/oilpriceapi/actions
+# Go to: https://github.com/OilpriceAPI/excel-energy-addin/actions
 ```
 
 ## Troubleshooting
