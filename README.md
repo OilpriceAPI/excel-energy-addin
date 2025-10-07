@@ -1,6 +1,10 @@
 # Excel Energy Price Comparison Add-in
 
-Compare energy commodity prices across units and currencies using OilPriceAPI.
+[![Website](https://img.shields.io/badge/Website-oilpriceapi.com-blue)](https://www.oilpriceapi.com)
+[![Docs](https://img.shields.io/badge/Docs-docs.oilpriceapi.com-green)](https://docs.oilpriceapi.com)
+[![GitHub](https://img.shields.io/github/stars/OilpriceAPI/excel-energy-addin?style=social)](https://github.com/OilpriceAPI/excel-energy-addin)
+
+Compare energy commodity prices across units and currencies using [OilPriceAPI](https://www.oilpriceapi.com).
 
 ## Overview
 
