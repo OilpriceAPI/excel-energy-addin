@@ -5,8 +5,8 @@
            xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides"
            xsi:type="TaskPaneApp">
 
-  <!-- App ID - Generate a unique GUID -->
-  <Id>12345678-1234-1234-1234-123456789abc</Id>
+  <!-- App ID - Unique GUID for AppSource -->
+  <Id>f402ea85-7778-41f3-8cee-c3465c49ca8d</Id>
 
   <!-- Version -->
   <Version>1.0.0.0</Version>

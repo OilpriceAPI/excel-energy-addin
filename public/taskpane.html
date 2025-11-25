@@ -8,10 +8,30 @@
   <!-- Office.js -->
   <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
 
+  <!-- Analytics -->
+  <script defer data-domain="excel.oilpriceapi.com" src="https://plausible.io/js/script.js"></script>
+
   <!-- Styles -->
   <link rel="stylesheet" href="taskpane.css">
 </head>
 <body>
+  <!-- Welcome Modal -->
+  <div id="welcome-modal" class="modal">
+    <div class="modal-content">
+      <h2>Welcome to Energy Price Comparison!</h2>
+      <p class="modal-intro">Get started in 3 simple steps:</p>
+      <ol class="welcome-steps">
+        <li><strong>Get your free API key</strong> - 1,000 requests/month</li>
+        <li><strong>Save it in Settings</strong> - We'll remember it</li>
+        <li><strong>Fetch prices</strong> - Start comparing energy costs</li>
+      </ol>
+      <div class="modal-actions">
+        <button id="get-api-key-btn" class="btn-primary">Get Free API Key</button>
+        <button id="close-welcome-btn" class="btn-secondary">I already have a key</button>
+      </div>
+    </div>
+  </div>
+
   <div class="container">
     <!-- Header -->
     <header>
@@ -29,12 +49,19 @@
           id="api-key"
           placeholder="Enter your OilPriceAPI key"
           autocomplete="off"
+          title="Your OilPriceAPI key for accessing commodity prices"
         >
-        <button id="save-key-btn" class="btn-secondary">Save</button>
+        <button id="save-key-btn" class="btn-secondary" title="Save API key to local storage">Save</button>
       </div>
       <div class="form-group">
-        <button id="test-connection-btn" class="btn-secondary">Test Connection</button>
+        <button id="test-connection-btn" class="btn-secondary" title="Test connection to OilPriceAPI">Test Connection</button>
         <span id="connection-status" class="status-text"></span>
+      </div>
+      <div class="form-group" id="usage-counter-section" style="display: none;">
+        <div class="usage-display">
+          <div class="usage-label">API Usage This Month</div>
+          <div id="usage-counter" class="usage-counter">-</div>
+        </div>
       </div>
     </section>
 
@@ -46,27 +73,93 @@
         <h3>1. Fetch Prices</h3>
         <p>Get latest spot prices for selected commodities</p>
         <div class="commodity-checkboxes" id="commodity-list">
-          <label><input type="checkbox" value="BRENT_CRUDE_USD" checked> Brent Crude</label>
-          <label><input type="checkbox" value="WTI_USD" checked> WTI Crude</label>
-          <label><input type="checkbox" value="NATURAL_GAS_USD" checked> Natural Gas (US)</label>
-          <label><input type="checkbox" value="NATURAL_GAS_GBP" checked> Natural Gas (UK)</label>
-          <label><input type="checkbox" value="DUTCH_TTF_EUR" checked> Dutch TTF Gas</label>
-          <label><input type="checkbox" value="COAL_USD" checked> Coal</label>
+          <label title="Brent Crude Oil benchmark price"><input type="checkbox" value="BRENT_CRUDE_USD" checked> Brent Crude</label>
+          <label title="West Texas Intermediate benchmark price"><input type="checkbox" value="WTI_USD" checked> WTI Crude</label>
+          <label title="US Natural Gas price"><input type="checkbox" value="NATURAL_GAS_USD" checked> Natural Gas (US)</label>
+          <label title="UK Natural Gas price"><input type="checkbox" value="NATURAL_GAS_GBP" checked> Natural Gas (UK)</label>
+          <label title="Dutch TTF Gas price"><input type="checkbox" value="DUTCH_TTF_EUR" checked> Dutch TTF Gas</label>
+          <label title="Coal commodity price"><input type="checkbox" value="COAL_USD" checked> Coal</label>
         </div>
-        <button id="fetch-prices-btn" class="btn-primary">Fetch Prices</button>
+        <button id="fetch-prices-btn" class="btn-primary" title="Fetch prices from OilPriceAPI (Ctrl+P)">
+          Fetch Prices
+          <span class="keyboard-hint">Ctrl+P</span>
+        </button>
       </div>
 
       <div class="action-card">
         <h3>2. Convert to MBtu</h3>
         <p>Convert prices to $/MBtu for direct comparison</p>
-        <button id="convert-btn" class="btn-primary">Convert to MBtu</button>
+        <button id="convert-btn" class="btn-primary" title="Convert all prices to standard energy units ($/MBtu)">Convert to MBtu</button>
       </div>
 
       <div class="action-card">
         <h3>3. Create Dashboard</h3>
         <p>Generate Tufte-style visualization dashboard</p>
-        <button id="dashboard-btn" class="btn-primary" disabled>Create Dashboard</button>
+        <button id="dashboard-btn" class="btn-primary" disabled title="Dashboard feature coming soon">Create Dashboard</button>
         <small class="help-text">Coming soon</small>
+      </div>
+    </section>
+
+    <!-- Historical Data Section -->
+    <section class="actions-section" id="historical-section">
+      <h2>Historical Data</h2>
+
+      <div class="action-card">
+        <h3>Fetch Past Year</h3>
+        <p>Get 365 days of historical prices for trend analysis</p>
+
+        <!-- Tier gate for free users -->
+        <div id="historical-tier-gate" class="tier-gate" style="display: none;">
+          <div class="tier-gate-content">
+            <p class="tier-gate-message">
+              📊 Historical data is available on paid plans
+            </p>
+            <ul class="tier-benefits">
+              <li>✓ 20+ years of price history</li>
+              <li>✓ Daily, weekly, monthly data</li>
+              <li>✓ Excel charts & pivot tables</li>
+            </ul>
+            <button class="btn-upgrade" onclick="window.open('https://www.oilpriceapi.com/pricing', '_blank')">
+              Upgrade to Exploration ($15/mo)
+            </button>
+          </div>
+        </div>
+
+        <!-- Feature UI (shown for paid users) -->
+        <div id="historical-feature-ui" style="display: none;">
+          <div class="form-group">
+            <label for="historical-commodity">Select Commodity</label>
+            <select id="historical-commodity">
+              <option value="BRENT_CRUDE_USD">Brent Crude Oil</option>
+              <option value="WTI_USD">WTI Crude</option>
+              <option value="NATURAL_GAS_USD">Natural Gas (US)</option>
+              <option value="NATURAL_GAS_GBP">Natural Gas (UK)</option>
+              <option value="DUTCH_TTF_EUR">Dutch TTF Gas</option>
+              <option value="COAL_USD">Coal</option>
+            </select>
+          </div>
+          <button id="fetch-past-year-btn" class="btn-primary" title="Fetch past year of historical data">
+            Fetch Past Year
+          </button>
+          <button id="fetch-past-month-btn" class="btn-secondary" title="Fetch past month of historical data">
+            Fetch Past Month
+          </button>
+          <small class="help-text">Rate limited to 1 fetch per commodity per hour</small>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bulk Fetch Section -->
+    <section class="actions-section" id="bulk-section">
+      <h2>Bulk Operations</h2>
+
+      <div class="action-card">
+        <h3>Fetch All Prices</h3>
+        <p>Get all commodity prices in one efficient API call</p>
+        <button id="fetch-all-btn" class="btn-primary" title="Fetch all prices (counts as 1 API request)">
+          Fetch All Prices (1 API call)
+        </button>
+        <small class="help-text">83% more efficient than individual fetches</small>
       </div>
     </section>
 
@@ -90,6 +183,7 @@
   </div>
 
   <!-- App Bundle -->
+  <script src="error-handler.js"></script>
   <script src="bundle.js"></script>
   <script src="taskpane.js"></script>
 </body>

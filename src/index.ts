@@ -215,3 +215,71 @@ export async function fetchPrices(apiKey: string, codes: string[]): Promise<Pric
   const client = new OilPriceAPIClient(apiKey);
   return await client.getMultiplePrices(codes);
 }
+
+/**
+ * Create Historical Data sheet
+ */
+export async function createHistoricalSheet(
+  code: string,
+  historicalData: PriceData[],
+  sheetName: string
+): Promise<void> {
+  await Excel.run(async (context) => {
+    // Get or create Historical sheet
+    let sheet = context.workbook.worksheets.getItemOrNullObject(sheetName);
+    await context.sync();
+
+    if (sheet.isNullObject) {
+      sheet = context.workbook.worksheets.add(sheetName);
+    }
+
+    // Clear existing data
+    sheet.getUsedRange()?.clear();
+
+    // Add headers
+    const headers = [['Date', 'Price', 'Currency', 'Commodity']];
+    const headerRange = sheet.getRange('A1:D1');
+    headerRange.values = headers;
+    headerRange.format.font.bold = true;
+    headerRange.format.fill.color = '#d4edda';
+
+    // Sort data by date (oldest first)
+    const sortedData = historicalData.sort((a, b) => {
+      return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime();
+    });
+
+    // Add historical data rows
+    const rows = sortedData.map(p => [
+      p.timestamp,
+      p.price,
+      p.currency || 'USD',
+      code
+    ]);
+
+    if (rows.length > 0) {
+      const dataRange = sheet.getRange(`A2:D${rows.length + 1}`);
+      dataRange.values = rows;
+
+      // Format price column
+      const priceRange = sheet.getRange(`B2:B${rows.length + 1}`);
+      priceRange.numberFormat = [['$#,##0.00']];
+
+      // Format date column
+      const dateRange = sheet.getRange(`A2:A${rows.length + 1}`);
+      dateRange.numberFormat = [['yyyy-mm-dd']];
+    }
+
+    // Auto-fit columns
+    sheet.getUsedRange()?.format.autofitColumns();
+
+    // Activate the historical sheet
+    sheet.activate();
+
+    await context.sync();
+  });
+}
+
+/**
+ * Export OilPriceAPIClient for direct use in taskpane
+ */
+export { OilPriceAPIClient };

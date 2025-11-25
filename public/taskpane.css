@@ -269,3 +269,364 @@ details[open] summary::before {
   border-radius: 4px;
   padding: 16px;
 }
+
+/* Enhanced Error Messages */
+.error-message {
+  display: none;
+  background: #fef0f0;
+  border-left: 4px solid #dc3545;
+  padding: 16px;
+  margin: 16px 0;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.error-message.visible {
+  display: block;
+  animation: slideDown 0.3s ease-out;
+}
+
+.error-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.error-icon {
+  font-size: 20px;
+  margin-right: 8px;
+  color: #dc3545;
+}
+
+.error-title {
+  font-weight: 600;
+  color: #721c24;
+  font-size: 14px;
+}
+
+.error-body {
+  color: #721c24;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.error-recovery {
+  background: #fff;
+  border: 1px solid #f5c6cb;
+  padding: 12px;
+  border-radius: 3px;
+  margin-top: 12px;
+}
+
+.error-recovery-title {
+  font-weight: 600;
+  font-size: 12px;
+  color: #721c24;
+  margin-bottom: 6px;
+}
+
+.error-recovery-text {
+  font-size: 12px;
+  color: #721c24;
+  margin-bottom: 8px;
+}
+
+.error-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.btn-fix {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-fix:hover {
+  background: #c82333;
+}
+
+.btn-dismiss {
+  background: white;
+  color: #721c24;
+  border: 1px solid #721c24;
+  padding: 8px 16px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-dismiss:hover {
+  background: #f8f9fa;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Success Messages */
+.status-message {
+  display: none;
+  background: #d4edda;
+  border-left: 4px solid #28a745;
+  padding: 12px;
+  margin: 16px 0;
+  border-radius: 4px;
+  color: #155724;
+  font-size: 13px;
+}
+
+.status-message.visible {
+  display: block;
+  animation: slideDown 0.3s ease-out;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #0078d4;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  color: #666;
+  font-size: 13px;
+  font-style: italic;
+}
+
+/* Welcome Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal.visible {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 32px 24px;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  animation: slideUp 0.3s ease-out;
+}
+
+.modal-content h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #1a1a1a;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.modal-intro {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 16px;
+}
+
+.welcome-steps {
+  margin: 16px 0 24px 20px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #333;
+}
+
+.welcome-steps li {
+  margin-bottom: 8px;
+}
+
+.welcome-steps strong {
+  color: #0078d4;
+}
+
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.modal-actions .btn-primary {
+  width: 100%;
+}
+
+.modal-actions .btn-secondary {
+  width: 100%;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Usage Counter */
+.usage-display {
+  background: #f0f7ff;
+  border: 1px solid #d0e7ff;
+  border-radius: 4px;
+  padding: 12px;
+  text-align: center;
+}
+
+.usage-label {
+  font-size: 11px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.usage-counter {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0078d4;
+  font-family: 'Courier New', monospace;
+}
+
+/* Keyboard Hints */
+.keyboard-hint {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 6px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  font-size: 10px;
+  font-family: 'Courier New', monospace;
+  vertical-align: middle;
+}
+
+/* Tooltip enhancements (browser native) */
+[title] {
+  cursor: help;
+}
+
+/* Tier Gate Styling */
+.tier-gate {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 6px;
+  padding: 20px;
+  margin: 12px 0;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+}
+
+.tier-gate-content {
+  color: white;
+  text-align: center;
+}
+
+.tier-gate-message {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: white;
+}
+
+.tier-benefits {
+  list-style: none;
+  margin: 16px 0;
+  padding: 0;
+  text-align: left;
+  max-width: 280px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.tier-benefits li {
+  font-size: 13px;
+  margin-bottom: 8px;
+  color: rgba(255, 255, 255, 0.95);
+  padding-left: 4px;
+}
+
+.btn-upgrade {
+  background: white;
+  color: #667eea;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+  margin-top: 12px;
+}
+
+.btn-upgrade:hover {
+  background: #f8f9ff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Select Dropdown */
+select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 13px;
+  background: white;
+  cursor: pointer;
+  margin-bottom: 12px;
+}
+
+select:focus {
+  outline: none;
+  border-color: #0078d4;
+}
