@@ -206,20 +206,26 @@ export class OilPriceAPIClient {
       }
 
       const user = await response.json();
+      const plan = user.plan || 'free';
+      const isReservoirMastery = user.reservoir_mastery === true || user.admin === true;
 
       return {
-        plan: user.plan || 'free',
+        plan: plan,
         requestsUsed: user.requests_this_month || 0,
         requestsLimit: user.request_limit || 1000,
-        emailConfirmed: !!user.email_confirmed_at,
+        emailConfirmed: !!user.email_confirmed_at || !!user.email_confirmed,
 
         // Feature flags based on plan
-        canAccessHistorical: ['exploration', 'production', 'reservoir_mastery'].includes(user.plan),
-        canAccessFutures: user.reservoir_mastery === true,
-        canUseWebhooks: ['production', 'reservoir_mastery'].includes(user.plan),
-        canAccessDrillingIntelligence: user.reservoir_mastery === true,
+        // Free tier: No historical data
+        // Exploration+: Historical data access
+        // Production+: Webhooks
+        // Reservoir Mastery: Futures + drilling intelligence
+        canAccessHistorical: ['exploration', 'production', 'reservoir_mastery'].includes(plan) || user.admin === true,
+        canAccessFutures: isReservoirMastery,
+        canUseWebhooks: ['production', 'reservoir_mastery'].includes(plan) || user.admin === true,
+        canAccessDrillingIntelligence: isReservoirMastery,
 
-        reservoirMastery: user.reservoir_mastery === true,
+        reservoirMastery: isReservoirMastery,
         webhookLimit: user.webhook_limit || 0,
         webhookEventsLimit: user.webhook_events_limit || 0
       };
