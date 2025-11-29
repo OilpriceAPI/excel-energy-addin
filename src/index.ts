@@ -140,7 +140,22 @@ export async function createProcessSheet(): Promise<void> {
       if (!code || !COMMODITY_MAP[code as string]) continue;
 
       const commodityInfo = COMMODITY_MAP[code as string];
-      const heatContent = getHeatContent(commodityInfo.type);
+
+      // Get heat content based on actual unit, not commodity type
+      // For therms: 1 therm = 0.1 MMBtu
+      // For MWh: 1 MWh = 3.412 MMBtu
+      // For others (barrel, tonne, Mcf): use commodity-specific heat content
+      let heatContent: number;
+      if (commodityInfo.unit === 'therm') {
+        heatContent = 0.1;  // 1 therm = 0.1 MMBtu
+      } else if (commodityInfo.unit === 'MWh') {
+        heatContent = 3.412;  // 1 MWh = 3.412 MMBtu
+      } else if (commodityInfo.unit === 'MBtu') {
+        heatContent = 1.0;  // Already in MMBtu
+      } else {
+        // For barrel, tonne, Mcf: use commodity-specific heat content
+        heatContent = getHeatContent(commodityInfo.type);
+      }
 
       // Convert price to USD if needed
       let usdPrice = Number(price);
