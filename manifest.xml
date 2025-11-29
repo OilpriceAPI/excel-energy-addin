@@ -24,15 +24,15 @@
   <Description DefaultValue="Compare energy commodity prices across units and currencies using OilPriceAPI"/>
 
   <!-- Icon URLs -->
-  <IconUrl DefaultValue="https://calm-bush-0e3aadf10.2.azurestaticapps.net/assets/icon-32.png"/>
-  <HighResolutionIconUrl DefaultValue="https://calm-bush-0e3aadf10.2.azurestaticapps.net/assets/icon-64.png"/>
+  <IconUrl DefaultValue="https://oilpriceapi.github.io/excel-energy-addin/assets/icon-32.png"/>
+  <HighResolutionIconUrl DefaultValue="https://oilpriceapi.github.io/excel-energy-addin/assets/icon-64.png"/>
 
   <!-- Support URL -->
   <SupportUrl DefaultValue="https://www.oilpriceapi.com/tools/excel-energy-comparison"/>
 
   <!-- App Domains -->
   <AppDomains>
-    <AppDomain>https://calm-bush-0e3aadf10.2.azurestaticapps.net</AppDomain>
+    <AppDomain>https://oilpriceapi.github.io</AppDomain>
     <AppDomain>https://www.oilpriceapi.com</AppDomain>
     <AppDomain>https://api.oilpriceapi.com</AppDomain>
   </AppDomains>
@@ -44,7 +44,7 @@
 
   <!-- Default Settings -->
   <DefaultSettings>
-    <SourceLocation DefaultValue="https://calm-bush-0e3aadf10.2.azurestaticapps.net/taskpane.html"/>
+    <SourceLocation DefaultValue="https://oilpriceapi.github.io/excel-energy-addin/taskpane.html"/>
   </DefaultSettings>
 
   <!-- Permissions -->
@@ -104,14 +104,14 @@
     <!-- Resources -->
     <Resources>
       <bt:Images>
-        <bt:Image id="Icon.16x16" DefaultValue="https://calm-bush-0e3aadf10.2.azurestaticapps.net/assets/icon-16.png"/>
-        <bt:Image id="Icon.32x32" DefaultValue="https://calm-bush-0e3aadf10.2.azurestaticapps.net/assets/icon-32.png"/>
-        <bt:Image id="Icon.80x80" DefaultValue="https://calm-bush-0e3aadf10.2.azurestaticapps.net/assets/icon-80.png"/>
+        <bt:Image id="Icon.16x16" DefaultValue="https://oilpriceapi.github.io/excel-energy-addin/assets/icon-16.png"/>
+        <bt:Image id="Icon.32x32" DefaultValue="https://oilpriceapi.github.io/excel-energy-addin/assets/icon-32.png"/>
+        <bt:Image id="Icon.80x80" DefaultValue="https://oilpriceapi.github.io/excel-energy-addin/assets/icon-80.png"/>
       </bt:Images>
 
       <bt:Urls>
         <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://www.oilpriceapi.com/tools/excel-energy-comparison"/>
-        <bt:Url id="Taskpane.Url" DefaultValue="https://calm-bush-0e3aadf10.2.azurestaticapps.net/taskpane.html"/>
+        <bt:Url id="Taskpane.Url" DefaultValue="https://oilpriceapi.github.io/excel-energy-addin/taskpane.html"/>
       </bt:Urls>
 
       <bt:ShortStrings>
