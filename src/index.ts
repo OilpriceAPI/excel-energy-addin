@@ -15,7 +15,18 @@ const COMMODITY_MAP: Record<string, { type: CommodityType; unit: string }> = {
   'NATURAL_GAS_USD': { type: 'NATURAL_GAS', unit: 'MBtu' },  // Henry Hub is already in $/MMBtu
   'NATURAL_GAS_GBP': { type: 'NATURAL_GAS', unit: 'therm' },
   'DUTCH_TTF_EUR': { type: 'NATURAL_GAS', unit: 'MWh' },
-  'COAL_USD': { type: 'COAL_BITUMINOUS', unit: 'tonne' }
+  'COAL_USD': { type: 'COAL_BITUMINOUS', unit: 'tonne' },
+  // US Spot Coal
+  'CAPP_COAL_USD': { type: 'COAL_BITUMINOUS', unit: 'short_ton' },
+  'PRB_COAL_USD': { type: 'COAL_BITUMINOUS', unit: 'short_ton' },
+  'ILLINOIS_COAL_USD': { type: 'COAL_BITUMINOUS', unit: 'short_ton' },
+  // International Coal Futures
+  'NEWCASTLE_COAL_USD': { type: 'COAL_BITUMINOUS', unit: 'tonne' },
+  'COKING_COAL_USD': { type: 'COAL_BITUMINOUS', unit: 'tonne' },
+  'CME_COAL_USD': { type: 'COAL_BITUMINOUS', unit: 'short_ton' },
+  // NYMEX Historical (Discontinued)
+  'NYMEX_APPALACHIAN_USD': { type: 'COAL_BITUMINOUS', unit: 'short_ton' },
+  'NYMEX_WESTERN_RAIL_USD': { type: 'COAL_BITUMINOUS', unit: 'short_ton' }
 };
 
 /**
