@@ -2,9 +2,13 @@
  * OilPriceAPI Client for fetching energy commodity prices
  */
 
-import { UserTier, UpgradeRequiredError, PLAN_FEATURES } from '../types/user-tier';
+import {
+  UserTier,
+  UpgradeRequiredError,
+  PLAN_FEATURES,
+} from "../types/user-tier";
 
-const API_BASE_URL = 'https://api.oilpriceapi.com/v1';
+const API_BASE_URL = "https://api.oilpriceapi.com/v1";
 
 export interface PriceData {
   code: string;
@@ -14,15 +18,40 @@ export interface PriceData {
   timestamp: string;
 }
 
+/**
+ * Data Connector price from BYOS (Bring Your Own Subscription)
+ * Used for bunker fuel prices from connected data sources like Ship&Bunker
+ */
+export interface DataConnectorPrice {
+  price: number;
+  currency: string;
+  fuel_type: string;
+  port: string;
+  region: string | null;
+  unit: string;
+  source: string;
+  timestamp: string;
+}
+
+/**
+ * Options for fetching Data Connector prices
+ */
+export interface DataConnectorOptions {
+  fuelType?: string;
+  port?: string;
+  region?: string;
+  since?: string;
+}
+
 export enum ErrorType {
-  AUTHENTICATION = 'AUTHENTICATION',
-  RATE_LIMIT = 'RATE_LIMIT',
-  UPGRADE_REQUIRED = 'UPGRADE_REQUIRED',
-  NOT_FOUND = 'NOT_FOUND',
-  SERVER_ERROR = 'SERVER_ERROR',
-  NETWORK_ERROR = 'NETWORK_ERROR',
-  INVALID_RESPONSE = 'INVALID_RESPONSE',
-  UNKNOWN = 'UNKNOWN'
+  AUTHENTICATION = "AUTHENTICATION",
+  RATE_LIMIT = "RATE_LIMIT",
+  UPGRADE_REQUIRED = "UPGRADE_REQUIRED",
+  NOT_FOUND = "NOT_FOUND",
+  SERVER_ERROR = "SERVER_ERROR",
+  NETWORK_ERROR = "NETWORK_ERROR",
+  INVALID_RESPONSE = "INVALID_RESPONSE",
+  UNKNOWN = "UNKNOWN",
 }
 
 export class APIError extends Error {
@@ -36,10 +65,10 @@ export class APIError extends Error {
     type?: ErrorType,
     userMessage?: string,
     recoveryAction?: string,
-    public originalError?: any
+    public originalError?: any,
   ) {
     super(message);
-    this.name = 'APIError';
+    this.name = "APIError";
     this.type = type || ErrorType.UNKNOWN;
     this.userMessage = userMessage || message;
     this.recoveryAction = recoveryAction;
@@ -55,8 +84,8 @@ export class APIError extends Error {
           `Authentication failed: ${errorMessage}`,
           401,
           ErrorType.AUTHENTICATION,
-          'Your API key is invalid or expired.',
-          'Please update your API key in Settings.'
+          "Your API key is invalid or expired.",
+          "Please update your API key in Settings.",
         );
 
       case 429:
@@ -64,8 +93,8 @@ export class APIError extends Error {
           `Rate limit exceeded: ${errorMessage}`,
           429,
           ErrorType.RATE_LIMIT,
-          'You\'ve reached your API request limit.',
-          'Upgrade your plan at oilpriceapi.com or wait for the limit to reset.'
+          "You've reached your API request limit.",
+          "Upgrade your plan at oilpriceapi.com or wait for the limit to reset.",
         );
 
       case 404:
@@ -73,8 +102,8 @@ export class APIError extends Error {
           `Resource not found: ${errorMessage}`,
           404,
           ErrorType.NOT_FOUND,
-          'The requested commodity was not found.',
-          'Check the commodity code and try again.'
+          "The requested commodity was not found.",
+          "Check the commodity code and try again.",
         );
 
       case 500:
@@ -84,8 +113,8 @@ export class APIError extends Error {
           `Server error: ${errorMessage}`,
           statusCode,
           ErrorType.SERVER_ERROR,
-          'The API server is experiencing issues.',
-          'Please try again in a few minutes.'
+          "The API server is experiencing issues.",
+          "Please try again in a few minutes.",
         );
 
       default:
@@ -93,8 +122,8 @@ export class APIError extends Error {
           `HTTP ${statusCode}: ${errorMessage}`,
           statusCode,
           ErrorType.UNKNOWN,
-          'An unexpected error occurred.',
-          'Please try again or contact support if the problem persists.'
+          "An unexpected error occurred.",
+          "Please try again or contact support if the problem persists.",
         );
     }
   }
@@ -104,9 +133,9 @@ export class APIError extends Error {
       `Network error: ${error.message}`,
       undefined,
       ErrorType.NETWORK_ERROR,
-      'Unable to connect to the API server.',
-      'Check your internet connection and try again.',
-      error
+      "Unable to connect to the API server.",
+      "Check your internet connection and try again.",
+      error,
     );
   }
 }
@@ -115,8 +144,8 @@ export class OilPriceAPIClient {
   private apiKey: string;
 
   constructor(apiKey: string) {
-    if (!apiKey || apiKey.trim() === '') {
-      throw new Error('API key is required');
+    if (!apiKey || apiKey.trim() === "") {
+      throw new Error("API key is required");
     }
     this.apiKey = apiKey;
   }
@@ -127,16 +156,20 @@ export class OilPriceAPIClient {
   async getPrice(code: string): Promise<PriceData> {
     try {
       const url = `${API_BASE_URL}/prices/latest?by_code=${code}`;
-      console.log('[API] Fetching:', url);
+      console.log("[API] Fetching:", url);
 
       const response = await fetch(url, {
         headers: {
-          'Authorization': `Token ${this.apiKey}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Token ${this.apiKey}`,
+          "Content-Type": "application/json",
+        },
       });
 
-      console.log('[API] Response status:', response.status, response.statusText);
+      console.log(
+        "[API] Response status:",
+        response.status,
+        response.statusText,
+      );
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
@@ -148,8 +181,8 @@ export class OilPriceAPIClient {
         code: data.data.code,
         price: data.data.price,
         formatted: data.data.formatted,
-        currency: data.data.currency || 'USD',
-        timestamp: data.data.created_at
+        currency: data.data.currency || "USD",
+        timestamp: data.data.created_at,
       };
     } catch (error: any) {
       if (error instanceof APIError) {
@@ -164,11 +197,11 @@ export class OilPriceAPIClient {
    * Returns successful fetches, skips failures
    */
   async getMultiplePrices(codes: string[]): Promise<PriceData[]> {
-    const promises = codes.map(code =>
-      this.getPrice(code).catch(error => {
+    const promises = codes.map((code) =>
+      this.getPrice(code).catch((error) => {
         console.warn(`Failed to fetch ${code}:`, error.message);
         return null;
-      })
+      }),
     );
 
     const results = await Promise.all(promises);
@@ -180,7 +213,7 @@ export class OilPriceAPIClient {
    */
   async testConnection(): Promise<boolean> {
     try {
-      await this.getPrice('BRENT_CRUDE_USD');
+      await this.getPrice("BRENT_CRUDE_USD");
       return true;
     } catch (error) {
       return false;
@@ -193,21 +226,22 @@ export class OilPriceAPIClient {
    */
   async getUserTier(): Promise<UserTier> {
     try {
-      const url = `${API_BASE_URL.replace('/v1', '')}/users/me`;
+      const url = `${API_BASE_URL.replace("/v1", "")}/users/me`;
       const response = await fetch(url, {
         headers: {
-          'Authorization': `Token ${this.apiKey}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Token ${this.apiKey}`,
+          "Content-Type": "application/json",
+        },
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch user tier');
+        throw new Error("Failed to fetch user tier");
       }
 
       const user = await response.json();
-      const plan = user.plan || 'free';
-      const isReservoirMastery = user.reservoir_mastery === true || user.admin === true;
+      const plan = user.plan || "free";
+      const isReservoirMastery =
+        user.reservoir_mastery === true || user.admin === true;
 
       return {
         plan: plan,
@@ -220,14 +254,18 @@ export class OilPriceAPIClient {
         // Exploration+: Historical data access
         // Production+: Webhooks
         // Reservoir Mastery: Futures + drilling intelligence
-        canAccessHistorical: ['exploration', 'production', 'reservoir_mastery'].includes(plan) || user.admin === true,
+        canAccessHistorical:
+          ["exploration", "production", "reservoir_mastery"].includes(plan) ||
+          user.admin === true,
         canAccessFutures: isReservoirMastery,
-        canUseWebhooks: ['production', 'reservoir_mastery'].includes(plan) || user.admin === true,
+        canUseWebhooks:
+          ["production", "reservoir_mastery"].includes(plan) ||
+          user.admin === true,
         canAccessDrillingIntelligence: isReservoirMastery,
 
         reservoirMastery: isReservoirMastery,
         webhookLimit: user.webhook_limit || 0,
-        webhookEventsLimit: user.webhook_events_limit || 0
+        webhookEventsLimit: user.webhook_events_limit || 0,
       };
     } catch (error: any) {
       throw APIError.fromNetworkError(error);
@@ -243,9 +281,9 @@ export class OilPriceAPIClient {
       const url = `${API_BASE_URL}/prices/all`;
       const response = await fetch(url, {
         headers: {
-          'Authorization': `Token ${this.apiKey}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Token ${this.apiKey}`,
+          "Content-Type": "application/json",
+        },
       });
 
       if (!response.ok) {
@@ -260,8 +298,8 @@ export class OilPriceAPIClient {
         code: item.code,
         price: item.price,
         formatted: `${item.currency} ${item.price.toFixed(2)}`,
-        currency: item.currency || 'USD',
-        timestamp: item.timestamp
+        currency: item.currency || "USD",
+        timestamp: item.timestamp,
       }));
     } catch (error: any) {
       if (error instanceof APIError) {
@@ -282,43 +320,43 @@ export class OilPriceAPIClient {
 
       if (!tier.canAccessHistorical) {
         throw new APIError(
-          'Historical data requires Exploration tier or higher',
+          "Historical data requires Exploration tier or higher",
           403,
           ErrorType.UPGRADE_REQUIRED,
-          'Historical data access requires a paid plan',
-          'Upgrade to Exploration tier ($15/mo) to access historical data'
+          "Historical data access requires a paid plan",
+          "Upgrade to Exploration tier ($15/mo) to access historical data",
         );
       }
 
       const url = `${API_BASE_URL}/prices/past_year?by_code=${code}`;
       const response = await fetch(url, {
         headers: {
-          'Authorization': `Token ${this.apiKey}`,
-          'Content-Type': 'application/json',
-          'X-Excel-Addin-Version': '1.0.0'
-        }
+          Authorization: `Token ${this.apiKey}`,
+          "Content-Type": "application/json",
+          "X-Excel-Addin-Version": "1.0.0",
+        },
       });
 
       if (response.status === 403) {
         const errorData = await response.json().catch(() => ({}));
         if (errorData.upgrade_required) {
           throw new APIError(
-            errorData.message || 'Upgrade required',
+            errorData.message || "Upgrade required",
             403,
             ErrorType.UPGRADE_REQUIRED,
             errorData.message,
-            `Upgrade to ${errorData.recommended_plan || 'Exploration'} tier`
+            `Upgrade to ${errorData.recommended_plan || "Exploration"} tier`,
           );
         }
       }
 
       if (response.status === 429) {
         throw new APIError(
-          'Rate limit exceeded for historical data',
+          "Rate limit exceeded for historical data",
           429,
           ErrorType.RATE_LIMIT,
-          'You can fetch historical data for each commodity once per hour',
-          'Please wait before fetching this commodity again'
+          "You can fetch historical data for each commodity once per hour",
+          "Please wait before fetching this commodity again",
         );
       }
 
@@ -334,8 +372,8 @@ export class OilPriceAPIClient {
         code: code,
         price: item.price,
         formatted: `USD ${item.price.toFixed(2)}`,
-        currency: 'USD',
-        timestamp: item.date || item.timestamp
+        currency: "USD",
+        timestamp: item.date || item.timestamp,
       }));
     } catch (error: any) {
       if (error instanceof APIError) {
@@ -355,20 +393,20 @@ export class OilPriceAPIClient {
 
       if (!tier.canAccessHistorical) {
         throw new APIError(
-          'Historical data requires Exploration tier or higher',
+          "Historical data requires Exploration tier or higher",
           403,
           ErrorType.UPGRADE_REQUIRED,
-          'Historical data access requires a paid plan',
-          'Upgrade to Exploration tier ($15/mo)'
+          "Historical data access requires a paid plan",
+          "Upgrade to Exploration tier ($15/mo)",
         );
       }
 
       const url = `${API_BASE_URL}/prices/past_month?by_code=${code}`;
       const response = await fetch(url, {
         headers: {
-          'Authorization': `Token ${this.apiKey}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Token ${this.apiKey}`,
+          "Content-Type": "application/json",
+        },
       });
 
       if (!response.ok) {
@@ -382,9 +420,70 @@ export class OilPriceAPIClient {
         code: code,
         price: item.price,
         formatted: `USD ${item.price.toFixed(2)}`,
-        currency: 'USD',
-        timestamp: item.date || item.timestamp
+        currency: "USD",
+        timestamp: item.date || item.timestamp,
       }));
+    } catch (error: any) {
+      if (error instanceof APIError) {
+        throw error;
+      }
+      throw APIError.fromNetworkError(error);
+    }
+  }
+
+  /**
+   * Fetch prices from Data Connector (BYOS - Bring Your Own Subscription)
+   * Returns bunker fuel prices from connected data sources like Ship&Bunker
+   *
+   * Requires Data Connector feature enabled on your organization.
+   */
+  async getDataConnectorPrices(
+    options: DataConnectorOptions = {},
+  ): Promise<DataConnectorPrice[]> {
+    try {
+      const params = new URLSearchParams();
+      if (options.fuelType) params.append("fuel_type", options.fuelType);
+      if (options.port) params.append("port", options.port);
+      if (options.region) params.append("region", options.region);
+      if (options.since) params.append("since", options.since);
+
+      const queryString = params.toString();
+      const url = `${API_BASE_URL}/prices/data-connector${queryString ? `?${queryString}` : ""}`;
+
+      console.log("[API] Fetching Data Connector:", url);
+
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Token ${this.apiKey}`,
+          "Content-Type": "application/json",
+          "X-Excel-Addin-Version": "1.0.0",
+        },
+      });
+
+      console.log(
+        "[API] Data Connector response:",
+        response.status,
+        response.statusText,
+      );
+
+      if (response.status === 403) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new APIError(
+          errorData.message || "Data Connector not enabled",
+          403,
+          ErrorType.UPGRADE_REQUIRED,
+          "Data Connector requires an organization with this feature enabled",
+          "Contact sales@oilpriceapi.com to enable Data Connector",
+        );
+      }
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw APIError.fromResponse(response, errorData);
+      }
+
+      const result = await response.json();
+      return result.data?.prices || [];
     } catch (error: any) {
       if (error instanceof APIError) {
         throw error;
