@@ -220,7 +220,7 @@ Energy Price Comparison
 
 **Short Description (300 chars max):**
 ```
-Compare energy commodity prices in Excel. Fetch real-time Brent, WTI, Natural Gas, and Coal prices. Convert to $/MBtu for direct comparison. Free tier: 1,000 requests/month. Perfect for energy analysts, traders, and procurement teams.
+Compare energy commodity prices in Excel. Fetch real-time Brent, WTI, Natural Gas, and Coal prices. Convert to $/MBtu for direct comparison. Free tier: 100 requests (lifetime). Perfect for energy analysts, traders, and procurement teams.
 ```
 
 **Description (use from CRAWL_PHASE_CHECKLIST.md lines 148-203):**

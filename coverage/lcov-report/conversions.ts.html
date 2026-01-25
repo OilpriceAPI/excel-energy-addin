@@ -25,14 +25,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>18/18</span>
+                <span class='fraction'>20/20</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>10/10</span>
+                <span class='fraction'>14/14</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>18/18</span>
+                <span class='fraction'>20/20</span>
             </div>
         
             
@@ -164,7 +164,25 @@
 <a name='L99'></a><a href='#L99'>99</a>
 <a name='L100'></a><a href='#L100'>100</a>
 <a name='L101'></a><a href='#L101'>101</a>
-<a name='L102'></a><a href='#L102'>102</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L102'></a><a href='#L102'>102</a>
+<a name='L103'></a><a href='#L103'>103</a>
+<a name='L104'></a><a href='#L104'>104</a>
+<a name='L105'></a><a href='#L105'>105</a>
+<a name='L106'></a><a href='#L106'>106</a>
+<a name='L107'></a><a href='#L107'>107</a>
+<a name='L108'></a><a href='#L108'>108</a>
+<a name='L109'></a><a href='#L109'>109</a>
+<a name='L110'></a><a href='#L110'>110</a>
+<a name='L111'></a><a href='#L111'>111</a>
+<a name='L112'></a><a href='#L112'>112</a>
+<a name='L113'></a><a href='#L113'>113</a>
+<a name='L114'></a><a href='#L114'>114</a>
+<a name='L115'></a><a href='#L115'>115</a>
+<a name='L116'></a><a href='#L116'>116</a>
+<a name='L117'></a><a href='#L117'>117</a>
+<a name='L118'></a><a href='#L118'>118</a>
+<a name='L119'></a><a href='#L119'>119</a>
+<a name='L120'></a><a href='#L120'>120</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -220,6 +238,18 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -232,6 +262,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
@@ -288,7 +324,7 @@ export type CommodityType =
   | 'DIESEL'
   | 'GASOLINE';
 &nbsp;
-export type UnitType = 'barrel' | 'Mcf' | 'tonne' | 'MBtu';
+export type UnitType = 'barrel' | 'Mcf' | 'tonne' | 'MBtu' | 'therm' | 'MWh';
 &nbsp;
 /**
  * Standard heat content values for common energy commodities
@@ -319,10 +355,22 @@ export function getHeatContent(commodity: CommodityType): number {
 }
 &nbsp;
 /**
+ * Unit-specific conversion factors to MMBtu
+ */
+const UNIT_TO_MMBTU: Record&lt;UnitType, number&gt; = {
+  'barrel': 1,   // Will use commodity-specific value (oil/diesel)
+  'Mcf': 1.037,  // Thousand cubic feet → MMBtu
+  'therm': 0.1,  // Therm → MMBtu (1 therm = 0.1 MMBtu)
+  'MWh': 3.412,  // Megawatt-hour → MMBtu
+  'tonne': 1,    // Will use commodity-specific value (coal/LNG)
+  'MBtu': 1      // Already in MMBtu (no conversion needed)
+};
+&nbsp;
+/**
  * Convert price per unit to price per MBtu
  * @param price Price per original unit (e.g., $/barrel)
  * @param unit Original unit type
- * @param heatContent Heat content in MMBtu per unit
+ * @param heatContent Heat content in MMBtu per unit (for barrel/tonne)
  * @returns Price per MBtu
  * @throws Error if inputs are invalid
  */
@@ -335,12 +383,18 @@ export function convertToMBtu(
     throw new Error('Price must be non-negative');
   }
 &nbsp;
-  if (heatContent &lt;= 0) {
-    throw new Error('Heat content must be positive');
+  // For standard units (Mcf, therm, MWh), use predefined conversion factors
+  // For commodity-specific units (barrel, tonne), use provided heat content
+  const conversionFactor = (unit === 'barrel' || unit === 'tonne')
+    ? heatContent
+    : UNIT_TO_MMBTU[unit];
+&nbsp;
+  if (conversionFactor &lt;= 0) {
+    throw new Error('Conversion factor must be positive');
   }
 &nbsp;
-  // Formula: Price per MBtu = Price per unit ÷ Heat content (MMBtu/unit)
-  return price / heatContent;
+  // Formula: Price per MBtu = Price per unit ÷ Conversion factor (MMBtu/unit)
+  return price / conversionFactor;
 }
 &nbsp;
 /**
@@ -373,7 +427,7 @@ export function convertFromMBtu(
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-07T16:26:29.871Z
+                at 2026-01-25T15:36:16.955Z
             </div>
         <script src="prettify.js"></script>
         <script>

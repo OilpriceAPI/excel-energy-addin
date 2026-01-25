@@ -53,7 +53,7 @@ if (isFirstRun) {
   <h2>Welcome to Energy Price Comparison!</h2>
   <p>Get started in 3 simple steps:</p>
   <ol>
-    <li><strong>Get your free API key</strong> - 1,000 requests/month</li>
+    <li><strong>Get your free API key</strong> - 100 requests (lifetime)</li>
     <li><strong>Save it in Settings</strong> - We'll remember it</li>
     <li><strong>Fetch prices</strong> - Start comparing energy costs</li>
   </ol>
@@ -120,7 +120,7 @@ Script:
 0:20-0:35  Enter API key, fetch prices
 0:35-0:50  Show Data sheet, convert to MBtu
 0:50-1:00  Show Process sheet comparison
-1:00-1:10  "Free tier: 1000 requests/month. Get started at oilpriceapi.com"
+1:00-1:10  "Free tier: 100 requests (lifetime). Get started at oilpriceapi.com"
 ```
 
 **Tool:** OBS Studio (free) or Loom
@@ -166,7 +166,7 @@ Fetch real-time energy commodity prices directly into Excel. No coding required.
 
 ### How It Works
 1. Install the add-in from AppSource
-2. Get your free API key at oilpriceapi.com (1,000 requests/month)
+2. Get your free API key at oilpriceapi.com (100 requests (lifetime))
 3. Enter your key in Settings
 4. Select commodities and click "Fetch Prices"
 5. Click "Convert to MBtu" for standardized comparisons
@@ -373,7 +373,7 @@ trackEvent('Error Occurred', { error: errorType });
 ```typescript
 export const metadata = {
   title: 'Energy Price Comparison Excel Add-in | OilPriceAPI',
-  description: 'Compare Brent, WTI, Natural Gas, Coal prices in Excel. One-click commodity price fetching. Free tier: 1,000 requests/month.',
+  description: 'Compare Brent, WTI, Natural Gas, Coal prices in Excel. One-click commodity price fetching. Free tier: 100 requests (lifetime).',
   keywords: 'excel energy prices, commodity prices excel, oil price excel, energy analyst tools'
 };
 ```

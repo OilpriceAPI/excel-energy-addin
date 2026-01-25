@@ -21,7 +21,7 @@
 ### Scenario 1: Free Tier User (Paywall Testing)
 
 **Setup:**
-- API Key: Use a free tier account (1,000 requests/month)
+- API Key: Use a free tier account (100 requests (lifetime))
 - Expected Behavior: Historical data section shows tier gate, not feature UI
 
 **Test Steps:**

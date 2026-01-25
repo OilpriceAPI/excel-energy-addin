@@ -584,7 +584,7 @@ function renderCommoditySelector(commodities: Commodity[]): void {
 5. ❌ Use custom functions for historical lookup
 
 **What Free Users CAN Do:**
-1. ✅ Fetch latest prices (up to 1,000 requests/month)
+1. ✅ Fetch latest prices (up to 100 requests (lifetime))
 2. ✅ Use `/v1/prices/all` for efficient bulk fetching (1 call = 1 request)
 3. ✅ See full commodity list (78 commodities)
 4. ✅ Convert to MBtu
