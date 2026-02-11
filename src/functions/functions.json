@@ -198,6 +198,154 @@
         "type": "string",
         "dimensionality": "matrix"
       }
+    },
+    {
+      "id": "FUTURES_PRICE",
+      "name": "FUTURES_PRICE",
+      "description": "Gets the latest futures price for a contract",
+      "helpUrl": "https://www.oilpriceapi.com/docs",
+      "parameters": [
+        {
+          "name": "contract",
+          "description": "Futures contract code (e.g., ice-brent, ice-wti, natural-gas)",
+          "type": "string",
+          "optional": false
+        }
+      ],
+      "result": {
+        "type": "number",
+        "dimensionality": "scalar"
+      }
+    },
+    {
+      "id": "FUTURES_CURVE",
+      "name": "FUTURES_CURVE",
+      "description": "Gets the futures curve for a contract",
+      "helpUrl": "https://www.oilpriceapi.com/docs",
+      "parameters": [
+        {
+          "name": "contract",
+          "description": "Futures contract code (e.g., ice-brent, ice-wti, natural-gas)",
+          "type": "string",
+          "optional": false
+        }
+      ],
+      "result": {
+        "type": "string",
+        "dimensionality": "matrix"
+      }
+    },
+    {
+      "id": "STORAGE_CUSHING",
+      "name": "STORAGE_CUSHING",
+      "description": "Gets the latest Cushing storage level in million barrels",
+      "helpUrl": "https://www.oilpriceapi.com/docs",
+      "parameters": [],
+      "result": {
+        "type": "number",
+        "dimensionality": "scalar"
+      }
+    },
+    {
+      "id": "STORAGE_SPR",
+      "name": "STORAGE_SPR",
+      "description": "Gets the latest Strategic Petroleum Reserve level in million barrels",
+      "helpUrl": "https://www.oilpriceapi.com/docs",
+      "parameters": [],
+      "result": {
+        "type": "number",
+        "dimensionality": "scalar"
+      }
+    },
+    {
+      "id": "RIG_COUNT",
+      "name": "RIG_COUNT",
+      "description": "Gets the latest rig count by type (oil, gas, or total)",
+      "helpUrl": "https://www.oilpriceapi.com/docs",
+      "parameters": [
+        {
+          "name": "type",
+          "description": "Rig type: oil, gas, or total",
+          "type": "string",
+          "optional": false
+        }
+      ],
+      "result": {
+        "type": "number",
+        "dimensionality": "scalar"
+      }
+    },
+    {
+      "id": "FORECAST_PRICE",
+      "name": "FORECAST_PRICE",
+      "description": "Gets monthly forecast price for a commodity",
+      "helpUrl": "https://www.oilpriceapi.com/docs",
+      "parameters": [
+        {
+          "name": "commodity",
+          "description": "Commodity code (e.g., WTI_USD, BRENT_CRUDE_USD)",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "period",
+          "description": "Forecast period in YYYY-MM format (e.g., 2026-03)",
+          "type": "string",
+          "optional": false
+        }
+      ],
+      "result": {
+        "type": "number",
+        "dimensionality": "scalar"
+      }
+    },
+    {
+      "id": "OILPRICE_STATS",
+      "name": "OILPRICE_STATS",
+      "description": "Gets statistical analytics for a commodity (mean, median, std dev, min, max)",
+      "helpUrl": "https://www.oilpriceapi.com/docs",
+      "parameters": [
+        {
+          "name": "code",
+          "description": "Commodity code (e.g., BRENT_CRUDE_USD)",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "days",
+          "description": "Number of days for analysis (e.g., 30)",
+          "type": "number",
+          "optional": false
+        }
+      ],
+      "result": {
+        "type": "string",
+        "dimensionality": "matrix"
+      }
+    },
+    {
+      "id": "OILPRICE_SPREAD",
+      "name": "OILPRICE_SPREAD",
+      "description": "Gets the price spread between two commodities (code1 - code2)",
+      "helpUrl": "https://www.oilpriceapi.com/docs",
+      "parameters": [
+        {
+          "name": "code1",
+          "description": "First commodity code (e.g., BRENT_CRUDE_USD)",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "code2",
+          "description": "Second commodity code (e.g., WTI_USD)",
+          "type": "string",
+          "optional": false
+        }
+      ],
+      "result": {
+        "type": "number",
+        "dimensionality": "scalar"
+      }
     }
   ]
 }

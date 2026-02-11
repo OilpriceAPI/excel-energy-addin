@@ -463,6 +463,278 @@ export async function oilpriceCodes(): Promise<string[][]> {
   }
 }
 
+/**
+ * Gets the latest futures price for a contract
+ * @customfunction FUTURES_PRICE
+ * @param contract Futures contract code (e.g., "ice-brent", "ice-wti", "natural-gas")
+ * @returns Latest futures price
+ */
+export async function futuresPrice(contract: string): Promise<number | string> {
+  const apiKey = await getApiKey();
+  if (!apiKey) {
+    return "#NO_API_KEY";
+  }
+
+  try {
+    const response = await apiRequest(`/futures/${contract}`, apiKey);
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return "#INVALID_CONTRACT";
+      }
+      return "#ERROR";
+    }
+
+    const data = await response.json();
+    return data.data.price;
+  } catch (error) {
+    return "#ERROR";
+  }
+}
+
+/**
+ * Gets the futures curve for a contract
+ * @customfunction FUTURES_CURVE
+ * @param contract Futures contract code (e.g., "ice-brent", "ice-wti", "natural-gas")
+ * @returns 2D array with futures curve data
+ */
+export async function futuresCurve(contract: string): Promise<string[][]> {
+  const apiKey = await getApiKey();
+  if (!apiKey) {
+    return [["Error"], ["#NO_API_KEY"]];
+  }
+
+  try {
+    const response = await apiRequest(`/futures/${contract}/curve`, apiKey);
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return [["Error"], ["#INVALID_CONTRACT"]];
+      }
+      return [["Error"], ["#ERROR"]];
+    }
+
+    const data = await response.json();
+    const curve = data.data.curve || [];
+
+    if (curve.length === 0) {
+      return [["Error"], ["#NO_DATA"]];
+    }
+
+    const result: string[][] = [["Month", "Price"]];
+    curve.forEach((point: any) => {
+      result.push([point.month, point.price.toFixed(2)]);
+    });
+
+    return result;
+  } catch (error) {
+    return [["Error"], ["#ERROR"]];
+  }
+}
+
+/**
+ * Gets the latest Cushing storage level
+ * @customfunction STORAGE_CUSHING
+ * @returns Cushing inventory level in million barrels
+ */
+export async function storageCushing(): Promise<number | string> {
+  const apiKey = await getApiKey();
+  if (!apiKey) {
+    return "#NO_API_KEY";
+  }
+
+  try {
+    const response = await apiRequest("/storage/cushing", apiKey);
+
+    if (!response.ok) {
+      return "#ERROR";
+    }
+
+    const data = await response.json();
+    return data.data.inventory;
+  } catch (error) {
+    return "#ERROR";
+  }
+}
+
+/**
+ * Gets the latest Strategic Petroleum Reserve level
+ * @customfunction STORAGE_SPR
+ * @returns SPR inventory level in million barrels
+ */
+export async function storageSpr(): Promise<number | string> {
+  const apiKey = await getApiKey();
+  if (!apiKey) {
+    return "#NO_API_KEY";
+  }
+
+  try {
+    const response = await apiRequest("/storage/spr", apiKey);
+
+    if (!response.ok) {
+      return "#ERROR";
+    }
+
+    const data = await response.json();
+    return data.data.inventory;
+  } catch (error) {
+    return "#ERROR";
+  }
+}
+
+/**
+ * Gets the latest rig count by type
+ * @customfunction RIG_COUNT
+ * @param type Rig type (e.g., "oil", "gas", "total")
+ * @returns Rig count
+ */
+export async function rigCount(type: string): Promise<number | string> {
+  const apiKey = await getApiKey();
+  if (!apiKey) {
+    return "#NO_API_KEY";
+  }
+
+  try {
+    const response = await apiRequest("/rig-counts/latest", apiKey);
+
+    if (!response.ok) {
+      return "#ERROR";
+    }
+
+    const data = await response.json();
+    const typeLower = type.toLowerCase();
+
+    if (typeLower === "oil") {
+      return data.data.oil;
+    } else if (typeLower === "gas") {
+      return data.data.gas;
+    } else if (typeLower === "total") {
+      return data.data.total;
+    } else {
+      return "#INVALID_TYPE";
+    }
+  } catch (error) {
+    return "#ERROR";
+  }
+}
+
+/**
+ * Gets monthly forecast price for a commodity
+ * @customfunction FORECAST_PRICE
+ * @param commodity Commodity code (e.g., "WTI_USD", "BRENT_CRUDE_USD")
+ * @param period Forecast period (e.g., "2026-03")
+ * @returns Forecast price
+ */
+export async function forecastPrice(
+  commodity: string,
+  period: string,
+): Promise<number | string> {
+  const apiKey = await getApiKey();
+  if (!apiKey) {
+    return "#NO_API_KEY";
+  }
+
+  try {
+    const response = await apiRequest(
+      `/forecasts/monthly/${period}?commodity=${commodity}`,
+      apiKey,
+    );
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return "#INVALID_PERIOD";
+      }
+      return "#ERROR";
+    }
+
+    const data = await response.json();
+    return data.data.price;
+  } catch (error) {
+    return "#ERROR";
+  }
+}
+
+/**
+ * Gets statistical analytics for a commodity
+ * @customfunction OILPRICE_STATS
+ * @param code Commodity code (e.g., "BRENT_CRUDE_USD")
+ * @param days Number of days for analysis (e.g., 30)
+ * @returns 2D array with statistical metrics
+ */
+export async function oilpriceStats(
+  code: string,
+  days: number,
+): Promise<string[][]> {
+  const apiKey = await getApiKey();
+  if (!apiKey) {
+    return [["Error"], ["#NO_API_KEY"]];
+  }
+
+  try {
+    const response = await apiRequest(
+      `/analytics/statistics?commodity=${code}&days=${days}`,
+      apiKey,
+    );
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return [["Error"], ["#INVALID_CODE"]];
+      }
+      return [["Error"], ["#ERROR"]];
+    }
+
+    const data = await response.json();
+    const stats = data.data;
+
+    const result: string[][] = [["Metric", "Value"]];
+    result.push(["Mean", stats.mean.toFixed(2)]);
+    result.push(["Median", stats.median.toFixed(2)]);
+    result.push(["StdDev", stats.std_dev.toFixed(2)]);
+    result.push(["Min", stats.min.toFixed(2)]);
+    result.push(["Max", stats.max.toFixed(2)]);
+
+    return result;
+  } catch (error) {
+    return [["Error"], ["#ERROR"]];
+  }
+}
+
+/**
+ * Gets the price spread between two commodities
+ * @customfunction OILPRICE_SPREAD
+ * @param code1 First commodity code (e.g., "BRENT_CRUDE_USD")
+ * @param code2 Second commodity code (e.g., "WTI_USD")
+ * @returns Spread value (code1 - code2)
+ */
+export async function oilpriceSpread(
+  code1: string,
+  code2: string,
+): Promise<number | string> {
+  const apiKey = await getApiKey();
+  if (!apiKey) {
+    return "#NO_API_KEY";
+  }
+
+  try {
+    const response = await apiRequest(
+      `/analytics/spread?commodity1=${code1}&commodity2=${code2}`,
+      apiKey,
+    );
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return "#INVALID_CODE";
+      }
+      return "#ERROR";
+    }
+
+    const data = await response.json();
+    return data.data.spread;
+  } catch (error) {
+    return "#ERROR";
+  }
+}
+
 // Register functions with CustomFunctions runtime
 CustomFunctions.associate("OILPRICE.LATEST", oilpriceLatest);
 CustomFunctions.associate("OILPRICE", oilprice);
@@ -473,3 +745,11 @@ CustomFunctions.associate("OILPRICE_MIN", oilpriceMin);
 CustomFunctions.associate("OILPRICE_MAX", oilpriceMax);
 CustomFunctions.associate("DIESEL_PRICE", dieselPrice);
 CustomFunctions.associate("OILPRICE.CODES", oilpriceCodes);
+CustomFunctions.associate("FUTURES_PRICE", futuresPrice);
+CustomFunctions.associate("FUTURES_CURVE", futuresCurve);
+CustomFunctions.associate("STORAGE_CUSHING", storageCushing);
+CustomFunctions.associate("STORAGE_SPR", storageSpr);
+CustomFunctions.associate("RIG_COUNT", rigCount);
+CustomFunctions.associate("FORECAST_PRICE", forecastPrice);
+CustomFunctions.associate("OILPRICE_STATS", oilpriceStats);
+CustomFunctions.associate("OILPRICE_SPREAD", oilpriceSpread);
