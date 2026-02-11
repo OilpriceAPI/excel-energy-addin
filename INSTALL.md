@@ -1,139 +1,124 @@
-# Installation Instructions
+# Installing the Energy Price Comparison Add-in
 
-## Development Server is Running ✅
+## Prerequisites
 
-The development server is now running at: **https://localhost:3000**
+- Microsoft Excel (2016 or later, or Excel Online)
+- An OilPriceAPI key ([get one free](https://www.oilpriceapi.com))
 
-## Load the Add-in into Excel
+---
 
-### Step 1: Open Excel
-- Open Microsoft Excel (any workbook)
+## Option A: Excel Online (Easiest)
 
-### Step 2: Sideload the Manifest
-
-#### Option A: Using the Upload Feature (Recommended for Desktop Excel)
-1. In Excel, go to **Insert** tab → **Add-ins** → **Get Add-ins**
-2. Click **My Add-ins** (left sidebar)
-3. Click **Upload My Add-in** (top right)
-4. Navigate to and select:
+1. Open [Excel Online](https://www.office.com/launch/excel) and create or open a workbook
+2. Click **Insert** > **Office Add-ins** > **Upload My Add-in**
+3. Enter this manifest URL or upload the file from:
    ```
-   /home/kwaldman/code/excel-energy-addin/dist/manifest.xml
+   https://oilpriceapi.github.io/excel-energy-addin/manifest.xml
    ```
-5. Click **Upload**
+4. Click **Upload** — the add-in appears in the **Home** ribbon
 
-#### Option B: Using Excel Online
-1. Go to https://www.office.com/launch/excel
-2. Open a blank workbook
-3. Click **Insert** → **Office Add-ins**
-4. Click **Upload My Add-in**
-5. Upload the manifest.xml file
+> If "Upload My Add-in" asks for a file, [download the manifest](https://oilpriceapi.github.io/excel-energy-addin/manifest.xml) first, then upload it.
 
-#### Option C: Manual Registry (Windows Desktop Excel)
-1. Create a network share folder or use a local folder
-2. Copy `manifest.xml` to that location
-3. Add the folder to Excel's Trusted Add-in Catalogs:
-   - File → Options → Trust Center → Trust Center Settings
-   - Trusted Add-in Catalogs
-   - Add the folder path
+---
 
-### Step 3: Accept the Self-Signed Certificate
+## Option B: Excel Desktop (Windows)
 
-When you first access the add-in, your browser will show a security warning about the self-signed certificate. This is expected for local development.
+### Sideload via Shared Folder Catalog
 
-**In your browser:**
-1. Click **Advanced** (or similar)
-2. Click **Proceed to localhost (unsafe)** (or similar)
+1. Create a folder for add-in manifests, e.g. `C:\ExcelAddins\`
+2. [Download the manifest.xml](https://oilpriceapi.github.io/excel-energy-addin/manifest.xml) and save it to that folder
+3. In Excel, go to **File** > **Options** > **Trust Center** > **Trust Center Settings**
+4. Click **Trusted Add-in Catalogs**
+5. In "Catalog Url", enter `C:\ExcelAddins\` and click **Add Catalog**
+6. Check the **Show in Menu** checkbox, click **OK**, then **OK** again
+7. Restart Excel
+8. Go to **Insert** > **My Add-ins** > **Shared Folder** tab
+9. Select **Energy Price Comparison** and click **Add**
 
-This is safe because it's your own development server.
+### Sideload via Upload (Microsoft 365)
 
-### Step 4: Use the Add-in
+1. In Excel, go to **Insert** > **Get Add-ins** > **My Add-ins**
+2. Click **Upload My Add-in** (top right corner)
+3. Browse to the downloaded `manifest.xml` file
+4. Click **Upload**
 
-1. After loading, the add-in will appear in the **Home** tab ribbon
-2. Click **Show Prices** button in the "Energy Prices" group
-3. The taskpane will open on the right side
+---
+
+## Option C: Excel Desktop (Mac)
+
+1. [Download the manifest.xml](https://oilpriceapi.github.io/excel-energy-addin/manifest.xml)
+2. Save it to `~/Library/Containers/com.microsoft.Excel/Data/Documents/wef/`
+   - Create the `wef` folder if it doesn't exist
+3. Restart Excel
+4. The add-in will appear under **Insert** > **My Add-ins**
+
+---
 
 ## First-Time Setup
 
-### 1. Enter API Key
-1. In the Settings section at the top
-2. Enter your OilPriceAPI key
-3. Click **Save**
-4. Click **Test Connection** to verify
+Once the add-in is loaded:
 
-### 2. Fetch Prices
-1. Select commodities you want (Brent, WTI, Natural Gas, etc.)
-2. Click **Fetch Prices**
-3. A "Data" sheet will be created with current prices
+1. Click **Show Prices** in the Home ribbon to open the panel
+2. Enter your OilPriceAPI key in the Settings section
+3. Click **Save**, then **Test Connection** to verify
+4. Select commodities and click **Fetch Prices**
 
-### 3. Convert to MBtu
-1. Click **Convert to MBtu**
-2. A "Process" sheet will be created with converted prices
-3. All commodities will be in $/MBtu for direct comparison
+---
+
+## Using Custom Functions
+
+Type these directly in any cell:
+
+| Function                              | Example                                                    | Description                    |
+| ------------------------------------- | ---------------------------------------------------------- | ------------------------------ |
+| `=OILPRICE(code)`                     | `=OILPRICE("BRENT_CRUDE_USD")`                             | Current price (auto-refreshes) |
+| `=OILPRICE.HISTORY(code, start, end)` | `=OILPRICE.HISTORY("WTI_USD", "2025-01-01", "2025-12-31")` | Historical prices as table     |
+| `=OILPRICE.CONVERT(code, from, to)`   | `=OILPRICE.CONVERT("BRENT_CRUDE_USD", "barrel", "MBtu")`   | Unit conversion                |
+| `=OILPRICE_AVG(code, days)`           | `=OILPRICE_AVG("WTI_USD", 30)`                             | N-day average price            |
+| `=OILPRICE_MIN(code)`                 | `=OILPRICE_MIN("NATURAL_GAS_USD")`                         | Minimum price                  |
+| `=OILPRICE_MAX(code)`                 | `=OILPRICE_MAX("NATURAL_GAS_USD")`                         | Maximum price                  |
+| `=DIESEL_PRICE(state)`                | `=DIESEL_PRICE("TX")`                                      | US state diesel average        |
+
+---
+
+## Common Commodity Codes
+
+| Code              | Commodity               |
+| ----------------- | ----------------------- |
+| `BRENT_CRUDE_USD` | Brent Crude Oil         |
+| `WTI_USD`         | WTI Crude Oil           |
+| `NATURAL_GAS_USD` | Natural Gas (Henry Hub) |
+| `HEATING_OIL_USD` | Heating Oil             |
+| `DIESEL_USD`      | Diesel                  |
+| `GASOLINE_USD`    | Gasoline                |
+| `COAL_USD`        | Coal                    |
+| `PROPANE_USD`     | Propane                 |
+
+For the full list of 100+ commodity codes, visit [docs.oilpriceapi.com](https://docs.oilpriceapi.com).
+
+---
 
 ## Troubleshooting
 
-### "Cannot be accessed" error
-- **Solution:** Make sure the development server is running
-- Check if https://localhost:3000 is accessible in your browser
-- Restart the server: `npm run dev`
+### Add-in doesn't appear in ribbon
 
-### "Manifest cannot be loaded" error
-- **Solution:** Use the manifest from the `dist/` folder, not the root folder
-- Full path: `/home/kwaldman/code/excel-energy-addin/dist/manifest.xml`
+- Make sure you restarted Excel after adding the manifest
+- Check that the catalog folder is correctly configured in Trust Center
 
-### Certificate errors
-- **Solution:** Accept the self-signed certificate warning
-- Or install the CA certificate (requires sudo):
-  ```bash
-  sudo npx office-addin-dev-certs install --machine
-  ```
+### "Could not connect" error
 
-### Server not running
-- **Solution:** Start the dev server:
-  ```bash
-  cd /home/kwaldman/code/excel-energy-addin
-  npm run dev
-  ```
+- Verify your API key is correct
+- Check your internet connection
+- Try the **Test Connection** button in the panel
 
-### Port 3000 already in use
-- **Solution:** Find and kill the process using port 3000:
-  ```bash
-  lsof -ti:3000 | xargs kill -9
-  npm run dev
-  ```
+### Functions return #ERROR
 
-## Development Commands
+- Ensure your API key is saved in the panel settings
+- Check that the commodity code is valid (see table above)
+- `#UPGRADE_REQUIRED` means the feature needs a paid plan
 
-```bash
-# Start development server (HTTPS on port 3000)
-npm run dev
+### Need help?
 
-# Run tests
-npm test
-
-# Build for production
-npm build
-
-# Run tests with coverage
-npm run test:coverage
-```
-
-## What's Running
-
-- **Dev Server:** https://localhost:3000
-- **Bundle:** /home/kwaldman/code/excel-energy-addin/dist/bundle.js
-- **Manifest:** /home/kwaldman/code/excel-energy-addin/dist/manifest.xml
-- **Certificates:** ~/.office-addin-dev-certs/
-
-## Next Steps
-
-Once the add-in is loaded:
-1. Get your API key from https://www.oilpriceapi.com
-2. Enter it in the Settings panel
-3. Test the connection
-4. Fetch your first set of prices!
-
-## Support
-
-- GitHub Issues: https://github.com/OilpriceAPI/oilpriceapi-api/issues
-- Documentation: https://docs.oilpriceapi.com
+- Documentation: [docs.oilpriceapi.com](https://docs.oilpriceapi.com)
+- Email: support@oilpriceapi.com
+- Issues: [GitHub](https://github.com/OilpriceAPI/excel-energy-addin/issues)
