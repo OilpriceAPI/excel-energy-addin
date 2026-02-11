@@ -21,6 +21,92 @@ declare const CustomFunctions: {
 const API_BASE = "https://api.oilpriceapi.com/v1";
 
 /**
+ * Demo commodities available without an API key (9 free commodities, 20 req/hour)
+ */
+const DEMO_COMMODITIES = [
+  "BRENT_CRUDE_USD",
+  "WTI_USD",
+  "NATURAL_GAS_USD",
+  "GOLD_USD",
+  "EUR_USD",
+  "GBP_USD",
+  "HEATING_OIL_USD",
+  "GASOLINE_USD",
+  "DIESEL_USD",
+];
+
+/**
+ * Format error for single-cell functions (returns string)
+ */
+function formatErrorString(code: string, message: string): string {
+  return `#${code}: ${message}`;
+}
+
+/**
+ * Format error for multi-cell functions (returns 2D array)
+ */
+function formatErrorArray(code: string, message: string): string[][] {
+  return [[`#${code}`], [message]];
+}
+
+/**
+ * Parse response error and return appropriate error code and message
+ */
+function parseResponseError(response: Response): {
+  code: string;
+  message: string;
+} {
+  const status = response.status;
+
+  if (status === 401) {
+    return { code: "AUTH_INVALID", message: "API key invalid or expired" };
+  }
+
+  if (status === 403) {
+    return {
+      code: "UPGRADE_REQUIRED",
+      message: "Requires higher tier. oilpriceapi.com/pricing",
+    };
+  }
+
+  if (status === 404) {
+    return {
+      code: "INVALID_CODE",
+      message: "Unknown commodity. Try BRENT_CRUDE_USD",
+    };
+  }
+
+  if (status === 429) {
+    const retryAfter = response.headers.get("Retry-After");
+    const resetTime = response.headers.get("X-RateLimit-Reset");
+    let waitMessage = "Resets soon";
+
+    if (retryAfter) {
+      const seconds = parseInt(retryAfter, 10);
+      waitMessage = `Resets in ${Math.ceil(seconds / 60)}m`;
+    } else if (resetTime) {
+      const resetDate = new Date(parseInt(resetTime, 10) * 1000);
+      const now = new Date();
+      const diffMinutes = Math.ceil(
+        (resetDate.getTime() - now.getTime()) / 60000,
+      );
+      waitMessage = `Resets in ${diffMinutes}m`;
+    }
+
+    return { code: "RATE_LIMITED", message: `Limit reached. ${waitMessage}` };
+  }
+
+  if (status >= 500) {
+    return {
+      code: "SERVER_ERROR",
+      message: "API temporarily unavailable. Retry in 1m",
+    };
+  }
+
+  return { code: "ERROR", message: `HTTP ${status}` };
+}
+
+/**
  * Helper function to get API key from shared storage
  */
 async function getApiKey(): Promise<string | null> {
@@ -43,6 +129,15 @@ async function apiRequest(endpoint: string, apiKey: string): Promise<Response> {
 }
 
 /**
+ * Helper function to make unauthenticated demo API requests (no API key needed)
+ */
+async function demoRequest(code: string): Promise<Response> {
+  return fetch(
+    `https://api.oilpriceapi.com/v1/demo/prices/${encodeURIComponent(code)}`,
+  );
+}
+
+/**
  * Gets the latest price for a commodity
  * @customfunction OILPRICE.LATEST
  * @param code Commodity code (e.g., "BRENT_CRUDE_USD")
@@ -55,8 +150,25 @@ export function oilpriceLatest(code: string, invocation: any): void {
 
   async function fetchAndSet() {
     const apiKey = await getApiKey();
+    const upperCode = code.toUpperCase();
+
+    // If no API key, try demo endpoint for supported commodities
     if (!apiKey) {
-      invocation.setResult("#NO_API_KEY" as any);
+      if (DEMO_COMMODITIES.includes(upperCode)) {
+        try {
+          const demoResp = await demoRequest(upperCode);
+          if (demoResp.ok) {
+            const demoData = await demoResp.json();
+            invocation.setResult(demoData.data.price);
+            return;
+          }
+        } catch {
+          // Fall through to auth error
+        }
+      }
+      invocation.setResult(
+        formatErrorString("AUTH_REQUIRED", "Set API key in Settings") as any,
+      );
       return;
     }
 
@@ -67,28 +179,28 @@ export function oilpriceLatest(code: string, invocation: any): void {
       );
 
       if (!response.ok) {
-        if (response.status === 404) {
-          invocation.setResult("#INVALID_CODE" as any);
-        } else {
-          invocation.setResult("#ERROR" as any);
-        }
+        const error = parseResponseError(response);
+        invocation.setResult(
+          formatErrorString(error.code, error.message) as any,
+        );
         return;
       }
 
       const data = await response.json();
       invocation.setResult(data.data.price);
     } catch (error) {
-      invocation.setResult("#ERROR" as any);
+      invocation.setResult(
+        formatErrorString(
+          "NETWORK_ERROR",
+          "Cannot reach API. Check connection",
+        ) as any,
+      );
     }
   }
 
-  // Initial fetch
   fetchAndSet();
-
-  // Set up 5-minute refresh interval
   intervalId = setInterval(fetchAndSet, 300000);
 
-  // Cleanup on cancel
   invocation.onCanceled = () => {
     if (intervalId) {
       clearInterval(intervalId);
@@ -123,7 +235,7 @@ export async function oilpriceHistory(
 ): Promise<string[][]> {
   const apiKey = await getApiKey();
   if (!apiKey) {
-    return [["Error"], ["#NO_API_KEY"]];
+    return formatErrorArray("AUTH_REQUIRED", "Set API key in Settings");
   }
 
   try {
@@ -133,20 +245,17 @@ export async function oilpriceHistory(
     );
 
     if (!response.ok) {
-      if (response.status === 400) {
-        return [["Error"], ["#INVALID_DATE_RANGE"]];
-      }
-      return [["Error"], ["#ERROR"]];
+      const error = parseResponseError(response);
+      return formatErrorArray(error.code, error.message);
     }
 
     const data = await response.json();
     const prices = data.data.prices || [];
 
     if (prices.length === 0) {
-      return [["Error"], ["#NO_DATA"]];
+      return formatErrorArray("NO_DATA", `No data available for ${code}`);
     }
 
-    // Filter by date range
     const start = new Date(startDate);
     const end = new Date(endDate);
     const filtered = prices.filter((p: any) => {
@@ -154,7 +263,6 @@ export async function oilpriceHistory(
       return d >= start && d <= end;
     });
 
-    // Format as 2D array with headers
     const result: string[][] = [["Date", "Price"]];
     filtered.forEach((p: any) => {
       result.push([p.date, p.price.toFixed(2)]);
@@ -162,7 +270,10 @@ export async function oilpriceHistory(
 
     return result;
   } catch (error) {
-    return [["Error"], ["#ERROR"]];
+    return formatErrorArray(
+      "NETWORK_ERROR",
+      "Cannot reach API. Check connection",
+    );
   }
 }
 
@@ -181,25 +292,24 @@ export async function oilpriceConvert(
 ): Promise<number | string> {
   const apiKey = await getApiKey();
   if (!apiKey) {
-    return "#NO_API_KEY";
+    return formatErrorString("AUTH_REQUIRED", "Set API key in Settings");
   }
 
   try {
     const response = await apiRequest(`/prices/latest?by_code=${code}`, apiKey);
 
     if (!response.ok) {
-      return "#INVALID_CODE";
+      const error = parseResponseError(response);
+      return formatErrorString(error.code, error.message);
     }
 
     const data = await response.json();
     const price = data.data.price;
 
-    // Use conversion utilities
-    const { convertToMBtu, getHeatContent, convertFromMBtu } =
+    const { convertToMBtu, convertFromMBtu } =
       await import("../utils/conversions");
 
     try {
-      // Simplified conversion - assumes heat content of 5.8 MMBtu/barrel for oil
       const heatContent = 5.8;
 
       if (toUnit.toLowerCase() === "mbtu") {
@@ -207,15 +317,17 @@ export async function oilpriceConvert(
       } else if (fromUnit.toLowerCase() === "mbtu") {
         return convertFromMBtu(price, toUnit as any, heatContent);
       } else {
-        // Convert through MBtu as intermediate
         const inMBtu = convertToMBtu(price, fromUnit as any, heatContent);
         return convertFromMBtu(inMBtu, toUnit as any, heatContent);
       }
     } catch (error) {
-      return "#CONVERSION_ERROR";
+      return formatErrorString("ERROR", "Conversion failed");
     }
   } catch (error) {
-    return "#ERROR";
+    return formatErrorString(
+      "NETWORK_ERROR",
+      "Cannot reach API. Check connection",
+    );
   }
 }
 
@@ -232,7 +344,7 @@ export async function oilpriceAvg(
 ): Promise<number | string> {
   const apiKey = await getApiKey();
   if (!apiKey) {
-    return "#NO_API_KEY";
+    return formatErrorString("AUTH_REQUIRED", "Set API key in Settings");
   }
 
   try {
@@ -242,22 +354,25 @@ export async function oilpriceAvg(
     );
 
     if (!response.ok) {
-      return "#INVALID_CODE";
+      const error = parseResponseError(response);
+      return formatErrorString(error.code, error.message);
     }
 
     const data = await response.json();
     const prices = data.data.prices || [];
 
     if (prices.length === 0) {
-      return "#NO_DATA_ERROR";
+      return formatErrorString("NO_DATA", `No data available for ${code}`);
     }
 
-    // Take last N days
     const recentPrices = prices.slice(-days);
     const sum = recentPrices.reduce((acc: number, p: any) => acc + p.price, 0);
     return sum / recentPrices.length;
   } catch (error) {
-    return "#ERROR";
+    return formatErrorString(
+      "NETWORK_ERROR",
+      "Cannot reach API. Check connection",
+    );
   }
 }
 
@@ -270,48 +385,51 @@ export async function oilpriceAvg(
 export async function oilpriceMin(code?: string): Promise<number | string> {
   const apiKey = await getApiKey();
   if (!apiKey) {
-    return "#NO_API_KEY";
+    return formatErrorString("AUTH_REQUIRED", "Set API key in Settings");
   }
 
   try {
     if (code) {
-      // Get min for specific commodity from history
       const response = await apiRequest(
         `/prices/past_month?by_code=${code}`,
         apiKey,
       );
 
       if (!response.ok) {
-        return "#INVALID_CODE";
+        const error = parseResponseError(response);
+        return formatErrorString(error.code, error.message);
       }
 
       const data = await response.json();
       const prices = data.data.prices || [];
 
       if (prices.length === 0) {
-        return "#NO_DATA_ERROR";
+        return formatErrorString("NO_DATA", `No data available for ${code}`);
       }
 
       return Math.min(...prices.map((p: any) => p.price));
     } else {
-      // Get min across all commodities
       const response = await apiRequest("/prices/all", apiKey);
 
       if (!response.ok) {
-        return "#ERROR";
+        const error = parseResponseError(response);
+        return formatErrorString(error.code, error.message);
       }
 
       const data = await response.json();
       const allPrices = data.data || [];
 
       if (allPrices.length === 0) {
-        return "#NO_DATA_ERROR";
+        return formatErrorString("NO_DATA", "No data available");
       }
 
       return Math.min(...allPrices.map((p: any) => p.price));
     }
   } catch (error) {
-    return "#ERROR";
+    return formatErrorString(
+      "NETWORK_ERROR",
+      "Cannot reach API. Check connection",
+    );
   }
 }
 
@@ -324,48 +442,51 @@ export async function oilpriceMin(code?: string): Promise<number | string> {
 export async function oilpriceMax(code?: string): Promise<number | string> {
   const apiKey = await getApiKey();
   if (!apiKey) {
-    return "#NO_API_KEY";
+    return formatErrorString("AUTH_REQUIRED", "Set API key in Settings");
   }
 
   try {
     if (code) {
-      // Get max for specific commodity from history
       const response = await apiRequest(
         `/prices/past_month?by_code=${code}`,
         apiKey,
       );
 
       if (!response.ok) {
-        return "#INVALID_CODE";
+        const error = parseResponseError(response);
+        return formatErrorString(error.code, error.message);
       }
 
       const data = await response.json();
       const prices = data.data.prices || [];
 
       if (prices.length === 0) {
-        return "#NO_DATA_ERROR";
+        return formatErrorString("NO_DATA", `No data available for ${code}`);
       }
 
       return Math.max(...prices.map((p: any) => p.price));
     } else {
-      // Get max across all commodities
       const response = await apiRequest("/prices/all", apiKey);
 
       if (!response.ok) {
-        return "#ERROR";
+        const error = parseResponseError(response);
+        return formatErrorString(error.code, error.message);
       }
 
       const data = await response.json();
       const allPrices = data.data || [];
 
       if (allPrices.length === 0) {
-        return "#NO_DATA_ERROR";
+        return formatErrorString("NO_DATA", "No data available");
       }
 
       return Math.max(...allPrices.map((p: any) => p.price));
     }
   } catch (error) {
-    return "#ERROR";
+    return formatErrorString(
+      "NETWORK_ERROR",
+      "Cannot reach API. Check connection",
+    );
   }
 }
 
@@ -383,7 +504,9 @@ export function dieselPrice(state: string, invocation: any): void {
   async function fetchAndSet() {
     const apiKey = await getApiKey();
     if (!apiKey) {
-      invocation.setResult("#NO_API_KEY" as any);
+      invocation.setResult(
+        formatErrorString("AUTH_REQUIRED", "Set API key in Settings") as any,
+      );
       return;
     }
 
@@ -394,28 +517,28 @@ export function dieselPrice(state: string, invocation: any): void {
       );
 
       if (!response.ok) {
-        if (response.status === 404) {
-          invocation.setResult("#INVALID_STATE" as any);
-        } else {
-          invocation.setResult("#ERROR" as any);
-        }
+        const error = parseResponseError(response);
+        invocation.setResult(
+          formatErrorString(error.code, error.message) as any,
+        );
         return;
       }
 
       const data = await response.json();
       invocation.setResult(data.data.price);
     } catch (error) {
-      invocation.setResult("#ERROR" as any);
+      invocation.setResult(
+        formatErrorString(
+          "NETWORK_ERROR",
+          "Cannot reach API. Check connection",
+        ) as any,
+      );
     }
   }
 
-  // Initial fetch
   fetchAndSet();
-
-  // Set up 60-minute refresh interval for diesel prices
   intervalId = setInterval(fetchAndSet, 3600000);
 
-  // Cleanup on cancel
   invocation.onCanceled = () => {
     if (intervalId) {
       clearInterval(intervalId);
@@ -431,21 +554,22 @@ export function dieselPrice(state: string, invocation: any): void {
 export async function oilpriceCodes(): Promise<string[][]> {
   const apiKey = await getApiKey();
   if (!apiKey) {
-    return [["Error"], ["#NO_API_KEY"]];
+    return formatErrorArray("AUTH_REQUIRED", "Set API key in Settings");
   }
 
   try {
     const response = await apiRequest("/commodities", apiKey);
 
     if (!response.ok) {
-      return [["Error"], ["#ERROR"]];
+      const error = parseResponseError(response);
+      return formatErrorArray(error.code, error.message);
     }
 
     const data = await response.json();
     const commodities = data.data?.commodities || data.data || [];
 
     if (commodities.length === 0) {
-      return [["Error"], ["#NO_DATA"]];
+      return formatErrorArray("NO_DATA", "No commodities available");
     }
 
     const result: string[][] = [["Code", "Name", "Category"]];
@@ -459,7 +583,10 @@ export async function oilpriceCodes(): Promise<string[][]> {
 
     return result;
   } catch (error) {
-    return [["Error"], ["#ERROR"]];
+    return formatErrorArray(
+      "NETWORK_ERROR",
+      "Cannot reach API. Check connection",
+    );
   }
 }
 
@@ -472,23 +599,24 @@ export async function oilpriceCodes(): Promise<string[][]> {
 export async function futuresPrice(contract: string): Promise<number | string> {
   const apiKey = await getApiKey();
   if (!apiKey) {
-    return "#NO_API_KEY";
+    return formatErrorString("AUTH_REQUIRED", "Set API key in Settings");
   }
 
   try {
     const response = await apiRequest(`/futures/${contract}`, apiKey);
 
     if (!response.ok) {
-      if (response.status === 404) {
-        return "#INVALID_CONTRACT";
-      }
-      return "#ERROR";
+      const error = parseResponseError(response);
+      return formatErrorString(error.code, error.message);
     }
 
     const data = await response.json();
     return data.data.price;
   } catch (error) {
-    return "#ERROR";
+    return formatErrorString(
+      "NETWORK_ERROR",
+      "Cannot reach API. Check connection",
+    );
   }
 }
 
@@ -501,7 +629,7 @@ export async function futuresPrice(contract: string): Promise<number | string> {
 export async function futuresCurve(contract: string): Promise<string[][]> {
   const apiKey = await getApiKey();
   if (!apiKey) {
-    return [["Error"], ["#NO_API_KEY"]];
+    return formatErrorArray("AUTH_REQUIRED", "Set API key in Settings");
   }
 
   try {
@@ -509,16 +637,22 @@ export async function futuresCurve(contract: string): Promise<string[][]> {
 
     if (!response.ok) {
       if (response.status === 404) {
-        return [["Error"], ["#INVALID_CONTRACT"]];
+        return formatErrorArray(
+          "INVALID_CODE",
+          "Unknown contract. Try ice-brent",
+        );
       }
-      return [["Error"], ["#ERROR"]];
+      return formatErrorArray(
+        "NETWORK_ERROR",
+        "Cannot reach API. Check connection",
+      );
     }
 
     const data = await response.json();
     const curve = data.data.curve || [];
 
     if (curve.length === 0) {
-      return [["Error"], ["#NO_DATA"]];
+      return formatErrorArray("NO_DATA", `No curve data for ${contract}`);
     }
 
     const result: string[][] = [["Month", "Price"]];
@@ -528,7 +662,10 @@ export async function futuresCurve(contract: string): Promise<string[][]> {
 
     return result;
   } catch (error) {
-    return [["Error"], ["#ERROR"]];
+    return formatErrorArray(
+      "NETWORK_ERROR",
+      "Cannot reach API. Check connection",
+    );
   }
 }
 
@@ -540,20 +677,26 @@ export async function futuresCurve(contract: string): Promise<string[][]> {
 export async function storageCushing(): Promise<number | string> {
   const apiKey = await getApiKey();
   if (!apiKey) {
-    return "#NO_API_KEY";
+    return formatErrorString("AUTH_REQUIRED", "Set API key in Settings");
   }
 
   try {
     const response = await apiRequest("/storage/cushing", apiKey);
 
     if (!response.ok) {
-      return "#ERROR";
+      return formatErrorString(
+        "NETWORK_ERROR",
+        "Cannot reach API. Check connection",
+      );
     }
 
     const data = await response.json();
     return data.data.inventory;
   } catch (error) {
-    return "#ERROR";
+    return formatErrorString(
+      "NETWORK_ERROR",
+      "Cannot reach API. Check connection",
+    );
   }
 }
 
@@ -565,20 +708,26 @@ export async function storageCushing(): Promise<number | string> {
 export async function storageSpr(): Promise<number | string> {
   const apiKey = await getApiKey();
   if (!apiKey) {
-    return "#NO_API_KEY";
+    return formatErrorString("AUTH_REQUIRED", "Set API key in Settings");
   }
 
   try {
     const response = await apiRequest("/storage/spr", apiKey);
 
     if (!response.ok) {
-      return "#ERROR";
+      return formatErrorString(
+        "NETWORK_ERROR",
+        "Cannot reach API. Check connection",
+      );
     }
 
     const data = await response.json();
     return data.data.inventory;
   } catch (error) {
-    return "#ERROR";
+    return formatErrorString(
+      "NETWORK_ERROR",
+      "Cannot reach API. Check connection",
+    );
   }
 }
 
@@ -591,14 +740,17 @@ export async function storageSpr(): Promise<number | string> {
 export async function rigCount(type: string): Promise<number | string> {
   const apiKey = await getApiKey();
   if (!apiKey) {
-    return "#NO_API_KEY";
+    return formatErrorString("AUTH_REQUIRED", "Set API key in Settings");
   }
 
   try {
     const response = await apiRequest("/rig-counts/latest", apiKey);
 
     if (!response.ok) {
-      return "#ERROR";
+      return formatErrorString(
+        "NETWORK_ERROR",
+        "Cannot reach API. Check connection",
+      );
     }
 
     const data = await response.json();
@@ -611,10 +763,13 @@ export async function rigCount(type: string): Promise<number | string> {
     } else if (typeLower === "total") {
       return data.data.total;
     } else {
-      return "#INVALID_TYPE";
+      return formatErrorString("INVALID_CODE", "Use 'oil', 'gas', or 'total'");
     }
   } catch (error) {
-    return "#ERROR";
+    return formatErrorString(
+      "NETWORK_ERROR",
+      "Cannot reach API. Check connection",
+    );
   }
 }
 
@@ -631,7 +786,7 @@ export async function forecastPrice(
 ): Promise<number | string> {
   const apiKey = await getApiKey();
   if (!apiKey) {
-    return "#NO_API_KEY";
+    return formatErrorString("AUTH_REQUIRED", "Set API key in Settings");
   }
 
   try {
@@ -642,15 +797,21 @@ export async function forecastPrice(
 
     if (!response.ok) {
       if (response.status === 404) {
-        return "#INVALID_PERIOD";
+        return formatErrorString("INVALID_CODE", "Invalid period. Use YYYY-MM");
       }
-      return "#ERROR";
+      return formatErrorString(
+        "NETWORK_ERROR",
+        "Cannot reach API. Check connection",
+      );
     }
 
     const data = await response.json();
     return data.data.price;
   } catch (error) {
-    return "#ERROR";
+    return formatErrorString(
+      "NETWORK_ERROR",
+      "Cannot reach API. Check connection",
+    );
   }
 }
 
@@ -667,7 +828,7 @@ export async function oilpriceStats(
 ): Promise<string[][]> {
   const apiKey = await getApiKey();
   if (!apiKey) {
-    return [["Error"], ["#NO_API_KEY"]];
+    return formatErrorArray("AUTH_REQUIRED", "Set API key in Settings");
   }
 
   try {
@@ -678,9 +839,15 @@ export async function oilpriceStats(
 
     if (!response.ok) {
       if (response.status === 404) {
-        return [["Error"], ["#INVALID_CODE"]];
+        return formatErrorArray(
+          "INVALID_CODE",
+          `Unknown commodity. Try BRENT_CRUDE_USD`,
+        );
       }
-      return [["Error"], ["#ERROR"]];
+      return formatErrorArray(
+        "NETWORK_ERROR",
+        "Cannot reach API. Check connection",
+      );
     }
 
     const data = await response.json();
@@ -695,7 +862,10 @@ export async function oilpriceStats(
 
     return result;
   } catch (error) {
-    return [["Error"], ["#ERROR"]];
+    return formatErrorArray(
+      "NETWORK_ERROR",
+      "Cannot reach API. Check connection",
+    );
   }
 }
 
@@ -712,7 +882,7 @@ export async function oilpriceSpread(
 ): Promise<number | string> {
   const apiKey = await getApiKey();
   if (!apiKey) {
-    return "#NO_API_KEY";
+    return formatErrorString("AUTH_REQUIRED", "Set API key in Settings");
   }
 
   try {
@@ -723,16 +893,38 @@ export async function oilpriceSpread(
 
     if (!response.ok) {
       if (response.status === 404) {
-        return "#INVALID_CODE";
+        return formatErrorString(
+          "INVALID_CODE",
+          "Unknown commodity. Try BRENT_CRUDE_USD",
+        );
       }
-      return "#ERROR";
+      return formatErrorString(
+        "NETWORK_ERROR",
+        "Cannot reach API. Check connection",
+      );
     }
 
     const data = await response.json();
     return data.data.spread;
   } catch (error) {
-    return "#ERROR";
+    return formatErrorString(
+      "NETWORK_ERROR",
+      "Cannot reach API. Check connection",
+    );
   }
+}
+
+/**
+ * Returns the list of demo commodity codes available without an API key
+ * @customfunction OILPRICE.DEMO
+ * @returns 2D array of demo commodity codes
+ */
+export async function oilpriceDemo(): Promise<string[][]> {
+  const result: string[][] = [["Demo Commodities (no API key needed)"]];
+  DEMO_COMMODITIES.forEach((code) => {
+    result.push([code]);
+  });
+  return result;
 }
 
 // Register functions with CustomFunctions runtime
@@ -753,3 +945,4 @@ CustomFunctions.associate("RIG_COUNT", rigCount);
 CustomFunctions.associate("FORECAST_PRICE", forecastPrice);
 CustomFunctions.associate("OILPRICE_STATS", oilpriceStats);
 CustomFunctions.associate("OILPRICE_SPREAD", oilpriceSpread);
+CustomFunctions.associate("OILPRICE.DEMO", oilpriceDemo);

@@ -346,6 +346,17 @@
         "type": "number",
         "dimensionality": "scalar"
       }
+    },
+    {
+      "id": "OILPRICE.DEMO",
+      "name": "OILPRICE.DEMO",
+      "description": "Returns the list of demo commodity codes that work without an API key (9 free commodities, 20 req/hour)",
+      "helpUrl": "https://www.oilpriceapi.com/docs",
+      "parameters": [],
+      "result": {
+        "type": "string",
+        "dimensionality": "matrix"
+      }
     }
   ]
 }
