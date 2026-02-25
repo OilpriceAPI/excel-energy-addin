@@ -889,4 +889,366 @@ describe("OilPriceAPIClient", () => {
       );
     });
   });
+
+  describe("listWebhooks", () => {
+    test("fetches webhooks successfully", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          data: {
+            webhooks: [
+              {
+                id: "wh_123",
+                url: "https://example.com/webhook",
+                events: ["price.updated"],
+                active: true,
+                created_at: "2025-01-01T00:00:00Z",
+              },
+              {
+                id: "wh_456",
+                url: "https://example.com/webhook2",
+                events: ["price.updated", "price.alert"],
+                active: false,
+                created_at: "2025-02-01T00:00:00Z",
+              },
+            ],
+          },
+        }),
+      } as Response);
+
+      const result = await client.listWebhooks();
+
+      expect(result).toHaveLength(2);
+      expect(result[0].id).toBe("wh_123");
+      expect(result[0].url).toBe("https://example.com/webhook");
+      expect(result[0].events).toEqual(["price.updated"]);
+      expect(result[0].active).toBe(true);
+      expect(result[1].id).toBe("wh_456");
+      expect(result[1].active).toBe(false);
+    });
+
+    test("sends correct request", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({ data: { webhooks: [] } }),
+      } as Response);
+
+      await client.listWebhooks();
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        "https://api.oilpriceapi.com/v1/webhooks",
+        {
+          headers: {
+            Authorization: `Token ${mockApiKey}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+    });
+
+    test("returns empty array when no webhooks", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({ data: { webhooks: [] } }),
+      } as Response);
+
+      const result = await client.listWebhooks();
+      expect(result).toEqual([]);
+    });
+
+    test("returns empty array when webhooks field is undefined", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({ data: {} }),
+      } as Response);
+
+      const result = await client.listWebhooks();
+      expect(result).toEqual([]);
+    });
+
+    test("throws APIError for 401", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 401,
+        statusText: "Unauthorized",
+        json: async () => ({ error: "Invalid API key" }),
+      } as Response);
+
+      await expect(client.listWebhooks()).rejects.toThrow(
+        "Authentication failed",
+      );
+    });
+
+    test("throws APIError for network error", async () => {
+      mockFetch.mockRejectedValueOnce(new Error("Connection refused"));
+
+      await expect(client.listWebhooks()).rejects.toThrow("Network error");
+    });
+  });
+
+  describe("createWebhook", () => {
+    test("creates webhook successfully", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        status: 201,
+        json: async () => ({
+          data: {
+            id: "wh_789",
+            url: "https://example.com/new-webhook",
+            events: ["price.updated"],
+            active: true,
+            secret: "whsec_test123",
+            created_at: "2025-03-01T00:00:00Z",
+          },
+        }),
+      } as Response);
+
+      const result = await client.createWebhook({
+        url: "https://example.com/new-webhook",
+        events: ["price.updated"],
+      });
+
+      expect(result.id).toBe("wh_789");
+      expect(result.url).toBe("https://example.com/new-webhook");
+      expect(result.events).toEqual(["price.updated"]);
+      expect(result.secret).toBe("whsec_test123");
+    });
+
+    test("sends correct POST request with body", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        status: 201,
+        json: async () => ({
+          data: {
+            id: "wh_789",
+            url: "https://example.com/webhook",
+            events: ["price.updated"],
+            active: true,
+            created_at: "2025-03-01T00:00:00Z",
+          },
+        }),
+      } as Response);
+
+      await client.createWebhook({
+        url: "https://example.com/webhook",
+        events: ["price.updated"],
+      });
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        "https://api.oilpriceapi.com/v1/webhooks",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Token ${mockApiKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            url: "https://example.com/webhook",
+            events: ["price.updated"],
+          }),
+        },
+      );
+    });
+
+    test("throws APIError for 401", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 401,
+        statusText: "Unauthorized",
+        json: async () => ({ error: "Invalid API key" }),
+      } as Response);
+
+      await expect(
+        client.createWebhook({
+          url: "https://example.com/webhook",
+          events: ["price.updated"],
+        }),
+      ).rejects.toThrow("Authentication failed");
+    });
+
+    test("throws APIError for 429 rate limit", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 429,
+        statusText: "Too Many Requests",
+        json: async () => ({ error: "Rate limit exceeded" }),
+      } as Response);
+
+      await expect(
+        client.createWebhook({
+          url: "https://example.com/webhook",
+          events: ["price.updated"],
+        }),
+      ).rejects.toThrow("Rate limit exceeded");
+    });
+
+    test("throws APIError for network error", async () => {
+      mockFetch.mockRejectedValueOnce(new Error("Network failure"));
+
+      await expect(
+        client.createWebhook({
+          url: "https://example.com/webhook",
+          events: ["price.updated"],
+        }),
+      ).rejects.toThrow("Network error");
+    });
+  });
+
+  describe("deleteWebhook", () => {
+    test("deletes webhook successfully", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({ status: "success" }),
+      } as Response);
+
+      await expect(client.deleteWebhook("wh_123")).resolves.toBeUndefined();
+    });
+
+    test("sends correct DELETE request", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({ status: "success" }),
+      } as Response);
+
+      await client.deleteWebhook("wh_123");
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        "https://api.oilpriceapi.com/v1/webhooks/wh_123",
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Token ${mockApiKey}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+    });
+
+    test("throws APIError for 404 not found", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 404,
+        statusText: "Not Found",
+        json: async () => ({ error: "Webhook not found" }),
+      } as Response);
+
+      await expect(client.deleteWebhook("wh_nonexistent")).rejects.toThrow(
+        "Webhook not found",
+      );
+    });
+
+    test("throws APIError for 401", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 401,
+        statusText: "Unauthorized",
+        json: async () => ({ error: "Unauthorized" }),
+      } as Response);
+
+      await expect(client.deleteWebhook("wh_123")).rejects.toThrow(
+        "Authentication failed",
+      );
+    });
+
+    test("throws APIError for network error", async () => {
+      mockFetch.mockRejectedValueOnce(new Error("Connection timeout"));
+
+      await expect(client.deleteWebhook("wh_123")).rejects.toThrow(
+        "Network error",
+      );
+    });
+  });
+
+  describe("testWebhook", () => {
+    test("tests webhook successfully", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          data: {
+            success: true,
+            status_code: 200,
+            response_time_ms: 45,
+          },
+        }),
+      } as Response);
+
+      const result = await client.testWebhook("wh_123");
+
+      expect(result.success).toBe(true);
+      expect(result.status_code).toBe(200);
+      expect(result.response_time_ms).toBe(45);
+    });
+
+    test("sends correct POST request", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          data: { success: true, status_code: 200, response_time_ms: 30 },
+        }),
+      } as Response);
+
+      await client.testWebhook("wh_123");
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        "https://api.oilpriceapi.com/v1/webhooks/wh_123/test",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Token ${mockApiKey}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+    });
+
+    test("returns failure result when webhook endpoint fails", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          data: {
+            success: false,
+            status_code: 500,
+            response_time_ms: 120,
+            error: "Target returned 500",
+          },
+        }),
+      } as Response);
+
+      const result = await client.testWebhook("wh_123");
+
+      expect(result.success).toBe(false);
+      expect(result.status_code).toBe(500);
+      expect(result.error).toBe("Target returned 500");
+    });
+
+    test("throws APIError for 404 not found", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 404,
+        statusText: "Not Found",
+        json: async () => ({ error: "Webhook not found" }),
+      } as Response);
+
+      await expect(client.testWebhook("wh_nonexistent")).rejects.toThrow(
+        "Webhook not found",
+      );
+    });
+
+    test("throws APIError for network error", async () => {
+      mockFetch.mockRejectedValueOnce(new Error("DNS resolution failed"));
+
+      await expect(client.testWebhook("wh_123")).rejects.toThrow(
+        "Network error",
+      );
+    });
+  });
 });

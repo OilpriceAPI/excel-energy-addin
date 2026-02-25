@@ -43,6 +43,36 @@ export interface DataConnectorOptions {
   since?: string;
 }
 
+/**
+ * Webhook configuration
+ */
+export interface Webhook {
+  id: string;
+  url: string;
+  events: string[];
+  active: boolean;
+  secret?: string;
+  created_at: string;
+}
+
+/**
+ * Options for creating a webhook
+ */
+export interface WebhookCreateOptions {
+  url: string;
+  events: string[];
+}
+
+/**
+ * Webhook test result
+ */
+export interface WebhookTestResult {
+  success: boolean;
+  status_code?: number;
+  response_time_ms?: number;
+  error?: string;
+}
+
 export enum ErrorType {
   AUTHENTICATION = "AUTHENTICATION",
   RATE_LIMIT = "RATE_LIMIT",
@@ -484,6 +514,121 @@ export class OilPriceAPIClient {
 
       const result = await response.json();
       return result.data?.prices || [];
+    } catch (error: any) {
+      if (error instanceof APIError) {
+        throw error;
+      }
+      throw APIError.fromNetworkError(error);
+    }
+  }
+
+  /**
+   * List all configured webhooks
+   * Requires Production tier or higher
+   */
+  async listWebhooks(): Promise<Webhook[]> {
+    try {
+      const url = `${API_BASE_URL}/webhooks`;
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Token ${this.apiKey}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw APIError.fromResponse(response, errorData);
+      }
+
+      const result = await response.json();
+      return result.data?.webhooks || [];
+    } catch (error: any) {
+      if (error instanceof APIError) {
+        throw error;
+      }
+      throw APIError.fromNetworkError(error);
+    }
+  }
+
+  /**
+   * Create a new webhook
+   * Requires Production tier or higher
+   */
+  async createWebhook(options: WebhookCreateOptions): Promise<Webhook> {
+    try {
+      const url = `${API_BASE_URL}/webhooks`;
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          Authorization: `Token ${this.apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(options),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw APIError.fromResponse(response, errorData);
+      }
+
+      const result = await response.json();
+      return result.data;
+    } catch (error: any) {
+      if (error instanceof APIError) {
+        throw error;
+      }
+      throw APIError.fromNetworkError(error);
+    }
+  }
+
+  /**
+   * Delete a webhook by ID
+   */
+  async deleteWebhook(id: string): Promise<void> {
+    try {
+      const url = `${API_BASE_URL}/webhooks/${id}`;
+      const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Token ${this.apiKey}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw APIError.fromResponse(response, errorData);
+      }
+    } catch (error: any) {
+      if (error instanceof APIError) {
+        throw error;
+      }
+      throw APIError.fromNetworkError(error);
+    }
+  }
+
+  /**
+   * Test a webhook by sending a test event
+   */
+  async testWebhook(id: string): Promise<WebhookTestResult> {
+    try {
+      const url = `${API_BASE_URL}/webhooks/${id}/test`;
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          Authorization: `Token ${this.apiKey}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw APIError.fromResponse(response, errorData);
+      }
+
+      const result = await response.json();
+      return result.data;
     } catch (error: any) {
       if (error instanceof APIError) {
         throw error;
