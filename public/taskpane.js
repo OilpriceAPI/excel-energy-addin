@@ -6,7 +6,7 @@
 /* global Office, Excel */
 
 // API Key Storage Key
-const API_KEY_STORAGE = 'oilpriceapi_key';
+const API_KEY_STORAGE = "oilpriceapi_key";
 
 /**
  * Track analytics event
@@ -20,10 +20,10 @@ function trackEvent(eventName, props = {}) {
 // Initialize when Office is ready
 Office.onReady((info) => {
   if (info.host === Office.HostType.Excel) {
-    console.log('Excel Energy Comparison Add-in loaded');
+    console.log("Excel Energy Comparison Add-in loaded");
 
     // Track add-in opened
-    trackEvent('Add-in Opened');
+    trackEvent("Add-in Opened");
 
     // Set up event listeners
     setupEventListeners();
@@ -50,30 +50,48 @@ Office.onReady((info) => {
  */
 function setupEventListeners() {
   // Settings
-  document.getElementById('save-key-btn')?.addEventListener('click', saveApiKey);
-  document.getElementById('test-connection-btn')?.addEventListener('click', testConnection);
+  document
+    .getElementById("save-key-btn")
+    ?.addEventListener("click", saveApiKey);
+  document
+    .getElementById("test-connection-btn")
+    ?.addEventListener("click", testConnection);
 
   // Actions
-  document.getElementById('fetch-prices-btn')?.addEventListener('click', fetchPrices);
-  document.getElementById('convert-btn')?.addEventListener('click', convertPrices);
+  document
+    .getElementById("fetch-prices-btn")
+    ?.addEventListener("click", fetchPrices);
+  document
+    .getElementById("convert-btn")
+    ?.addEventListener("click", convertPrices);
 
   // Welcome modal
-  document.getElementById('get-api-key-btn')?.addEventListener('click', openSignupPage);
-  document.getElementById('close-welcome-btn')?.addEventListener('click', closeWelcomeModal);
+  document
+    .getElementById("get-api-key-btn")
+    ?.addEventListener("click", openSignupPage);
+  document
+    .getElementById("close-welcome-btn")
+    ?.addEventListener("click", closeWelcomeModal);
 
   // Historical data
-  document.getElementById('fetch-past-year-btn')?.addEventListener('click', fetchPastYear);
-  document.getElementById('fetch-past-month-btn')?.addEventListener('click', fetchPastMonth);
+  document
+    .getElementById("fetch-past-year-btn")
+    ?.addEventListener("click", fetchPastYear);
+  document
+    .getElementById("fetch-past-month-btn")
+    ?.addEventListener("click", fetchPastMonth);
 
   // Bulk fetch
-  document.getElementById('fetch-all-btn')?.addEventListener('click', fetchAllPrices);
+  document
+    .getElementById("fetch-all-btn")
+    ?.addEventListener("click", fetchAllPrices);
 }
 
 /**
  * Check if this is first run
  */
 function checkFirstRun() {
-  const hasSeenWelcome = localStorage.getItem('hasSeenWelcome');
+  const hasSeenWelcome = localStorage.getItem("hasSeenWelcome");
   if (!hasSeenWelcome) {
     showWelcomeModal();
   }
@@ -83,9 +101,9 @@ function checkFirstRun() {
  * Show welcome modal
  */
 function showWelcomeModal() {
-  const modal = document.getElementById('welcome-modal');
+  const modal = document.getElementById("welcome-modal");
   if (modal) {
-    modal.classList.add('visible');
+    modal.classList.add("visible");
   }
 }
 
@@ -93,11 +111,11 @@ function showWelcomeModal() {
  * Close welcome modal
  */
 function closeWelcomeModal() {
-  const modal = document.getElementById('welcome-modal');
+  const modal = document.getElementById("welcome-modal");
   if (modal) {
-    modal.classList.remove('visible');
-    localStorage.setItem('hasSeenWelcome', 'true');
-    trackEvent('Welcome Modal Closed');
+    modal.classList.remove("visible");
+    localStorage.setItem("hasSeenWelcome", "true");
+    trackEvent("Welcome Modal Closed");
   }
 }
 
@@ -105,8 +123,11 @@ function closeWelcomeModal() {
  * Open signup page in new window
  */
 function openSignupPage() {
-  trackEvent('Get API Key Clicked');
-  window.open('https://www.oilpriceapi.com/signup', '_blank');
+  trackEvent("Get API Key Clicked");
+  window.open(
+    "https://www.oilpriceapi.com/signup?utm_source=excel&utm_medium=addin&utm_campaign=readme",
+    "_blank",
+  );
   closeWelcomeModal();
 }
 
@@ -114,11 +135,11 @@ function openSignupPage() {
  * Set up keyboard shortcuts
  */
 function setupKeyboardShortcuts() {
-  document.addEventListener('keydown', (event) => {
+  document.addEventListener("keydown", (event) => {
     // Ctrl+P or Cmd+P for fetch prices
-    if ((event.ctrlKey || event.metaKey) && event.key === 'p') {
+    if ((event.ctrlKey || event.metaKey) && event.key === "p") {
       event.preventDefault();
-      const fetchBtn = document.getElementById('fetch-prices-btn');
+      const fetchBtn = document.getElementById("fetch-prices-btn");
       if (fetchBtn && !fetchBtn.disabled) {
         fetchPrices();
       }
@@ -135,10 +156,10 @@ async function fetchUsageCounter() {
 
   try {
     // Call the API to get usage stats
-    const response = await fetch('https://api.oilpriceapi.com/v1/usage', {
+    const response = await fetch("https://api.oilpriceapi.com/v1/usage", {
       headers: {
-        'Authorization': `Token ${apiKey}`
-      }
+        Authorization: `Token ${apiKey}`,
+      },
     });
 
     if (response.ok) {
@@ -146,7 +167,7 @@ async function fetchUsageCounter() {
       updateUsageDisplay(data);
     }
   } catch (error) {
-    console.error('Failed to fetch usage counter:', error);
+    console.error("Failed to fetch usage counter:", error);
   }
 }
 
@@ -154,15 +175,15 @@ async function fetchUsageCounter() {
  * Update usage display
  */
 function updateUsageDisplay(data) {
-  const usageSection = document.getElementById('usage-counter-section');
-  const usageCounter = document.getElementById('usage-counter');
+  const usageSection = document.getElementById("usage-counter-section");
+  const usageCounter = document.getElementById("usage-counter");
 
   if (usageSection && usageCounter && data) {
     const used = data.used || 0;
     const limit = data.limit || 1000;
 
     usageCounter.textContent = `${used.toLocaleString()} / ${limit.toLocaleString()} requests`;
-    usageSection.style.display = 'block';
+    usageSection.style.display = "block";
   }
 }
 
@@ -172,7 +193,7 @@ function updateUsageDisplay(data) {
 function loadApiKey() {
   const apiKey = localStorage.getItem(API_KEY_STORAGE);
   if (apiKey) {
-    const input = document.getElementById('api-key');
+    const input = document.getElementById("api-key");
     if (input) {
       input.value = apiKey;
     }
@@ -183,34 +204,34 @@ function loadApiKey() {
  * Save API key to localStorage
  */
 async function saveApiKey() {
-  const input = document.getElementById('api-key');
+  const input = document.getElementById("api-key");
   const apiKey = input?.value?.trim();
 
   if (!apiKey) {
-    showError('Please enter an API key');
+    showError("Please enter an API key");
     return;
   }
 
   // Validate API key before saving
-  showStatus('Validating API key...');
+  showStatus("Validating API key...");
 
   try {
     const isValid = await window.ExcelEnergyAddin.testConnection(apiKey);
 
     if (isValid) {
       localStorage.setItem(API_KEY_STORAGE, apiKey);
-      showStatus('✓ API key saved and validated!');
-      trackEvent('API Key Saved');
+      showStatus("✓ API key saved and validated!");
+      trackEvent("API Key Saved");
 
       // Fetch usage counter after saving valid key
       fetchUsageCounter();
     } else {
-      showError('Invalid API key. Please check and try again.');
-      trackEvent('API Key Invalid');
+      showError("Invalid API key. Please check and try again.");
+      trackEvent("API Key Invalid");
     }
   } catch (error) {
-    showError('Failed to validate API key: ' + error);
-    trackEvent('Error Occurred', { error: 'API Key Validation Failed' });
+    showError("Failed to validate API key: " + error);
+    trackEvent("Error Occurred", { error: "API Key Validation Failed" });
   }
 }
 
@@ -220,14 +241,14 @@ async function saveApiKey() {
 async function testConnection() {
   const apiKey = getApiKey();
   if (!apiKey) {
-    showError('Please enter and save your API key first');
+    showError("Please enter and save your API key first");
     return;
   }
 
-  const statusEl = document.getElementById('connection-status');
+  const statusEl = document.getElementById("connection-status");
   if (statusEl) {
-    statusEl.textContent = 'Testing...';
-    statusEl.className = 'status-text';
+    statusEl.textContent = "Testing...";
+    statusEl.className = "status-text";
   }
 
   try {
@@ -236,17 +257,17 @@ async function testConnection() {
 
     if (statusEl) {
       if (success) {
-        statusEl.textContent = '✓ Connected';
-        statusEl.className = 'status-text success';
+        statusEl.textContent = "✓ Connected";
+        statusEl.className = "status-text success";
       } else {
-        statusEl.textContent = '✗ Failed';
-        statusEl.className = 'status-text error';
+        statusEl.textContent = "✗ Failed";
+        statusEl.className = "status-text error";
       }
     }
   } catch (error) {
     if (statusEl) {
-      statusEl.textContent = '✗ Error';
-      statusEl.className = 'status-text error';
+      statusEl.textContent = "✗ Error";
+      statusEl.className = "status-text error";
     }
     showError(error);
   }
@@ -258,16 +279,18 @@ async function testConnection() {
 async function fetchPrices() {
   const apiKey = getApiKey();
   if (!apiKey) {
-    showError('Please enter and save your API key first');
+    showError("Please enter and save your API key first");
     return;
   }
 
   // Get selected commodities
-  const checkboxes = document.querySelectorAll('#commodity-list input[type="checkbox"]:checked');
-  const codes = Array.from(checkboxes).map(cb => cb.value);
+  const checkboxes = document.querySelectorAll(
+    '#commodity-list input[type="checkbox"]:checked',
+  );
+  const codes = Array.from(checkboxes).map((cb) => cb.value);
 
   if (codes.length === 0) {
-    showError('Please select at least one commodity');
+    showError("Please select at least one commodity");
     return;
   }
 
@@ -278,25 +301,30 @@ async function fetchPrices() {
     const prices = await window.ExcelEnergyAddin.fetchPrices(apiKey, codes);
 
     if (prices.length === 0) {
-      showError('No prices fetched. Check your API key and try again.');
-      trackEvent('Error Occurred', { error: 'No Prices Fetched' });
+      showError("No prices fetched. Check your API key and try again.");
+      trackEvent("Error Occurred", { error: "No Prices Fetched" });
       return;
     }
 
     // Create Data sheet
     await window.ExcelEnergyAddin.createDataSheet(prices);
 
-    showStatus(`✓ Successfully fetched ${prices.length} prices and created Data sheet`);
-    trackEvent('Prices Fetched', { commodities: codes.join(','), count: prices.length });
+    showStatus(
+      `✓ Successfully fetched ${prices.length} prices and created Data sheet`,
+    );
+    trackEvent("Prices Fetched", {
+      commodities: codes.join(","),
+      count: prices.length,
+    });
 
     // Enable convert button
-    const convertBtn = document.getElementById('convert-btn');
+    const convertBtn = document.getElementById("convert-btn");
     if (convertBtn) {
       convertBtn.disabled = false;
     }
   } catch (error) {
     showError(error);
-    trackEvent('Error Occurred', { error: 'Fetch Prices Failed' });
+    trackEvent("Error Occurred", { error: "Fetch Prices Failed" });
   }
 }
 
@@ -305,16 +333,16 @@ async function fetchPrices() {
  */
 async function convertPrices() {
   try {
-    showStatus('Converting prices to $/MBtu...');
+    showStatus("Converting prices to $/MBtu...");
 
     // Create Process sheet with conversions
     await window.ExcelEnergyAddin.createProcessSheet();
 
-    showStatus('✓ Successfully created Process sheet with MBtu conversions');
-    trackEvent('Converted to MBtu');
+    showStatus("✓ Successfully created Process sheet with MBtu conversions");
+    trackEvent("Converted to MBtu");
   } catch (error) {
     showError(error);
-    trackEvent('Error Occurred', { error: 'Conversion Failed' });
+    trackEvent("Error Occurred", { error: "Conversion Failed" });
   }
 }
 
@@ -329,22 +357,22 @@ function getApiKey() {
  * Show status message
  */
 function showStatus(message) {
-  const statusEl = document.getElementById('status-message');
-  const errorEl = document.getElementById('error-message');
+  const statusEl = document.getElementById("status-message");
+  const errorEl = document.getElementById("error-message");
 
   if (statusEl) {
     statusEl.textContent = message;
-    statusEl.className = 'status-message visible';
+    statusEl.className = "status-message visible";
   }
 
   if (errorEl) {
-    errorEl.className = 'error-message';
+    errorEl.className = "error-message";
   }
 
   // Auto-hide after 5 seconds
   setTimeout(() => {
     if (statusEl) {
-      statusEl.className = 'status-message';
+      statusEl.className = "status-message";
     }
   }, 5000);
 }
@@ -353,22 +381,22 @@ function showStatus(message) {
  * Show error message
  */
 function showError(message) {
-  const errorEl = document.getElementById('error-message');
-  const statusEl = document.getElementById('status-message');
+  const errorEl = document.getElementById("error-message");
+  const statusEl = document.getElementById("status-message");
 
   if (errorEl) {
     errorEl.textContent = message;
-    errorEl.className = 'error-message visible';
+    errorEl.className = "error-message visible";
   }
 
   if (statusEl) {
-    statusEl.className = 'status-message';
+    statusEl.className = "status-message";
   }
 
   // Auto-hide after 8 seconds
   setTimeout(() => {
     if (errorEl) {
-      errorEl.className = 'error-message';
+      errorEl.className = "error-message";
     }
   }, 8000);
 }
@@ -385,23 +413,23 @@ async function checkUserTierAndShowFeatures() {
     const tier = await client.getUserTier();
 
     // Show/hide historical data features based on tier
-    const historicalGate = document.getElementById('historical-tier-gate');
-    const historicalUI = document.getElementById('historical-feature-ui');
+    const historicalGate = document.getElementById("historical-tier-gate");
+    const historicalUI = document.getElementById("historical-feature-ui");
 
     if (tier.canAccessHistorical) {
       // Paid user - show feature UI
-      if (historicalGate) historicalGate.style.display = 'none';
-      if (historicalUI) historicalUI.style.display = 'block';
+      if (historicalGate) historicalGate.style.display = "none";
+      if (historicalUI) historicalUI.style.display = "block";
     } else {
       // Free user - show paywall
-      if (historicalGate) historicalGate.style.display = 'block';
-      if (historicalUI) historicalUI.style.display = 'none';
+      if (historicalGate) historicalGate.style.display = "block";
+      if (historicalUI) historicalUI.style.display = "none";
 
       // Track paywall shown
-      trackEvent('Paywall Shown', { feature: 'historical_data' });
+      trackEvent("Paywall Shown", { feature: "historical_data" });
     }
   } catch (error) {
-    console.error('Failed to check user tier:', error);
+    console.error("Failed to check user tier:", error);
   }
 }
 
@@ -411,18 +439,18 @@ async function checkUserTierAndShowFeatures() {
 async function fetchAllPrices() {
   const apiKey = getApiKey();
   if (!apiKey) {
-    showError('Please enter and save your API key first');
+    showError("Please enter and save your API key first");
     return;
   }
 
   try {
-    showStatus('Fetching all commodity prices...');
+    showStatus("Fetching all commodity prices...");
 
     const client = new window.ExcelEnergyAddin.OilPriceAPIClient(apiKey);
     const prices = await client.getAllPrices();
 
     if (prices.length === 0) {
-      showError('No prices fetched. Check your API key and try again.');
+      showError("No prices fetched. Check your API key and try again.");
       return;
     }
 
@@ -430,16 +458,16 @@ async function fetchAllPrices() {
     await window.ExcelEnergyAddin.createDataSheet(prices);
 
     showStatus(`✓ Successfully fetched ${prices.length} prices in 1 API call`);
-    trackEvent('Bulk Fetch All', { count: prices.length });
+    trackEvent("Bulk Fetch All", { count: prices.length });
 
     // Enable convert button
-    const convertBtn = document.getElementById('convert-btn');
+    const convertBtn = document.getElementById("convert-btn");
     if (convertBtn) {
       convertBtn.disabled = false;
     }
   } catch (error) {
     showError(error.userMessage || error.message);
-    trackEvent('Error Occurred', { error: 'Bulk Fetch Failed' });
+    trackEvent("Error Occurred", { error: "Bulk Fetch Failed" });
   }
 }
 
@@ -449,15 +477,15 @@ async function fetchAllPrices() {
 async function fetchPastYear() {
   const apiKey = getApiKey();
   if (!apiKey) {
-    showError('Please enter and save your API key first');
+    showError("Please enter and save your API key first");
     return;
   }
 
-  const select = document.getElementById('historical-commodity');
+  const select = document.getElementById("historical-commodity");
   const code = select?.value;
 
   if (!code) {
-    showError('Please select a commodity');
+    showError("Please select a commodity");
     return;
   }
 
@@ -468,26 +496,42 @@ async function fetchPastYear() {
     const historicalData = await client.getPastYear(code);
 
     if (historicalData.length === 0) {
-      showError('No historical data available');
+      showError("No historical data available");
       return;
     }
 
     // Create Historical sheet
-    await window.ExcelEnergyAddin.createHistoricalSheet(code, historicalData, 'Past Year');
+    await window.ExcelEnergyAddin.createHistoricalSheet(
+      code,
+      historicalData,
+      "Past Year",
+    );
 
-    showStatus(`✓ Successfully fetched ${historicalData.length} historical data points`);
-    trackEvent('Historical Data Fetched', { commodity: code, period: 'past_year', count: historicalData.length });
+    showStatus(
+      `✓ Successfully fetched ${historicalData.length} historical data points`,
+    );
+    trackEvent("Historical Data Fetched", {
+      commodity: code,
+      period: "past_year",
+      count: historicalData.length,
+    });
   } catch (error) {
     // Check if upgrade required
-    if (error.type === 'UPGRADE_REQUIRED') {
+    if (error.type === "UPGRADE_REQUIRED") {
       showUpgradePrompt(error);
-      trackEvent('Upgrade Required Shown', { feature: 'historical_data', commodity: code });
-    } else if (error.type === 'RATE_LIMIT') {
+      trackEvent("Upgrade Required Shown", {
+        feature: "historical_data",
+        commodity: code,
+      });
+    } else if (error.type === "RATE_LIMIT") {
       showError(error.userMessage);
-      trackEvent('Rate Limit Hit', { feature: 'historical_data', commodity: code });
+      trackEvent("Rate Limit Hit", {
+        feature: "historical_data",
+        commodity: code,
+      });
     } else {
       showError(error.userMessage || error.message);
-      trackEvent('Error Occurred', { error: 'Historical Fetch Failed' });
+      trackEvent("Error Occurred", { error: "Historical Fetch Failed" });
     }
   }
 }
@@ -498,15 +542,15 @@ async function fetchPastYear() {
 async function fetchPastMonth() {
   const apiKey = getApiKey();
   if (!apiKey) {
-    showError('Please enter and save your API key first');
+    showError("Please enter and save your API key first");
     return;
   }
 
-  const select = document.getElementById('historical-commodity');
+  const select = document.getElementById("historical-commodity");
   const code = select?.value;
 
   if (!code) {
-    showError('Please select a commodity');
+    showError("Please select a commodity");
     return;
   }
 
@@ -517,26 +561,42 @@ async function fetchPastMonth() {
     const historicalData = await client.getPastMonth(code);
 
     if (historicalData.length === 0) {
-      showError('No historical data available');
+      showError("No historical data available");
       return;
     }
 
     // Create Historical sheet
-    await window.ExcelEnergyAddin.createHistoricalSheet(code, historicalData, 'Past Month');
+    await window.ExcelEnergyAddin.createHistoricalSheet(
+      code,
+      historicalData,
+      "Past Month",
+    );
 
-    showStatus(`✓ Successfully fetched ${historicalData.length} historical data points`);
-    trackEvent('Historical Data Fetched', { commodity: code, period: 'past_month', count: historicalData.length });
+    showStatus(
+      `✓ Successfully fetched ${historicalData.length} historical data points`,
+    );
+    trackEvent("Historical Data Fetched", {
+      commodity: code,
+      period: "past_month",
+      count: historicalData.length,
+    });
   } catch (error) {
     // Check if upgrade required
-    if (error.type === 'UPGRADE_REQUIRED') {
+    if (error.type === "UPGRADE_REQUIRED") {
       showUpgradePrompt(error);
-      trackEvent('Upgrade Required Shown', { feature: 'historical_data', commodity: code });
-    } else if (error.type === 'RATE_LIMIT') {
+      trackEvent("Upgrade Required Shown", {
+        feature: "historical_data",
+        commodity: code,
+      });
+    } else if (error.type === "RATE_LIMIT") {
       showError(error.userMessage);
-      trackEvent('Rate Limit Hit', { feature: 'historical_data', commodity: code });
+      trackEvent("Rate Limit Hit", {
+        feature: "historical_data",
+        commodity: code,
+      });
     } else {
       showError(error.userMessage || error.message);
-      trackEvent('Error Occurred', { error: 'Historical Fetch Failed' });
+      trackEvent("Error Occurred", { error: "Historical Fetch Failed" });
     }
   }
 }
@@ -547,10 +607,12 @@ async function fetchPastMonth() {
 function showUpgradePrompt(error) {
   const message = `${error.userMessage}\n\n${error.recoveryAction}`;
 
-  const shouldUpgrade = confirm(message + '\n\nClick OK to view upgrade options.');
+  const shouldUpgrade = confirm(
+    message + "\n\nClick OK to view upgrade options.",
+  );
 
   if (shouldUpgrade) {
-    window.open('https://www.oilpriceapi.com/pricing', '_blank');
-    trackEvent('Upgrade Clicked', { source: 'upgrade_prompt' });
+    window.open("https://www.oilpriceapi.com/pricing", "_blank");
+    trackEvent("Upgrade Clicked", { source: "upgrade_prompt" });
   }
 }
