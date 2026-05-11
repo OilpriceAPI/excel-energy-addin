@@ -7,43 +7,42 @@
     <meta name="description" content="Download a no-macro Excel starter workbook for OilPriceAPI latest WTI and Brent benchmark rows.">
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 800px;
-            margin: 50px auto;
+            font-family: Georgia, "Times New Roman", serif;
+            max-width: 820px;
+            margin: 56px auto;
             padding: 20px;
-            background: #f5f5f5;
-        }
-        .container {
-            background: white;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: #fbfaf6;
+            color: #1f2933;
         }
         h1 {
-            color: #2c3e50;
+            color: #111111;
+            font-size: 44px;
+            font-weight: 400;
             margin-bottom: 10px;
         }
         .subtitle {
-            color: #7f8c8d;
+            color: #6b6258;
             font-size: 18px;
             margin-bottom: 30px;
         }
         .button {
             display: inline-block;
-            background: #3498db;
+            background: #1f2933;
             color: white;
             padding: 12px 24px;
             text-decoration: none;
-            border-radius: 4px;
+            border-radius: 2px;
             margin-right: 10px;
             margin-bottom: 10px;
+            font-family: "Segoe UI", Tahoma, sans-serif;
         }
         .button:hover {
-            background: #2980b9;
+            background: #384656;
         }
         .feature {
             margin: 20px 0;
             padding-left: 20px;
+            font-family: "Segoe UI", Tahoma, sans-serif;
         }
         .feature li {
             margin: 10px 0;
@@ -51,18 +50,19 @@
         .footer {
             margin-top: 40px;
             padding-top: 20px;
-            border-top: 1px solid #ecf0f1;
-            color: #95a5a6;
+            border-top: 1px solid #d8d1c5;
+            color: #7a746a;
             font-size: 14px;
+            font-family: "Segoe UI", Tahoma, sans-serif;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <main>
         <h1>OilPriceAPI Excel Starter Workbook</h1>
-        <p class="subtitle">Paste your API key into one cell and start with WTI and Brent rows</p>
+        <p class="subtitle">One visible sheet. The key cell is selected on open. Paste your API key, press Enter, and start with WTI and Brent rows.</p>
         
-        <p>The starter workbook is the simple first-use path for Windows desktop Excel. It does not require manifest XML, macros, Developer tools, or add-in sideloading.</p>
+        <p>The starter workbook is the simple first-use path for Windows desktop Excel. It does not require manifest XML, XML Expansion Packs, macros, Developer tools, or add-in sideloading.</p>
         
         <div style="margin: 30px 0;">
             <a href="./Energy_Price_Comparison_Template.xlsx" class="button">Download Starter Workbook</a>
@@ -73,15 +73,15 @@
         <h2>First Use</h2>
         <ul class="feature">
             <li>Open the workbook in Windows desktop Excel.</li>
-            <li>Paste your OilPriceAPI key into <strong>Settings!B2</strong>.</li>
-            <li>Go to <strong>Latest Prices</strong>.</li>
-            <li>If values do not populate immediately, use <strong>Formulas &gt; Calculate Now</strong> or <strong>Data &gt; Refresh All</strong>.</li>
+            <li>If Excel asks, choose <strong>Enable Editing</strong> and <strong>Enable Content</strong>. Microsoft controls those prompts for downloaded workbooks that call web endpoints.</li>
+            <li>Paste your OilPriceAPI key into the highlighted key cell and press <strong>Enter</strong>.</li>
+            <li>If values do not populate immediately, use <strong>Formulas &gt; Calculate Now</strong>.</li>
         </ul>
         <p>Formula refresh uses Excel <strong>WEBSERVICE</strong> and <strong>FILTERXML</strong>, which are intended for Windows desktop Excel. This starter workbook is not the recommended path for Excel for Mac or Excel for the web.</p>
         
         <h2>What It Includes</h2>
         <ul class="feature">
-            <li>WTI and Brent latest-price starter rows.</li>
+            <li>One-page Tufte-style latest-price table for WTI and Brent.</li>
             <li>Visible worksheet messages for missing key, auth, quota/rate-limit, and no-data states.</li>
             <li>No embedded API key or customer data.</li>
             <li>No VBA, macros, or Office add-in dependency for first use.</li>
@@ -97,6 +97,6 @@
             <p>Built by the <a href="https://www.oilpriceapi.com">OilPriceAPI</a> team</p>
             <p><a href="https://github.com/OilpriceAPI/excel-energy-addin">GitHub repository</a></p>
         </div>
-    </div>
+    </main>
 </body>
 </html>

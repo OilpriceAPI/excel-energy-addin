@@ -7,110 +7,123 @@ const ROOT = path.resolve(__dirname, "..");
 const OUTPUT = path.join(ROOT, "Energy_Price_Comparison_Template.xlsx");
 const PUBLIC_OUTPUT = path.join(ROOT, "public", "Energy_Price_Comparison_Template.xlsx");
 
+const STYLE = {
+  normal: 0,
+  title: 1,
+  eyebrow: 2,
+  muted: 3,
+  label: 4,
+  input: 5,
+  status: 6,
+  header: 7,
+  price: 8,
+  footnote: 9,
+  code: 10,
+};
+
 const SHEETS = [
   {
-    name: "Start Here",
-    rows: [
-      ["OilPriceAPI Excel Starter Workbook"],
-      ["Step", "What to do"],
-      ["1", "Paste your OilPriceAPI key into Settings cell B2."],
-      ["2", "Go to Latest Prices. WTI and Brent should populate automatically."],
-      ["3", "If Excel does not refresh immediately, use Formulas > Calculate Now or Data > Refresh All."],
-      [],
-      [
-        "Compatibility",
-        "Formula refresh uses WEBSERVICE and FILTERXML, which are intended for Windows desktop Excel. Use this starter on Excel for Windows, not Excel for Mac or Excel for the web.",
-      ],
-      ["No XML or manifest setup", "Do not use Developer tools, XML Expansion Packs, sideloading, or macros for this workbook."],
-      [
-        "Status",
-        "This workbook is valid .xlsx structure, contains no embedded API key, and uses native Excel formulas.",
-      ],
-    ],
-    widths: [16, 88],
-  },
-  {
-    name: "Settings",
-    rows: [
-      ["Setting", "Value", "Notes"],
-      [
-        "API key",
-        "",
-        "Paste your own OilPriceAPI key here. The distributed workbook intentionally ships blank.",
-      ],
-      ["Base URL", "https://api.oilpriceapi.com", "Editable if the API base changes."],
-      ["Workbook endpoint", "/v1/prices/excel-latest.xml", "Used by native Excel formulas on the Latest Prices sheet."],
-      ["Included benchmarks", "WTI_USD,BRENT_CRUDE_USD", "Starter workbook scope for first value."],
-    ],
-    widths: [22, 34, 82],
-  },
-  {
     name: "Latest Prices",
-    rows: [
-      ["OilPriceAPI latest prices"],
-      [
-        "Workbook status",
-        formula('IF(Settings!$B$2="","Missing API key - paste your OilPriceAPI key into Settings!B2.",IFERROR(FILTERXML($J$10,"/oilpriceapi/message"),"Refresh error - check API key and network."))'),
-      ],
-      [
-        "Retrieved at",
-        formula('IF(Settings!$B$2="","",IFERROR(FILTERXML($J$10,"/oilpriceapi/retrieved_at"),""))'),
-      ],
-      [],
-      ["Commodity", "API code", "Price", "Formatted", "Currency", "Unit", "Source", "Timestamp", "Status"],
-      [
-        "WTI crude",
-        "WTI_USD",
-        formula('IF($J$10="","",IFERROR(FILTERXML($J$10,"/oilpriceapi/prices/price[1]/value"),""))'),
-        formula('IF($J$10="","",IFERROR(FILTERXML($J$10,"/oilpriceapi/prices/price[1]/formatted"),""))'),
-        formula('IF($J$10="","",IFERROR(FILTERXML($J$10,"/oilpriceapi/prices/price[1]/currency"),""))'),
-        formula('IF($J$10="","",IFERROR(FILTERXML($J$10,"/oilpriceapi/prices/price[1]/unit"),""))'),
-        formula('IF($J$10="","",IFERROR(FILTERXML($J$10,"/oilpriceapi/prices/price[1]/source"),""))'),
-        formula('IF($J$10="","",IFERROR(FILTERXML($J$10,"/oilpriceapi/prices/price[1]/timestamp"),""))'),
-        formula('IF($J$10="","",IFERROR(FILTERXML($J$10,"/oilpriceapi/prices/price[1]/status"),""))'),
-      ],
-      [
-        "Brent crude",
-        "BRENT_CRUDE_USD",
-        formula('IF($J$10="","",IFERROR(FILTERXML($J$10,"/oilpriceapi/prices/price[2]/value"),""))'),
-        formula('IF($J$10="","",IFERROR(FILTERXML($J$10,"/oilpriceapi/prices/price[2]/formatted"),""))'),
-        formula('IF($J$10="","",IFERROR(FILTERXML($J$10,"/oilpriceapi/prices/price[2]/currency"),""))'),
-        formula('IF($J$10="","",IFERROR(FILTERXML($J$10,"/oilpriceapi/prices/price[2]/unit"),""))'),
-        formula('IF($J$10="","",IFERROR(FILTERXML($J$10,"/oilpriceapi/prices/price[2]/source"),""))'),
-        formula('IF($J$10="","",IFERROR(FILTERXML($J$10,"/oilpriceapi/prices/price[2]/timestamp"),""))'),
-        formula('IF($J$10="","",IFERROR(FILTERXML($J$10,"/oilpriceapi/prices/price[2]/status"),""))'),
-      ],
-      [],
-      ["Visible error states", "Missing API key", "Authentication failure", "Quota or rate-limit failure", "No data or unexpected empty response"],
-      ["Raw response", "", "", "", "", "", "", "", "", formula('IF(Settings!$B$2="","",WEBSERVICE(Settings!$B$3&Settings!$B$4&"?api_key="&Settings!$B$2&"&codes="&Settings!$B$5))')],
+    activeCell: "B5",
+    widths: [
+      20,
+      30,
+      14,
+      24,
+      28,
+      16,
+      { width: 4, hidden: true },
+      { width: 4, hidden: true },
+      { width: 4, hidden: true },
+      { width: 58, hidden: true },
     ],
-    widths: [22, 22, 14, 16, 12, 14, 28, 28, 16, { width: 18, hidden: true }],
-  },
-  {
-    name: "Examples",
     rows: [
-      ["Example", "Supported now?", "Notes"],
-      ["WTI latest price", "Yes", "Paste API key in Settings!B2 and read the WTI row on Latest Prices."],
-      ["Brent latest price", "Yes", "Paste API key in Settings!B2 and read the Brent row on Latest Prices."],
-      ["Natural gas latest price", "Pending endpoint confirmation", "Do not market until endpoint is confirmed."],
-      [
-        "Diesel / fuel surcharge",
-        "Pending endpoint confirmation",
-        "Do not market until endpoint is confirmed.",
-      ],
-      [],
-      ["Error states required before website link"],
-      ["Missing API key"],
-      ["Authentication failure"],
-      ["Quota or rate-limit failure"],
-      ["No data or unexpected empty response"],
+      row(24, { A: text("OilPriceAPI", STYLE.eyebrow) }),
+      row(40, {
+        A: text("Latest oil prices", STYLE.title),
+        J: formula('IF($B$5="","",WEBSERVICE($J$3&$J$4&"?api_key="&$B$5&"&codes="&$J$5))'),
+      }),
+      row(24, {
+        A: text("Paste your key once. Press Enter. WTI and Brent appear below.", STYLE.muted),
+        J: text("https://api.oilpriceapi.com"),
+      }),
+      row(8, { J: text("/v1/prices/excel-latest.xml") }),
+      row(30, {
+        A: text("API key", STYLE.label),
+        B: blank(STYLE.input),
+        C: text("Paste key here and press Enter", STYLE.muted),
+        J: text("WTI_USD,BRENT_CRUDE_USD"),
+      }),
+      row(28, {
+        A: text("Status", STYLE.label),
+        B: formula(
+          'IF($B$5="","Waiting for API key",IFERROR(IF(FILTERXML($J$2,"/oilpriceapi/status")="auth_failed","API key was not accepted. Check the key cell and try again.",FILTERXML($J$2,"/oilpriceapi/message")),"Excel blocked or did not return API data. Enable editing and external content once, then press F9."))',
+          "Waiting for API key",
+          STYLE.status,
+        ),
+      }),
+      row(24, {
+        A: text("Retrieved", STYLE.label),
+        B: formula('IF($B$5="","",IFERROR(FILTERXML($J$2,"/oilpriceapi/retrieved_at"),""))', "", STYLE.muted),
+      }),
+      row(12, {}),
+      row(24, {
+        A: text("Benchmark", STYLE.header),
+        B: text("Price", STYLE.header),
+        C: text("Currency", STYLE.header),
+        D: text("Source", STYLE.header),
+        E: text("Timestamp", STYLE.header),
+        F: text("Status", STYLE.header),
+      }),
+      row(34, {
+        A: text("WTI crude", STYLE.normal),
+        B: formula('IF($J$2="","",IFERROR(FILTERXML($J$2,"/oilpriceapi/prices/price[1]/formatted"),""))', "", STYLE.price),
+        C: formula('IF($J$2="","",IFERROR(FILTERXML($J$2,"/oilpriceapi/prices/price[1]/currency"),""))'),
+        D: formula('IF($J$2="","",IFERROR(FILTERXML($J$2,"/oilpriceapi/prices/price[1]/source"),""))'),
+        E: formula('IF($J$2="","",IFERROR(FILTERXML($J$2,"/oilpriceapi/prices/price[1]/timestamp"),""))', "", STYLE.muted),
+        F: formula('IF($J$2="","",IFERROR(FILTERXML($J$2,"/oilpriceapi/prices/price[1]/status"),""))'),
+      }),
+      row(34, {
+        A: text("Brent crude", STYLE.normal),
+        B: formula('IF($J$2="","",IFERROR(FILTERXML($J$2,"/oilpriceapi/prices/price[2]/formatted"),""))', "", STYLE.price),
+        C: formula('IF($J$2="","",IFERROR(FILTERXML($J$2,"/oilpriceapi/prices/price[2]/currency"),""))'),
+        D: formula('IF($J$2="","",IFERROR(FILTERXML($J$2,"/oilpriceapi/prices/price[2]/source"),""))'),
+        E: formula('IF($J$2="","",IFERROR(FILTERXML($J$2,"/oilpriceapi/prices/price[2]/timestamp"),""))', "", STYLE.muted),
+        F: formula('IF($J$2="","",IFERROR(FILTERXML($J$2,"/oilpriceapi/prices/price[2]/status"),""))'),
+      }),
+      row(18, {}),
+      row(36, {
+        A: text("If it does not load", STYLE.label),
+        B: text(
+          "Use Windows desktop Excel. Microsoft may ask to Enable Editing and Enable Content once because this downloaded workbook contacts a web endpoint.",
+          STYLE.footnote,
+        ),
+      }),
+      row(36, {
+        A: text("No setup chores", STYLE.label),
+        B: text(
+          "No XML Expansion Packs, macros, manifest XML, Developer tools, add-in sideloading, or Trust Center catalog setup. The starter scope is WTI_USD and BRENT_CRUDE_USD.",
+          STYLE.footnote,
+        ),
+      }),
     ],
-    widths: [34, 34, 78],
   },
 ];
 
-function formula(value, cached = "") {
-  return { formula: value, cached };
+function row(height, cells) {
+  return { height, cells };
+}
+
+function text(value, style = STYLE.normal) {
+  return { value, style };
+}
+
+function blank(style = STYLE.normal) {
+  return { value: "", style, preserveBlank: true };
+}
+
+function formula(value, cached = "", style = STYLE.normal) {
+  return { formula: value, cached, style };
 }
 
 function escapeXml(value) {
@@ -133,13 +146,35 @@ function columnName(index) {
   return name;
 }
 
-function cellXml(value, reference) {
-  if (value && typeof value === "object" && Object.prototype.hasOwnProperty.call(value, "formula")) {
-    const cached = value.cached === undefined ? "" : `<v>${escapeXml(value.cached)}</v>`;
-    return `<c r="${reference}" t="str"><f>${escapeXml(value.formula)}</f>${cached}</c>`;
+function cellReference(column, rowNumber) {
+  if (Number.isInteger(column)) {
+    return `${columnName(column)}${rowNumber}`;
+  }
+  return `${column}${rowNumber}`;
+}
+
+function cellXml(cell, reference) {
+  if (cell === undefined || cell === null) {
+    return "";
   }
 
-  return `<c r="${reference}" t="inlineStr"><is><t>${escapeXml(value)}</t></is></c>`;
+  const value = typeof cell === "object" ? cell : { value: cell, style: STYLE.normal };
+  const style = value.style === undefined ? "" : ` s="${value.style}"`;
+
+  if (Object.prototype.hasOwnProperty.call(value, "formula")) {
+    const cached = value.cached === undefined ? "" : `<v>${escapeXml(value.cached)}</v>`;
+    return `<c r="${reference}" s="${value.style || STYLE.normal}" t="str"><f>${escapeXml(value.formula)}</f>${cached}</c>`;
+  }
+
+  if (value.value === "" && value.preserveBlank) {
+    return `<c r="${reference}"${style}/>`;
+  }
+
+  if (value.value === "") {
+    return "";
+  }
+
+  return `<c r="${reference}"${style} t="inlineStr"><is><t>${escapeXml(value.value)}</t></is></c>`;
 }
 
 function sheetXml(sheet) {
@@ -151,23 +186,24 @@ function sheetXml(sheet) {
     })
     .join("");
   const rows = sheet.rows
-    .map((row, rowIndex) => {
-      const cells = row
-        .map((value, cellIndex) => {
-          if (value === undefined || value === null || value === "") {
-            return "";
-          }
-          const reference = `${columnName(cellIndex + 1)}${rowIndex + 1}`;
-          return cellXml(value, reference);
-        })
+    .map((sheetRow, rowIndex) => {
+      const rowNumber = rowIndex + 1;
+      const height = sheetRow.height ? ` ht="${sheetRow.height}" customHeight="1"` : "";
+      const cells = Object.entries(sheetRow.cells)
+        .map(([column, value]) => cellXml(value, cellReference(column, rowNumber)))
         .join("");
-      return `<row r="${rowIndex + 1}">${cells}</row>`;
+      return `<row r="${rowNumber}"${height}>${cells}</row>`;
     })
     .join("");
 
   return xml(`\
 <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
-  <sheetViews><sheetView workbookViewId="0"/></sheetViews>
+  <sheetViews>
+    <sheetView workbookViewId="0" showGridLines="0" tabSelected="1">
+      <selection activeCell="${escapeXml(sheet.activeCell)}" sqref="${escapeXml(sheet.activeCell)}"/>
+    </sheetView>
+  </sheetViews>
+  <sheetFormatPr defaultRowHeight="18"/>
   <cols>${cols}</cols>
   <sheetData>${rows}</sheetData>
 </worksheet>`);
@@ -189,9 +225,9 @@ function workbookXml() {
   <bookViews><workbookView activeTab="0"/></bookViews>
   <sheets>${sheets}</sheets>
   <definedNames>
-    <definedName name="ApiKey">'Settings'!$B$2</definedName>
-    <definedName name="ApiBaseUrl">'Settings'!$B$3</definedName>
-    <definedName name="WorkbookEndpoint">'Settings'!$B$4</definedName>
+    <definedName name="ApiKey">'Latest Prices'!$B$5</definedName>
+    <definedName name="ApiBaseUrl">'Latest Prices'!$J$3</definedName>
+    <definedName name="WorkbookEndpoint">'Latest Prices'!$J$4</definedName>
   </definedNames>
   <calcPr calcMode="auto" fullCalcOnLoad="1" forceFullCalc="1"/>
 </workbook>`);
@@ -238,11 +274,39 @@ function rootRelsXml() {
 function stylesXml() {
   return xml(`\
 <styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
-  <fonts count="1"><font><sz val="11"/><name val="Calibri"/></font></fonts>
-  <fills count="1"><fill><patternFill patternType="none"/></fill></fills>
-  <borders count="1"><border/></borders>
+  <fonts count="6">
+    <font><sz val="11"/><color rgb="FF1F2933"/><name val="Aptos"/></font>
+    <font><sz val="24"/><color rgb="FF111111"/><name val="Georgia"/></font>
+    <font><sz val="9"/><color rgb="FF7A746A"/><name val="Aptos"/></font>
+    <font><b/><sz val="10"/><color rgb="FF4A4036"/><name val="Aptos"/></font>
+    <font><sz val="18"/><color rgb="FF111111"/><name val="Georgia"/></font>
+    <font><sz val="9"/><color rgb="FF6B6258"/><name val="Aptos"/></font>
+  </fonts>
+  <fills count="4">
+    <fill><patternFill patternType="none"/></fill>
+    <fill><patternFill patternType="gray125"/></fill>
+    <fill><patternFill patternType="solid"><fgColor rgb="FFFFF3C4"/><bgColor indexed="64"/></patternFill></fill>
+    <fill><patternFill patternType="solid"><fgColor rgb="FFFAF8F1"/><bgColor indexed="64"/></patternFill></fill>
+  </fills>
+  <borders count="3">
+    <border/>
+    <border><bottom style="thin"><color rgb="FFBDB6A8"/></bottom></border>
+    <border><left style="thin"><color rgb="FFE1D8C8"/></left><right style="thin"><color rgb="FFE1D8C8"/></right><top style="thin"><color rgb="FFE1D8C8"/></top><bottom style="thin"><color rgb="FFE1D8C8"/></bottom></border>
+  </borders>
   <cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>
-  <cellXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/></cellXfs>
+  <cellXfs count="11">
+    <xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"><alignment vertical="top"/></xf>
+    <xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"><alignment vertical="top"/></xf>
+    <xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1"><alignment vertical="top"/></xf>
+    <xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1"><alignment wrapText="1" vertical="top"/></xf>
+    <xf numFmtId="0" fontId="3" fillId="0" borderId="0" xfId="0" applyFont="1"><alignment vertical="top"/></xf>
+    <xf numFmtId="0" fontId="0" fillId="2" borderId="2" xfId="0" applyFill="1" applyBorder="1"><alignment vertical="center"/></xf>
+    <xf numFmtId="0" fontId="0" fillId="3" borderId="1" xfId="0" applyFill="1" applyBorder="1"><alignment wrapText="1" vertical="center"/></xf>
+    <xf numFmtId="0" fontId="3" fillId="0" borderId="1" xfId="0" applyFont="1" applyBorder="1"><alignment vertical="bottom"/></xf>
+    <xf numFmtId="0" fontId="4" fillId="0" borderId="0" xfId="0" applyFont="1"><alignment vertical="center"/></xf>
+    <xf numFmtId="0" fontId="5" fillId="0" borderId="0" xfId="0" applyFont="1"><alignment wrapText="1" vertical="top"/></xf>
+    <xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"><alignment vertical="top"/></xf>
+  </cellXfs>
   <cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles>
 </styleSheet>`);
 }
@@ -287,7 +351,7 @@ function dosDateTime(date) {
     (date.getUTCHours() << 11) |
     (date.getUTCMinutes() << 5) |
     Math.floor(date.getUTCSeconds() / 2);
-  const day = (year - 1980) << 9 | (date.getUTCMonth() + 1) << 5 | date.getUTCDate();
+  const day = ((year - 1980) << 9) | ((date.getUTCMonth() + 1) << 5) | date.getUTCDate();
   return { time, day };
 }
 

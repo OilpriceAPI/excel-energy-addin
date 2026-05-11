@@ -4,25 +4,26 @@
 [![Docs](https://img.shields.io/badge/Docs-docs.oilpriceapi.com-green)](https://docs.oilpriceapi.com)
 [![GitHub](https://img.shields.io/github/stars/OilpriceAPI/excel-energy-addin?style=social)](https://github.com/OilpriceAPI/excel-energy-addin)
 
-Open a workbook, paste an OilPriceAPI key, and get a narrow latest-price starter table without manifest XML, macros, or add-in sideloading.
+Open a one-page workbook, paste an OilPriceAPI key into the highlighted cell, press Enter, and get a narrow latest-price starter table without manifest XML, macros, or add-in sideloading.
 
 ## Overview
 
 The repo still contains the Office add-in code, but the customer-first path is now the generated starter workbook:
 
 - `Energy_Price_Comparison_Template.xlsx`
-- `Start Here`, `Settings`, `Latest Prices`, and `Examples` sheets
-- API key input in `Settings!B2`
+- one visible `Latest Prices` sheet
+- API key input in the selected `Latest Prices!B5` cell
 - native Excel `WEBSERVICE()` and `FILTERXML()` formulas against `/v1/prices/excel-latest.xml`
 - WTI and Brent starter rows
 
 ## Features
 
-✅ **No XML first-use path** - No manifest sideloading, XML Expansion Packs, Trust Center catalog, VBA, or macros for the starter workbook
-✅ **Blank-key distribution** - The workbook ships without embedded API keys or customer data
-✅ **Visible worksheet errors** - Missing key, auth, quota/rate-limit, and no-data states are surfaced in cells
-✅ **Small supported slice** - WTI and Brent latest-price rows first
-⏳ **Broader sheets** - Natural gas, diesel, fuel surcharge, and add-in flows should be added only after endpoint and workbook UX verification
+- **One-page first-use path** - the key cell is selected when the workbook opens
+- **No XML setup** - no manifest sideloading, XML Expansion Packs, Trust Center catalog, VBA, or macros for the starter workbook
+- **Blank-key distribution** - the workbook ships without embedded API keys or customer data
+- **Visible worksheet errors** - missing key, auth, quota/rate-limit, and no-data states are surfaced in cells
+- **Small supported slice** - WTI and Brent latest-price rows first
+- **Broader sheets later** - natural gas, diesel, fuel surcharge, and add-in flows should be added only after endpoint and workbook UX verification
 
 ## Installation
 
@@ -42,15 +43,15 @@ npm run generate:starter-workbook
 npm run validate:starter-workbook
 ```
 
-The current artifact is a valid `.xlsx` workbook with `Start Here`, `Settings`, `Latest Prices`, and `Examples` tabs. It uses native formula refresh through `/v1/prices/excel-latest.xml`; see [STARTER_WORKBOOK.md](STARTER_WORKBOOK.md) for validation and support notes.
+The current artifact is a valid `.xlsx` workbook with one visible `Latest Prices` sheet. It uses native formula refresh through `/v1/prices/excel-latest.xml`; see [STARTER_WORKBOOK.md](STARTER_WORKBOOK.md) for validation and support notes.
 
 ### Use the workbook
 
 1. Download `Energy_Price_Comparison_Template.xlsx`.
 2. Open it in Windows desktop Excel.
-3. Paste your OilPriceAPI key into `Settings!B2`.
-4. Go to `Latest Prices`.
-5. If values do not populate immediately, use `Formulas > Calculate Now` or `Data > Refresh All`.
+3. If Excel asks, choose `Enable Editing` and `Enable Content`. Microsoft controls those prompts for downloaded workbooks that call web endpoints.
+4. Paste your OilPriceAPI key into the selected key cell, `Latest Prices!B5`.
+5. Press `Enter`. If values do not populate immediately, use `Formulas > Calculate Now`.
 
 ### Developer add-in path
 
