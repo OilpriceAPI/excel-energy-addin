@@ -5,7 +5,7 @@ const path = require("path");
 
 const ROOT = path.resolve(__dirname, "..");
 const WORKBOOK = path.join(ROOT, "Energy_Price_Comparison_Template.xlsx");
-const REQUIRED_SHEETS = ["Latest Prices"];
+const REQUIRED_SHEETS = ["API Runner"];
 const FORBIDDEN_SHEETS = ["Start Here", "Settings", "Examples"];
 const REQUIRED_ENTRIES = [
   "[Content_Types].xml",
@@ -112,17 +112,23 @@ for (const sheetName of FORBIDDEN_SHEETS) {
 const allXml = [...entries.values()].map((entry) => entry.toString("utf8")).join("\n");
 const decodedXml = decodeXmlText(allXml);
 const requiredText = [
-  "Paste your key once. Press Enter. WTI and Brent appear below.",
-  "Paste key here and press Enter",
+  "API Runner Workbook",
+  "API key in use",
+  "Endpoint path",
+  "Query string",
+  "API request",
+  "Rows returned",
   "https://api.oilpriceapi.com",
-  "/v1/prices/excel-latest.xml",
-  "instant Excel download",
+  "/v1/excel/run.xml",
+  "/v1/prices/latest",
+  "/v1/prices/past_month",
+  "/v1/futures/ice-brent/curve",
   "WTI_USD",
   "BRENT_CRUDE_USD",
-  "WEBSERVICE($J$3",
-  "FILTERXML($J$2",
-  "auth_failed",
-  "instant download",
+  "WEBSERVICE($N$3",
+  "FILTERXML($N$2",
+  "/oilpriceapi/columns/col1",
+  "/oilpriceapi/rows/row[1]/col1",
   'showGridLines="0"',
   'activeCell="B5"',
   'definedName name="ApiKey"'
@@ -144,6 +150,9 @@ const forbiddenText = [
   "Paste your OilPriceAPI key into Settings",
   "No setup chores",
   "No XML Expansion Packs",
+  "Live API Runner",
+  "instant Excel download",
+  "static workbook",
 ];
 
 for (const text of forbiddenText) {
@@ -152,7 +161,7 @@ for (const text of forbiddenText) {
   }
 }
 
-if (!workbookXml.includes("<definedName name=\"ApiKey\">'Latest Prices'!$B$5</definedName>")) {
+if (!workbookXml.includes("<definedName name=\"ApiKey\">'API Runner'!$B$5</definedName>")) {
   fail("ApiKey defined name must point at the one-page key cell");
 }
 
