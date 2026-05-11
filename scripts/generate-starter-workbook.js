@@ -17,6 +17,10 @@ const SHEETS = [
       ["2", "Go to Latest Prices. WTI and Brent should populate automatically."],
       ["3", "If Excel does not refresh immediately, use Formulas > Calculate Now or Data > Refresh All."],
       [],
+      [
+        "Compatibility",
+        "Formula refresh uses WEBSERVICE and FILTERXML, which are intended for Windows desktop Excel. Use this starter on Excel for Windows, not Excel for Mac or Excel for the web.",
+      ],
       ["No XML or manifest setup", "Do not use Developer tools, XML Expansion Packs, sideloading, or macros for this workbook."],
       [
         "Status",
