@@ -32,6 +32,19 @@ This Excel add-in allows analysts to:
 - Microsoft Excel (2016 or later)
 - OilPriceAPI key ([get one free at oilpriceapi.com/signup](https://www.oilpriceapi.com/signup?utm_source=excel&utm_medium=addin&utm_campaign=readme))
 
+## Starter Workbook
+
+This repo includes `Energy_Price_Comparison_Template.xlsx`, a generated no-key workbook shell for the website self-service flow.
+
+Regenerate and validate it with:
+
+```bash
+npm run generate:starter-workbook
+npm run validate:starter-workbook
+```
+
+The current artifact is a valid `.xlsx` workbook with `Start Here`, `Settings`, `Latest Prices`, and `Examples` tabs. It does not yet include a verified Power Query refresh connection, so it should not be marketed as a complete self-service workbook until the refresh blocker in [STARTER_WORKBOOK.md](STARTER_WORKBOOK.md) is resolved.
+
 ### Install from GitHub
 
 1. Download the latest release
