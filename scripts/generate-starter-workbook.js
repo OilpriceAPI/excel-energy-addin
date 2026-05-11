@@ -23,85 +23,153 @@ const STYLE = {
 
 const SHEETS = [
   {
-    name: "Latest Prices",
+    name: "API Runner",
     activeCell: "B5",
     widths: [
-      20,
-      30,
-      14,
-      24,
+      18,
+      34,
       28,
-      16,
+      22,
+      18,
+      18,
+      18,
+      18,
+      18,
+      18,
+      18,
+      18,
       { width: 4, hidden: true },
-      { width: 4, hidden: true },
-      { width: 4, hidden: true },
-      { width: 58, hidden: true },
+      { width: 72, hidden: true },
     ],
-    rows: [
-      row(24, { A: text("OilPriceAPI", STYLE.eyebrow) }),
-      row(40, {
-        A: text("Latest oil prices", STYLE.title),
-        J: formula('IF($B$5="","",WEBSERVICE($J$3&$J$4&"?api_key="&$B$5&"&codes="&$J$5))'),
-      }),
-      row(24, {
-        A: text("Paste your key once. Press Enter. WTI and Brent appear below.", STYLE.muted),
-        J: text("https://api.oilpriceapi.com"),
-      }),
-      row(8, { J: text("/v1/prices/excel-latest.xml") }),
-      row(30, {
-        A: text("API key", STYLE.label),
-        B: blank(STYLE.input),
-        C: text("Paste key here and press Enter", STYLE.muted),
-        J: text("WTI_USD,BRENT_CRUDE_USD"),
-      }),
-      row(28, {
-        A: text("Status", STYLE.label),
-        B: formula(
-          'IF($B$5="","Waiting for API key",IFERROR(IF(FILTERXML($J$2,"/oilpriceapi/status")="auth_failed","API key was not accepted. Check the key cell and try again.",FILTERXML($J$2,"/oilpriceapi/message")),"Excel formula fetch did not return data. Use oilpriceapi.com/excel for instant download."))',
-          "Waiting for API key",
-          STYLE.status,
-        ),
-      }),
-      row(24, {
-        A: text("Retrieved", STYLE.label),
-        B: formula('IF($B$5="","",IFERROR(FILTERXML($J$2,"/oilpriceapi/retrieved_at"),""))', "", STYLE.muted),
-      }),
-      row(12, {}),
-      row(24, {
-        A: text("Benchmark", STYLE.header),
-        B: text("Price", STYLE.header),
-        C: text("Currency", STYLE.header),
-        D: text("Source", STYLE.header),
-        E: text("Timestamp", STYLE.header),
-        F: text("Status", STYLE.header),
-      }),
-      row(34, {
-        A: text("WTI crude", STYLE.normal),
-        B: formula('IF($J$2="","",IFERROR(FILTERXML($J$2,"/oilpriceapi/prices/price[1]/formatted"),""))', "", STYLE.price),
-        C: formula('IF($J$2="","",IFERROR(FILTERXML($J$2,"/oilpriceapi/prices/price[1]/currency"),""))'),
-        D: formula('IF($J$2="","",IFERROR(FILTERXML($J$2,"/oilpriceapi/prices/price[1]/source"),""))'),
-        E: formula('IF($J$2="","",IFERROR(FILTERXML($J$2,"/oilpriceapi/prices/price[1]/timestamp"),""))', "", STYLE.muted),
-        F: formula('IF($J$2="","",IFERROR(FILTERXML($J$2,"/oilpriceapi/prices/price[1]/status"),""))'),
-      }),
-      row(34, {
-        A: text("Brent crude", STYLE.normal),
-        B: formula('IF($J$2="","",IFERROR(FILTERXML($J$2,"/oilpriceapi/prices/price[2]/formatted"),""))', "", STYLE.price),
-        C: formula('IF($J$2="","",IFERROR(FILTERXML($J$2,"/oilpriceapi/prices/price[2]/currency"),""))'),
-        D: formula('IF($J$2="","",IFERROR(FILTERXML($J$2,"/oilpriceapi/prices/price[2]/source"),""))'),
-        E: formula('IF($J$2="","",IFERROR(FILTERXML($J$2,"/oilpriceapi/prices/price[2]/timestamp"),""))', "", STYLE.muted),
-        F: formula('IF($J$2="","",IFERROR(FILTERXML($J$2,"/oilpriceapi/prices/price[2]/status"),""))'),
-      }),
-      row(18, {}),
-      row(36, {
-        A: text("If it does not load", STYLE.label),
-        B: text(
-          "Use the instant Excel download at oilpriceapi.com/excel if workbook formulas are blocked.",
-          STYLE.footnote,
-        ),
-      }),
-    ],
+    rows: buildApiRunnerRows(),
   },
 ];
+
+function buildApiRunnerRows() {
+  const rows = [
+    row(24, { A: text("OilPriceAPI", STYLE.eyebrow) }),
+    row(40, {
+      A: text("API Runner Workbook", STYLE.title),
+      N: formula('IF($B$5="","",WEBSERVICE($N$3&"/v1/excel/run.xml?api_key="&$B$5&"&path="&$B$6&IF($B$7="","","&"&$B$7)))'),
+    }),
+    row(24, {
+      A: text("Paste a key, edit the endpoint, then press Enter or Calculate Now.", STYLE.muted),
+      N: text("https://api.oilpriceapi.com"),
+    }),
+    row(10, {}),
+    row(28, {
+      A: text("API key in use", STYLE.label),
+      B: blank(STYLE.input),
+      C: text("Visible so you can switch test, staging, or production keys.", STYLE.muted),
+    }),
+    row(28, {
+      A: text("Endpoint path", STYLE.label),
+      B: text("/v1/prices/latest", STYLE.input),
+      C: text("Edit this to a supported GET data endpoint.", STYLE.muted),
+    }),
+    row(28, {
+      A: text("Query string", STYLE.label),
+      B: text("by_code=WTI_USD", STYLE.input),
+      C: text("Use normal API params, for example by_code=BRENT_CRUDE_USD.", STYLE.muted),
+    }),
+    row(28, {
+      A: text("API request", STYLE.label),
+      B: formula('IF($B$6="","",$N$3&$B$6&IF($B$7="","","?"&$B$7))', "", STYLE.code),
+      C: text("This is the endpoint being looked up.", STYLE.muted),
+    }),
+    row(28, {
+      A: text("Status", STYLE.label),
+      B: formula(
+        'IF($B$5="","Waiting for API key",IFERROR(FILTERXML($N$2,"/oilpriceapi/status")&" - "&FILTERXML($N$2,"/oilpriceapi/message"),"Excel did not return API data. Check external content permissions."))',
+        "Waiting for API key",
+        STYLE.status,
+      ),
+    }),
+    row(24, {
+      A: text("Retrieved", STYLE.label),
+      B: formula('IF($N$2="","",IFERROR(FILTERXML($N$2,"/oilpriceapi/retrieved_at"),""))', "", STYLE.muted),
+    }),
+    row(24, {
+      A: text("Rows returned", STYLE.label),
+      B: formula('IF($N$2="","",IFERROR(FILTERXML($N$2,"/oilpriceapi/returned_row_count")&" of "&FILTERXML($N$2,"/oilpriceapi/source_row_count"),""))', "", STYLE.muted),
+    }),
+    row(14, {}),
+    row(24, {
+      A: text("Examples", STYLE.header),
+      B: text("Path", STYLE.header),
+      C: text("Query", STYLE.header),
+      D: text("Use", STYLE.header),
+    }),
+    row(24, {
+      A: text("Latest WTI", STYLE.normal),
+      B: text("/v1/prices/latest", STYLE.code),
+      C: text("by_code=WTI_USD", STYLE.code),
+      D: text("single latest price", STYLE.muted),
+    }),
+    row(24, {
+      A: text("Latest Brent", STYLE.normal),
+      B: text("/v1/prices/latest", STYLE.code),
+      C: text("by_code=BRENT_CRUDE_USD", STYLE.code),
+      D: text("single latest price", STYLE.muted),
+    }),
+    row(24, {
+      A: text("Price history", STYLE.normal),
+      B: text("/v1/prices/past_month", STYLE.code),
+      C: text("by_code=WTI_USD&interval=daily", STYLE.code),
+      D: text("daily rows if included in your tier", STYLE.muted),
+    }),
+    row(24, {
+      A: text("Futures curve", STYLE.normal),
+      B: text("/v1/futures/ice-brent/curve", STYLE.code),
+      C: text("", STYLE.code),
+      D: text("curve rows if included in your tier", STYLE.muted),
+    }),
+    row(16, {}),
+    row(26, {
+      A: text("Results", STYLE.header),
+      B: text("Change B6/B7 to look up a different endpoint.", STYLE.muted),
+    }),
+    row(24, apiHeaderCells()),
+  ];
+
+  for (let index = 1; index <= 25; index += 1) {
+    rows.push(row(24, apiResultCells(index)));
+  }
+
+  return rows;
+}
+
+function apiHeaderCells() {
+  return Object.fromEntries(
+    Array.from({ length: 12 }, (_, index) => {
+      const column = columnName(index + 1);
+      return [
+        column,
+        formula(
+          `IF($N$2="","",IFERROR(FILTERXML($N$2,"/oilpriceapi/columns/col${index + 1}"),""))`,
+          "",
+          STYLE.header,
+        ),
+      ];
+    }),
+  );
+}
+
+function apiResultCells(rowIndex) {
+  return Object.fromEntries(
+    Array.from({ length: 12 }, (_, index) => {
+      const column = columnName(index + 1);
+      return [
+        column,
+        formula(
+          `IF($N$2="","",IFERROR(FILTERXML($N$2,"/oilpriceapi/rows/row[${rowIndex}]/col${index + 1}"),""))`,
+          "",
+          STYLE.normal,
+        ),
+      ];
+    }),
+  );
+}
 
 function row(height, cells) {
   return { height, cells };
@@ -218,9 +286,10 @@ function workbookXml() {
   <bookViews><workbookView activeTab="0"/></bookViews>
   <sheets>${sheets}</sheets>
   <definedNames>
-    <definedName name="ApiKey">'Latest Prices'!$B$5</definedName>
-    <definedName name="ApiBaseUrl">'Latest Prices'!$J$3</definedName>
-    <definedName name="WorkbookEndpoint">'Latest Prices'!$J$4</definedName>
+    <definedName name="ApiKey">'API Runner'!$B$5</definedName>
+    <definedName name="ApiBaseUrl">'API Runner'!$N$3</definedName>
+    <definedName name="EndpointPath">'API Runner'!$B$6</definedName>
+    <definedName name="EndpointQuery">'API Runner'!$B$7</definedName>
   </definedNames>
   <calcPr calcMode="auto" fullCalcOnLoad="1" forceFullCalc="1"/>
 </workbook>`);

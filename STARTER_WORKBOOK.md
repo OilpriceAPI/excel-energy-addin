@@ -9,31 +9,33 @@ npm run validate:starter-workbook
 
 The generated file is a valid `.xlsx` workbook with one visible sheet:
 
-- `Latest Prices`
+- `API Runner`
 
-The workbook intentionally ships without an API key. `Latest Prices!B5` is blank, styled as the key input cell, and selected when the workbook opens. Hidden cells on the same sheet hold the API base URL, workbook XML endpoint, starter benchmark list, and raw XML response used by the visible formulas.
+The workbook intentionally ships without an API key. `API Runner!B5` is blank, styled as the key input cell, and selected when the workbook opens. The endpoint path is visible in `API Runner!B6`, the query string is visible in `API Runner!B7`, and hidden cells on the same sheet hold the API base URL plus the raw XML response used by the visible formulas.
 
 ## Customer Flow
 
 1. Open `Energy_Price_Comparison_Template.xlsx`.
 2. If Excel asks, choose `Enable Editing` and `Enable Content`. Microsoft controls those prompts for downloaded workbooks that call web endpoints.
-3. Paste an OilPriceAPI key into the selected key cell, `Latest Prices!B5`.
-4. Press `Enter`.
-5. If Excel does not refresh immediately, use `Formulas > Calculate Now`.
+3. Paste an OilPriceAPI key into the selected key cell, `API Runner!B5`.
+4. Keep the default `/v1/prices/latest` and `by_code=WTI_USD`, or edit `API Runner!B6` and `API Runner!B7` to another supported GET data endpoint and query string.
+5. Press `Enter`.
+6. If Excel does not refresh immediately, use `Formulas > Calculate Now`.
 
-The workbook uses native Excel `WEBSERVICE()` and `FILTERXML()` formulas against `/v1/prices/excel-latest.xml`. That formula pair is intended for Windows desktop Excel; this starter workbook is not the recommended path for Excel for Mac or Excel for the web. Mac and web users should use the instant Excel download at `https://www.oilpriceapi.com/excel`.
+The workbook uses native Excel `WEBSERVICE()` and `FILTERXML()` formulas against `/v1/excel/run.xml`. That formula pair is intended for Windows desktop Excel; this starter workbook is not the recommended path for Excel for Mac or Excel for the web. Mac and web users should use the browser export at `https://www.oilpriceapi.com/excel` until a Power Query or add-in path is verified.
 
 ## Scope
 
-This starter workbook intentionally starts narrow:
+This starter workbook intentionally keeps the first surface bounded:
 
-- WTI crude: `WTI_USD`
-- Brent crude: `BRENT_CRUDE_USD`
+- default WTI latest-price lookup
+- visible path/query cells for supported GET data endpoints
+- examples for WTI, Brent, price history, and futures curve lookups
 - visible worksheet states for missing API key, auth failure, quota/rate-limit, and empty/unexpected responses
 - no embedded API key or customer data
 - no macros or add-in dependency
 
-Natural gas, diesel, fuel surcharge, and broader workflow sheets should be added only after the corresponding endpoint codes and workbook UX are verified.
+Broader workflow sheets should be added only after the corresponding endpoint codes and workbook UX are verified.
 
 ## Validation
 
