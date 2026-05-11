@@ -7,23 +7,21 @@ npm run generate:starter-workbook
 npm run validate:starter-workbook
 ```
 
-The generated file is a valid `.xlsx` workbook with these tabs:
+The generated file is a valid `.xlsx` workbook with one visible sheet:
 
-- `Start Here`
-- `Settings`
 - `Latest Prices`
-- `Examples`
 
-The workbook intentionally ships without an API key. `Settings!B2` is blank and marked as the user API key input cell. `Settings!B3` contains the editable API base URL, `Settings!B4` contains the workbook XML endpoint, and `Settings!B5` contains the starter benchmark list.
+The workbook intentionally ships without an API key. `Latest Prices!B5` is blank, styled as the key input cell, and selected when the workbook opens. Hidden cells on the same sheet hold the API base URL, workbook XML endpoint, starter benchmark list, and raw XML response used by the visible formulas.
 
 ## Customer Flow
 
 1. Open `Energy_Price_Comparison_Template.xlsx`.
-2. Paste an OilPriceAPI key into `Settings!B2`.
-3. Open `Latest Prices`.
-4. If Excel does not refresh immediately, use `Formulas > Calculate Now` or `Data > Refresh All`.
+2. If Excel asks, choose `Enable Editing` and `Enable Content`. Microsoft controls those prompts for downloaded workbooks that call web endpoints.
+3. Paste an OilPriceAPI key into the selected key cell, `Latest Prices!B5`.
+4. Press `Enter`.
+5. If Excel does not refresh immediately, use `Formulas > Calculate Now`.
 
-The workbook uses native Excel `WEBSERVICE()` and `FILTERXML()` formulas against `/v1/prices/excel-latest.xml`. That formula pair is intended for Windows desktop Excel; this starter workbook is not the recommended path for Excel for Mac or Excel for the web. It does not require VBA, macros, manifest XML, Office add-in sideloading, or Trust Center catalog setup for the first value path.
+The workbook uses native Excel `WEBSERVICE()` and `FILTERXML()` formulas against `/v1/prices/excel-latest.xml`. That formula pair is intended for Windows desktop Excel; this starter workbook is not the recommended path for Excel for Mac or Excel for the web. It does not require VBA, macros, manifest XML, XML Expansion Packs, Office add-in sideloading, or Trust Center catalog setup for the first value path.
 
 ## Scope
 
@@ -45,4 +43,4 @@ npm run validate:starter-workbook
 npm run build
 ```
 
-The validator checks workbook structure, required sheets, required formula text, hidden raw-response storage, defined names, no macro package, and key-material patterns. Manual Excel Desktop/Microsoft 365 verification is still recommended before sending a customer support reply.
+The validator checks workbook structure, one-page sheet scope, required formula text, hidden raw-response storage, defined names, no macro package, and key-material patterns. Manual Excel Desktop/Microsoft 365 verification is still recommended before sending a customer support reply.

@@ -5,7 +5,8 @@ const path = require("path");
 
 const ROOT = path.resolve(__dirname, "..");
 const WORKBOOK = path.join(ROOT, "Energy_Price_Comparison_Template.xlsx");
-const REQUIRED_SHEETS = ["Start Here", "Settings", "Latest Prices", "Examples"];
+const REQUIRED_SHEETS = ["Latest Prices"];
+const FORBIDDEN_SHEETS = ["Start Here", "Settings", "Examples"];
 const REQUIRED_ENTRIES = [
   "[Content_Types].xml",
   "_rels/.rels",
@@ -13,9 +14,6 @@ const REQUIRED_ENTRIES = [
   "xl/_rels/workbook.xml.rels",
   "xl/styles.xml",
   "xl/worksheets/sheet1.xml",
-  "xl/worksheets/sheet2.xml",
-  "xl/worksheets/sheet3.xml",
-  "xl/worksheets/sheet4.xml",
 ];
 
 function fail(message) {
@@ -88,6 +86,12 @@ for (const entry of REQUIRED_ENTRIES) {
   }
 }
 
+for (const entry of ["xl/worksheets/sheet2.xml", "xl/worksheets/sheet3.xml", "xl/worksheets/sheet4.xml"]) {
+  if (entries.has(entry)) {
+    fail(`unexpected extra worksheet entry ${entry}`);
+  }
+}
+
 const workbookXml = entries.get("xl/workbook.xml").toString("utf8");
 const sheetNames = [...workbookXml.matchAll(/<sheet name="([^"]+)"/g)].map((match) =>
   decodeXmlText(match[1]),
@@ -99,25 +103,34 @@ for (const sheetName of REQUIRED_SHEETS) {
   }
 }
 
+for (const sheetName of FORBIDDEN_SHEETS) {
+  if (sheetNames.includes(sheetName)) {
+    fail(`old multi-tab sheet still present: ${sheetName}`);
+  }
+}
+
 const allXml = [...entries.values()].map((entry) => entry.toString("utf8")).join("\n");
+const decodedXml = decodeXmlText(allXml);
 const requiredText = [
-  "Paste your OilPriceAPI key into Settings cell B2.",
+  "Paste your key once. Press Enter. WTI and Brent appear below.",
+  "Paste key here and press Enter",
   "https://api.oilpriceapi.com",
   "/v1/prices/excel-latest.xml",
   "Windows desktop Excel",
-  "No XML or manifest setup",
+  "No XML Expansion Packs",
   "WTI_USD",
   "BRENT_CRUDE_USD",
-  "WEBSERVICE(Settings!$B$3",
-  "FILTERXML($J$10",
-  "Missing API key",
-  "Authentication failure",
-  "Quota or rate-limit failure",
-  "No data or unexpected empty response",
+  "WEBSERVICE($J$3",
+  "FILTERXML($J$2",
+  "auth_failed",
+  "Enable editing and external content once",
+  'showGridLines="0"',
+  'activeCell="B5"',
+  'definedName name="ApiKey"'
 ];
 
 for (const text of requiredText) {
-  if (!allXml.includes(text)) {
+  if (!decodedXml.includes(text) && !allXml.includes(text)) {
     fail(`missing expected workbook text: ${text}`);
   }
 }
@@ -127,16 +140,19 @@ const forbiddenText = [
   "Pending Power Query implementation",
   "Pending refresh implementation",
   "manifest setup required",
+  "Settings!B2",
+  "Settings cell B2",
+  "Paste your OilPriceAPI key into Settings",
 ];
 
 for (const text of forbiddenText) {
-  if (allXml.includes(text)) {
+  if (decodedXml.includes(text)) {
     fail(`workbook contains obsolete setup text: ${text}`);
   }
 }
 
-if (!allXml.includes('definedName name="ApiKey"')) {
-  fail("missing ApiKey defined name");
+if (!workbookXml.includes("<definedName name=\"ApiKey\">'Latest Prices'!$B$5</definedName>")) {
+  fail("ApiKey defined name must point at the one-page key cell");
 }
 
 if (entries.has("xl/vbaProject.bin") || allXml.includes("vbaProject.bin")) {
@@ -151,7 +167,7 @@ const forbiddenPatterns = [
 ];
 
 for (const pattern of forbiddenPatterns) {
-  if (pattern.test(allXml)) {
+  if (pattern.test(decodedXml)) {
     fail(`workbook appears to contain key material matching ${pattern}`);
   }
 }
