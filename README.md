@@ -28,7 +28,7 @@ The repo still contains the Office add-in code, but the customer-first path is n
 
 ### Prerequisites
 
-- Microsoft Excel (2016 or later)
+- Windows desktop Excel 2016 or later. The starter workbook uses `WEBSERVICE()` and `FILTERXML()`, which are not the recommended path for Excel for Mac or Excel for the web.
 - OilPriceAPI key ([sign up at oilpriceapi.com/signup](https://www.oilpriceapi.com/signup?utm_source=excel&utm_medium=starter_workbook&utm_campaign=readme))
 
 ## Starter Workbook
@@ -47,7 +47,7 @@ The current artifact is a valid `.xlsx` workbook with `Start Here`, `Settings`, 
 ### Use the workbook
 
 1. Download `Energy_Price_Comparison_Template.xlsx`.
-2. Open it in Excel.
+2. Open it in Windows desktop Excel.
 3. Paste your OilPriceAPI key into `Settings!B2`.
 4. Go to `Latest Prices`.
 5. If values do not populate immediately, use `Formulas > Calculate Now` or `Data > Refresh All`.
@@ -56,48 +56,9 @@ The current artifact is a valid `.xlsx` workbook with `Start Here`, `Settings`, 
 
 The Office add-in manifest remains available for development and testing. It is not the first-use path for non-technical customers.
 
-## Usage
+## Current Scope
 
-### 1. Configure API Key
-
-1. Open the Energy Price Comparison panel
-2. Enter your OilPriceAPI key in Settings
-3. Click "Save"
-4. Click "Test Connection" to verify
-
-### 2. Fetch Prices
-
-1. Select commodities to fetch (Brent, WTI, Natural Gas, Coal)
-2. Click "Fetch Prices"
-3. A "Data" sheet will be created with raw prices
-
-### 3. Convert to MBtu
-
-1. Click "Convert to MBtu"
-2. A "Process" sheet will be created with converted prices
-3. Compare prices directly in $/MBtu
-
-## Energy Unit Conversions
-
-The add-in uses standard heat content factors:
-
-| Commodity             | Unit   | Heat Content (MMBtu) |
-| --------------------- | ------ | -------------------- |
-| Crude Oil (Brent/WTI) | barrel | 5.8                  |
-| Natural Gas           | Mcf    | 1.037                |
-| Coal (Bituminous)     | tonne  | 24                   |
-| Coal (Sub-bituminous) | tonne  | 17                   |
-| LNG                   | tonne  | 51.6                 |
-| Diesel/Gasoil         | barrel | 5.77                 |
-| Gasoline              | barrel | 5.05                 |
-
-**Formula:** `Price per MBtu = Price per unit ÷ Heat content`
-
-### Example
-
-- Brent Crude: $85.50/barrel
-- Heat Content: 5.8 MMBtu/barrel
-- **Result: $14.74/MBtu**
+The customer-ready starter workbook scope is WTI and Brent latest-price rows only. The Office add-in code and broader energy-conversion utilities remain in the repository for development, but they are not the support-first path and should not be used as public setup instructions until separately verified.
 
 ## Development
 

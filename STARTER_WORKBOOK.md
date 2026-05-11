@@ -23,7 +23,7 @@ The workbook intentionally ships without an API key. `Settings!B2` is blank and 
 3. Open `Latest Prices`.
 4. If Excel does not refresh immediately, use `Formulas > Calculate Now` or `Data > Refresh All`.
 
-The workbook uses native Excel `WEBSERVICE()` and `FILTERXML()` formulas against `/v1/prices/excel-latest.xml`. It does not require VBA, macros, manifest XML, Office add-in sideloading, or Trust Center catalog setup for the first value path.
+The workbook uses native Excel `WEBSERVICE()` and `FILTERXML()` formulas against `/v1/prices/excel-latest.xml`. That formula pair is intended for Windows desktop Excel; this starter workbook is not the recommended path for Excel for Mac or Excel for the web. It does not require VBA, macros, manifest XML, Office add-in sideloading, or Trust Center catalog setup for the first value path.
 
 ## Scope
 

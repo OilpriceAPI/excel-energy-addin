@@ -104,6 +104,7 @@ const requiredText = [
   "Paste your OilPriceAPI key into Settings cell B2.",
   "https://api.oilpriceapi.com",
   "/v1/prices/excel-latest.xml",
+  "Windows desktop Excel",
   "No XML or manifest setup",
   "WTI_USD",
   "BRENT_CRUDE_USD",
