@@ -4,7 +4,7 @@
 [![Docs](https://img.shields.io/badge/Docs-docs.oilpriceapi.com-green)](https://docs.oilpriceapi.com)
 [![GitHub](https://img.shields.io/github/stars/OilpriceAPI/excel-energy-addin?style=social)](https://github.com/OilpriceAPI/excel-energy-addin)
 
-Open a one-page workbook, paste an OilPriceAPI key into the highlighted cell, press Enter, and get a narrow latest-price starter table without manifest XML, macros, or add-in sideloading.
+Open the Excel page, paste an OilPriceAPI key, and download a populated starter workbook. A formula workbook is still included for Windows desktop Excel, but it is not the primary path for Mac or web users.
 
 ## Overview
 
@@ -19,7 +19,7 @@ The repo still contains the Office add-in code, but the customer-first path is n
 ## Features
 
 - **One-page first-use path** - the key cell is selected when the workbook opens
-- **No XML setup** - no manifest sideloading, XML Expansion Packs, Trust Center catalog, VBA, or macros for the starter workbook
+- **No macro starter artifact** - the static workbook ships without embedded keys, VBA, or macros
 - **Blank-key distribution** - the workbook ships without embedded API keys or customer data
 - **Visible worksheet errors** - missing key, auth, quota/rate-limit, and no-data states are surfaced in cells
 - **Small supported slice** - WTI and Brent latest-price rows first
@@ -29,7 +29,8 @@ The repo still contains the Office add-in code, but the customer-first path is n
 
 ### Prerequisites
 
-- Windows desktop Excel 2016 or later. The starter workbook uses `WEBSERVICE()` and `FILTERXML()`, which are not the recommended path for Excel for Mac or Excel for the web.
+- For Mac or Excel for the web, use the instant Excel download at [oilpriceapi.com/excel](https://www.oilpriceapi.com/excel).
+- Windows desktop Excel 2016 or later for the formula workbook. It uses `WEBSERVICE()` and `FILTERXML()`, which are not the recommended path for Excel for Mac or Excel for the web.
 - OilPriceAPI key ([sign up at oilpriceapi.com/signup](https://www.oilpriceapi.com/signup?utm_source=excel&utm_medium=starter_workbook&utm_campaign=readme))
 
 ## Starter Workbook

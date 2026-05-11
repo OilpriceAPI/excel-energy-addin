@@ -21,7 +21,7 @@ The workbook intentionally ships without an API key. `Latest Prices!B5` is blank
 4. Press `Enter`.
 5. If Excel does not refresh immediately, use `Formulas > Calculate Now`.
 
-The workbook uses native Excel `WEBSERVICE()` and `FILTERXML()` formulas against `/v1/prices/excel-latest.xml`. That formula pair is intended for Windows desktop Excel; this starter workbook is not the recommended path for Excel for Mac or Excel for the web. It does not require VBA, macros, manifest XML, XML Expansion Packs, Office add-in sideloading, or Trust Center catalog setup for the first value path.
+The workbook uses native Excel `WEBSERVICE()` and `FILTERXML()` formulas against `/v1/prices/excel-latest.xml`. That formula pair is intended for Windows desktop Excel; this starter workbook is not the recommended path for Excel for Mac or Excel for the web. Mac and web users should use the instant Excel download at `https://www.oilpriceapi.com/excel`.
 
 ## Scope
 
