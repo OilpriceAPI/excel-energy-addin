@@ -10,6 +10,7 @@
     "generate:icons": "node generate-icons.js",
     "generate:starter-workbook": "node scripts/generate-starter-workbook.js",
     "validate:starter-workbook": "node scripts/validate-starter-workbook.js",
+    "prebuild": "npm run generate:starter-workbook",
     "build": "webpack --mode production",
     "dev": "webpack serve --config webpack.dev.js",
     "start": "npm run dev"

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Excel Energy Price Comparison Add-in - OilPriceAPI</title>
-    <meta name="description" content="Compare energy commodity prices across units and currencies using OilPriceAPI. Free Excel add-in for analyzing oil, gas, and coal prices.">
+    <title>OilPriceAPI Excel Starter Workbook</title>
+    <meta name="description" content="Download a no-macro Excel starter workbook for OilPriceAPI latest WTI and Brent benchmark rows.">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -59,38 +59,42 @@
 </head>
 <body>
     <div class="container">
-        <h1>Excel Energy Price Comparison Add-in</h1>
-        <p class="subtitle">Compare energy commodity prices across units and currencies</p>
+        <h1>OilPriceAPI Excel Starter Workbook</h1>
+        <p class="subtitle">Paste your API key into one cell and start with WTI and Brent rows</p>
         
-        <p>This Excel add-in allows analysts to fetch real-time energy commodity prices and convert them to equivalent energy units for direct comparison.</p>
+        <p>The starter workbook is the simple first-use path for Excel. It does not require manifest XML, macros, Developer tools, or add-in sideloading.</p>
         
         <div style="margin: 30px 0;">
-            <a href="https://www.oilpriceapi.com" class="button">Get API Key (Free)</a>
+            <a href="./Energy_Price_Comparison_Template.xlsx" class="button">Download Starter Workbook</a>
+            <a href="https://www.oilpriceapi.com/signup?utm_source=excel&utm_medium=starter_workbook&utm_campaign=github_pages" class="button">Get API Key</a>
             <a href="https://github.com/OilpriceAPI/excel-energy-addin" class="button">View on GitHub</a>
-            <a href="https://docs.oilpriceapi.com" class="button">Documentation</a>
         </div>
         
-        <h2>Features</h2>
+        <h2>First Use</h2>
         <ul class="feature">
-            <li>✅ Real-time price fetching from OilPriceAPI</li>
-            <li>✅ Energy unit conversions ($/MMBtu)</li>
-            <li>✅ Support for Brent, WTI, Natural Gas, Coal, and more</li>
-            <li>✅ Multi-currency support (USD, GBP, EUR)</li>
-            <li>✅ Data export for analysis</li>
+            <li>Open the workbook in Excel.</li>
+            <li>Paste your OilPriceAPI key into <strong>Settings!B2</strong>.</li>
+            <li>Go to <strong>Latest Prices</strong>.</li>
+            <li>If values do not populate immediately, use <strong>Formulas &gt; Calculate Now</strong> or <strong>Data &gt; Refresh All</strong>.</li>
         </ul>
         
-        <h2>Installation</h2>
+        <h2>What It Includes</h2>
+        <ul class="feature">
+            <li>WTI and Brent latest-price starter rows.</li>
+            <li>Visible worksheet messages for missing key, auth, quota/rate-limit, and no-data states.</li>
+            <li>No embedded API key or customer data.</li>
+            <li>No VBA, macros, or Office add-in dependency for first use.</li>
+        </ul>
+
+        <h2>Developer Add-in</h2>
         <ol class="feature">
-            <li>Download the manifest file from <a href="https://github.com/OilpriceAPI/excel-energy-addin">GitHub</a></li>
-            <li>Open Microsoft Excel (2016 or later)</li>
-            <li>Go to Insert → Get Add-ins → Upload My Add-in</li>
-            <li>Select the manifest.xml file</li>
-            <li>Get your free API key from <a href="https://www.oilpriceapi.com">OilPriceAPI.com</a></li>
+            <li>The Office add-in manifest remains available in the GitHub repo for development and testing.</li>
+            <li>Use the starter workbook first unless you specifically need to test the add-in path.</li>
         </ol>
         
         <div class="footer">
-            <p>Built with ❤️ by the <a href="https://www.oilpriceapi.com">OilPriceAPI</a> team</p>
-            <p>Free for personal and commercial use | <a href="https://github.com/OilpriceAPI/excel-energy-addin">MIT License</a></p>
+            <p>Built by the <a href="https://www.oilpriceapi.com">OilPriceAPI</a> team</p>
+            <p><a href="https://github.com/OilpriceAPI/excel-energy-addin">GitHub repository</a></p>
         </div>
     </div>
 </body>

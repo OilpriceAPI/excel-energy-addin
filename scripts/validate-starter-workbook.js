@@ -103,7 +103,12 @@ const allXml = [...entries.values()].map((entry) => entry.toString("utf8")).join
 const requiredText = [
   "Paste your OilPriceAPI key into Settings cell B2.",
   "https://api.oilpriceapi.com",
-  "Power Query refresh is not implemented in this generated artifact.",
+  "/v1/prices/excel-latest.xml",
+  "No XML or manifest setup",
+  "WTI_USD",
+  "BRENT_CRUDE_USD",
+  "WEBSERVICE(Settings!$B$3",
+  "FILTERXML($J$10",
   "Missing API key",
   "Authentication failure",
   "Quota or rate-limit failure",
@@ -114,6 +119,27 @@ for (const text of requiredText) {
   if (!allXml.includes(text)) {
     fail(`missing expected workbook text: ${text}`);
   }
+}
+
+const forbiddenText = [
+  "Power Query refresh is not implemented",
+  "Pending Power Query implementation",
+  "Pending refresh implementation",
+  "manifest setup required",
+];
+
+for (const text of forbiddenText) {
+  if (allXml.includes(text)) {
+    fail(`workbook contains obsolete setup text: ${text}`);
+  }
+}
+
+if (!allXml.includes('definedName name="ApiKey"')) {
+  fail("missing ApiKey defined name");
+}
+
+if (entries.has("xl/vbaProject.bin") || allXml.includes("vbaProject.bin")) {
+  fail("workbook must not contain macros");
 }
 
 const forbiddenPatterns = [

@@ -7,26 +7,42 @@ npm run generate:starter-workbook
 npm run validate:starter-workbook
 ```
 
-The generated file is a valid `.xlsx` workbook shell with these tabs:
+The generated file is a valid `.xlsx` workbook with these tabs:
 
 - `Start Here`
 - `Settings`
 - `Latest Prices`
 - `Examples`
 
-The workbook intentionally ships without an API key. `Settings!B2` is blank and marked as the user API key input cell. `Settings!B3` contains the editable API base URL.
+The workbook intentionally ships without an API key. `Settings!B2` is blank and marked as the user API key input cell. `Settings!B3` contains the editable API base URL, `Settings!B4` contains the workbook XML endpoint, and `Settings!B5` contains the starter benchmark list.
 
-## Current Refresh Blocker
+## Customer Flow
 
-This first artifact does not include a working Power Query refresh connection. Programmatically authoring Power Query inside OOXML without Excel tooling or a proven workbook library is risky because the workbook can validate as a ZIP package while still failing when the user clicks `Refresh All`.
+1. Open `Energy_Price_Comparison_Template.xlsx`.
+2. Paste an OilPriceAPI key into `Settings!B2`.
+3. Open `Latest Prices`.
+4. If Excel does not refresh immediately, use `Formulas > Calculate Now` or `Data > Refresh All`.
 
-Before `website-clean#604` links this workbook as the primary self-service path, the remaining work is:
+The workbook uses native Excel `WEBSERVICE()` and `FILTERXML()` formulas against `/v1/prices/excel-latest.xml`. It does not require VBA, macros, manifest XML, Office add-in sideloading, or Trust Center catalog setup for the first value path.
 
-- Add a verified Power Query or equivalent built-in non-macro connector.
-- Read the API key from `Settings!B2`.
-- Read the base URL from `Settings!B3`.
-- Populate `Latest Prices` from confirmed public API endpoints.
-- Show clear worksheet-visible errors for missing API key, authentication failure, quota/rate-limit failure, and empty/unexpected responses.
-- Re-run `npm run validate:starter-workbook` and manually verify `Refresh All` in Excel.
+## Scope
 
-Until that refresh path is implemented and verified, the workbook should be treated as a valid shell artifact, not a complete self-service download.
+This starter workbook intentionally starts narrow:
+
+- WTI crude: `WTI_USD`
+- Brent crude: `BRENT_CRUDE_USD`
+- visible worksheet states for missing API key, auth failure, quota/rate-limit, and empty/unexpected responses
+- no embedded API key or customer data
+- no macros or add-in dependency
+
+Natural gas, diesel, fuel surcharge, and broader workflow sheets should be added only after the corresponding endpoint codes and workbook UX are verified.
+
+## Validation
+
+```bash
+npm run generate:starter-workbook
+npm run validate:starter-workbook
+npm run build
+```
+
+The validator checks workbook structure, required sheets, required formula text, hidden raw-response storage, defined names, no macro package, and key-material patterns. Manual Excel Desktop/Microsoft 365 verification is still recommended before sending a customer support reply.
