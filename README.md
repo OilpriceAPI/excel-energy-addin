@@ -1,40 +1,39 @@
-# Excel Energy Price Comparison Add-in
+# OilPriceAPI Excel Starter Workbook
 
 [![Website](https://img.shields.io/badge/Website-oilpriceapi.com-blue)](https://www.oilpriceapi.com)
 [![Docs](https://img.shields.io/badge/Docs-docs.oilpriceapi.com-green)](https://docs.oilpriceapi.com)
 [![GitHub](https://img.shields.io/github/stars/OilpriceAPI/excel-energy-addin?style=social)](https://github.com/OilpriceAPI/excel-energy-addin)
 
-Compare energy commodity prices across units and currencies using [OilPriceAPI](https://www.oilpriceapi.com).
+Open a workbook, paste an OilPriceAPI key, and get a narrow latest-price starter table without manifest XML, macros, or add-in sideloading.
 
 ## Overview
 
-This Excel add-in allows analysts to:
+The repo still contains the Office add-in code, but the customer-first path is now the generated starter workbook:
 
-- Fetch real-time energy commodity prices (Brent, WTI, Natural Gas, Coal, etc.)
-- Convert prices to equivalent energy units ($/MBtu) for direct comparison
-- Analyze price relationships across different commodities
-- Export data for further analysis
+- `Energy_Price_Comparison_Template.xlsx`
+- `Start Here`, `Settings`, `Latest Prices`, and `Examples` sheets
+- API key input in `Settings!B2`
+- native Excel `WEBSERVICE()` and `FILTERXML()` formulas against `/v1/prices/excel-latest.xml`
+- WTI and Brent starter rows
 
 ## Features
 
-✅ **Real-time Price Fetching** - Get latest spot prices from OilPriceAPI
-✅ **Energy Unit Conversions** - Convert to $/MBtu using standard heat content factors
-✅ **Data Tab** - Clean tabular view of raw commodity prices
-✅ **Process Tab** - Converted prices for direct comparison
-⏳ **Dashboard Tab** - Tufte-style visualizations (coming soon)
-⏳ **Multi-Currency** - USD, EUR, GBP support (coming soon)
-⏳ **Historical Data** - Time series analysis (coming soon)
+✅ **No XML first-use path** - No manifest sideloading, XML Expansion Packs, Trust Center catalog, VBA, or macros for the starter workbook
+✅ **Blank-key distribution** - The workbook ships without embedded API keys or customer data
+✅ **Visible worksheet errors** - Missing key, auth, quota/rate-limit, and no-data states are surfaced in cells
+✅ **Small supported slice** - WTI and Brent latest-price rows first
+⏳ **Broader sheets** - Natural gas, diesel, fuel surcharge, and add-in flows should be added only after endpoint and workbook UX verification
 
 ## Installation
 
 ### Prerequisites
 
 - Microsoft Excel (2016 or later)
-- OilPriceAPI key ([get one free at oilpriceapi.com/signup](https://www.oilpriceapi.com/signup?utm_source=excel&utm_medium=addin&utm_campaign=readme))
+- OilPriceAPI key ([sign up at oilpriceapi.com/signup](https://www.oilpriceapi.com/signup?utm_source=excel&utm_medium=starter_workbook&utm_campaign=readme))
 
 ## Starter Workbook
 
-This repo includes `Energy_Price_Comparison_Template.xlsx`, a generated no-key workbook shell for the website self-service flow.
+This repo includes `Energy_Price_Comparison_Template.xlsx`, a generated no-key workbook for the website self-service flow.
 
 Regenerate and validate it with:
 
@@ -43,15 +42,19 @@ npm run generate:starter-workbook
 npm run validate:starter-workbook
 ```
 
-The current artifact is a valid `.xlsx` workbook with `Start Here`, `Settings`, `Latest Prices`, and `Examples` tabs. It does not yet include a verified Power Query refresh connection, so it should not be marketed as a complete self-service workbook until the refresh blocker in [STARTER_WORKBOOK.md](STARTER_WORKBOOK.md) is resolved.
+The current artifact is a valid `.xlsx` workbook with `Start Here`, `Settings`, `Latest Prices`, and `Examples` tabs. It uses native formula refresh through `/v1/prices/excel-latest.xml`; see [STARTER_WORKBOOK.md](STARTER_WORKBOOK.md) for validation and support notes.
 
-### Install from GitHub
+### Use the workbook
 
-1. Download the latest release
-2. Open Excel
-3. Go to Insert > Get Add-ins > Upload My Add-in
-4. Select the `manifest.xml` file
-5. The add-in will appear in the Home ribbon
+1. Download `Energy_Price_Comparison_Template.xlsx`.
+2. Open it in Excel.
+3. Paste your OilPriceAPI key into `Settings!B2`.
+4. Go to `Latest Prices`.
+5. If values do not populate immediately, use `Formulas > Calculate Now` or `Data > Refresh All`.
+
+### Developer add-in path
+
+The Office add-in manifest remains available for development and testing. It is not the first-use path for non-technical customers.
 
 ## Usage
 

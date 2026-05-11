@@ -5,6 +5,7 @@ const path = require("path");
 
 const ROOT = path.resolve(__dirname, "..");
 const OUTPUT = path.join(ROOT, "Energy_Price_Comparison_Template.xlsx");
+const PUBLIC_OUTPUT = path.join(ROOT, "public", "Energy_Price_Comparison_Template.xlsx");
 
 const SHEETS = [
   {
@@ -13,15 +14,13 @@ const SHEETS = [
       ["OilPriceAPI Excel Starter Workbook"],
       ["Step", "What to do"],
       ["1", "Paste your OilPriceAPI key into Settings cell B2."],
-      ["2", "Confirm the base URL in Settings cell B3."],
-      [
-        "3",
-        "Refresh is not enabled in this generated shell yet. See Latest Prices for the Power Query blocker.",
-      ],
+      ["2", "Go to Latest Prices. WTI and Brent should populate automatically."],
+      ["3", "If Excel does not refresh immediately, use Formulas > Calculate Now or Data > Refresh All."],
       [],
+      ["No XML or manifest setup", "Do not use Developer tools, XML Expansion Packs, sideloading, or macros for this workbook."],
       [
         "Status",
-        "This workbook is valid .xlsx structure and contains no embedded API key.",
+        "This workbook is valid .xlsx structure, contains no embedded API key, and uses native Excel formulas.",
       ],
     ],
     widths: [16, 88],
@@ -33,40 +32,62 @@ const SHEETS = [
       [
         "API key",
         "",
-        "Paste your own key here before using a refresh-enabled version. This distributed workbook intentionally ships blank.",
+        "Paste your own OilPriceAPI key here. The distributed workbook intentionally ships blank.",
       ],
       ["Base URL", "https://api.oilpriceapi.com", "Editable if the API base changes."],
-      ["Authentication", "Bearer token", "Use the key from cell B2 as the bearer token."],
+      ["Workbook endpoint", "/v1/prices/excel-latest.xml", "Used by native Excel formulas on the Latest Prices sheet."],
+      ["Included benchmarks", "WTI_USD,BRENT_CRUDE_USD", "Starter workbook scope for first value."],
     ],
     widths: [22, 34, 82],
   },
   {
     name: "Latest Prices",
     rows: [
-      ["Status", "Power Query refresh is not implemented in this generated artifact."],
+      ["OilPriceAPI latest prices"],
       [
-        "Blocker",
-        "A refreshable Power Query connection should be authored and verified in Excel or with a proven workbook library before website-clean links this file as fully self-service.",
+        "Workbook status",
+        formula('IF(Settings!$B$2="","Missing API key - paste your OilPriceAPI key into Settings!B2.",IFERROR(FILTERXML($J$10,"/oilpriceapi/message"),"Refresh error - check API key and network."))'),
       ],
       [
-        "Expected flow",
-        "After the blocker is resolved, paste an API key in Settings!B2 and click Data > Refresh All.",
+        "Retrieved at",
+        formula('IF(Settings!$B$2="","",IFERROR(FILTERXML($J$10,"/oilpriceapi/retrieved_at"),""))'),
       ],
       [],
-      ["Commodity", "API code", "Expected result", "Refresh status"],
-      ["WTI", "WTI_USD", "", "Pending Power Query implementation"],
-      ["Brent", "BRENT_USD", "", "Pending Power Query implementation"],
-      ["Natural gas", "NATURAL_GAS_USD", "", "Pending endpoint confirmation"],
-      ["Diesel / fuel surcharge", "", "", "Pending endpoint confirmation"],
+      ["Commodity", "API code", "Price", "Formatted", "Currency", "Unit", "Source", "Timestamp", "Status"],
+      [
+        "WTI crude",
+        "WTI_USD",
+        formula('IF($J$10="","",IFERROR(FILTERXML($J$10,"/oilpriceapi/prices/price[1]/value"),""))'),
+        formula('IF($J$10="","",IFERROR(FILTERXML($J$10,"/oilpriceapi/prices/price[1]/formatted"),""))'),
+        formula('IF($J$10="","",IFERROR(FILTERXML($J$10,"/oilpriceapi/prices/price[1]/currency"),""))'),
+        formula('IF($J$10="","",IFERROR(FILTERXML($J$10,"/oilpriceapi/prices/price[1]/unit"),""))'),
+        formula('IF($J$10="","",IFERROR(FILTERXML($J$10,"/oilpriceapi/prices/price[1]/source"),""))'),
+        formula('IF($J$10="","",IFERROR(FILTERXML($J$10,"/oilpriceapi/prices/price[1]/timestamp"),""))'),
+        formula('IF($J$10="","",IFERROR(FILTERXML($J$10,"/oilpriceapi/prices/price[1]/status"),""))'),
+      ],
+      [
+        "Brent crude",
+        "BRENT_CRUDE_USD",
+        formula('IF($J$10="","",IFERROR(FILTERXML($J$10,"/oilpriceapi/prices/price[2]/value"),""))'),
+        formula('IF($J$10="","",IFERROR(FILTERXML($J$10,"/oilpriceapi/prices/price[2]/formatted"),""))'),
+        formula('IF($J$10="","",IFERROR(FILTERXML($J$10,"/oilpriceapi/prices/price[2]/currency"),""))'),
+        formula('IF($J$10="","",IFERROR(FILTERXML($J$10,"/oilpriceapi/prices/price[2]/unit"),""))'),
+        formula('IF($J$10="","",IFERROR(FILTERXML($J$10,"/oilpriceapi/prices/price[2]/source"),""))'),
+        formula('IF($J$10="","",IFERROR(FILTERXML($J$10,"/oilpriceapi/prices/price[2]/timestamp"),""))'),
+        formula('IF($J$10="","",IFERROR(FILTERXML($J$10,"/oilpriceapi/prices/price[2]/status"),""))'),
+      ],
+      [],
+      ["Visible error states", "Missing API key", "Authentication failure", "Quota or rate-limit failure", "No data or unexpected empty response"],
+      ["Raw response", "", "", "", "", "", "", "", "", formula('IF(Settings!$B$2="","",WEBSERVICE(Settings!$B$3&Settings!$B$4&"?api_key="&Settings!$B$2&"&codes="&Settings!$B$5))')],
     ],
-    widths: [26, 22, 34, 44],
+    widths: [22, 22, 14, 16, 12, 14, 28, 28, 16, { width: 18, hidden: true }],
   },
   {
     name: "Examples",
     rows: [
       ["Example", "Supported now?", "Notes"],
-      ["WTI latest price", "Pending refresh implementation", "Use only after API code and query are verified."],
-      ["Brent latest price", "Pending refresh implementation", "Use only after API code and query are verified."],
+      ["WTI latest price", "Yes", "Paste API key in Settings!B2 and read the WTI row on Latest Prices."],
+      ["Brent latest price", "Yes", "Paste API key in Settings!B2 and read the Brent row on Latest Prices."],
       ["Natural gas latest price", "Pending endpoint confirmation", "Do not market until endpoint is confirmed."],
       [
         "Diesel / fuel surcharge",
@@ -83,6 +104,10 @@ const SHEETS = [
     widths: [34, 34, 78],
   },
 ];
+
+function formula(value, cached = "") {
+  return { formula: value, cached };
+}
 
 function escapeXml(value) {
   return String(value)
@@ -104,12 +129,22 @@ function columnName(index) {
   return name;
 }
 
+function cellXml(value, reference) {
+  if (value && typeof value === "object" && Object.prototype.hasOwnProperty.call(value, "formula")) {
+    const cached = value.cached === undefined ? "" : `<v>${escapeXml(value.cached)}</v>`;
+    return `<c r="${reference}" t="str"><f>${escapeXml(value.formula)}</f>${cached}</c>`;
+  }
+
+  return `<c r="${reference}" t="inlineStr"><is><t>${escapeXml(value)}</t></is></c>`;
+}
+
 function sheetXml(sheet) {
   const cols = sheet.widths
-    .map(
-      (width, index) =>
-        `<col min="${index + 1}" max="${index + 1}" width="${width}" customWidth="1"/>`,
-    )
+    .map((widthConfig, index) => {
+      const width = typeof widthConfig === "object" ? widthConfig.width : widthConfig;
+      const hidden = typeof widthConfig === "object" && widthConfig.hidden ? ' hidden="1"' : "";
+      return `<col min="${index + 1}" max="${index + 1}" width="${width}" customWidth="1"${hidden}/>`;
+    })
     .join("");
   const rows = sheet.rows
     .map((row, rowIndex) => {
@@ -119,7 +154,7 @@ function sheetXml(sheet) {
             return "";
           }
           const reference = `${columnName(cellIndex + 1)}${rowIndex + 1}`;
-          return `<c r="${reference}" t="inlineStr"><is><t>${escapeXml(value)}</t></is></c>`;
+          return cellXml(value, reference);
         })
         .join("");
       return `<row r="${rowIndex + 1}">${cells}</row>`;
@@ -149,6 +184,12 @@ function workbookXml() {
   <workbookPr date1904="false"/>
   <bookViews><workbookView activeTab="0"/></bookViews>
   <sheets>${sheets}</sheets>
+  <definedNames>
+    <definedName name="ApiKey">'Settings'!$B$2</definedName>
+    <definedName name="ApiBaseUrl">'Settings'!$B$3</definedName>
+    <definedName name="WorkbookEndpoint">'Settings'!$B$4</definedName>
+  </definedNames>
+  <calcPr calcMode="auto" fullCalcOnLoad="1" forceFullCalc="1"/>
 </workbook>`);
 }
 
@@ -247,6 +288,7 @@ function dosDateTime(date) {
 }
 
 function writeZip(entries, outputPath) {
+  fs.mkdirSync(path.dirname(outputPath), { recursive: true });
   const fixedDate = new Date(Date.UTC(2026, 4, 11, 0, 0, 0));
   const { time, day } = dosDateTime(fixedDate);
   const localParts = [];
@@ -325,3 +367,5 @@ const entries = [
 
 writeZip(entries, OUTPUT);
 console.log(`Generated ${path.relative(ROOT, OUTPUT)} (${fs.statSync(OUTPUT).size} bytes)`);
+writeZip(entries, PUBLIC_OUTPUT);
+console.log(`Generated ${path.relative(ROOT, PUBLIC_OUTPUT)} (${fs.statSync(PUBLIC_OUTPUT).size} bytes)`);
