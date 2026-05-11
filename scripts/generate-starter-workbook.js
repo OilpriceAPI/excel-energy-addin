@@ -57,7 +57,7 @@ const SHEETS = [
       row(28, {
         A: text("Status", STYLE.label),
         B: formula(
-          'IF($B$5="","Waiting for API key",IFERROR(IF(FILTERXML($J$2,"/oilpriceapi/status")="auth_failed","API key was not accepted. Check the key cell and try again.",FILTERXML($J$2,"/oilpriceapi/message")),"Excel blocked or did not return API data. Enable editing and external content once, then press F9."))',
+          'IF($B$5="","Waiting for API key",IFERROR(IF(FILTERXML($J$2,"/oilpriceapi/status")="auth_failed","API key was not accepted. Check the key cell and try again.",FILTERXML($J$2,"/oilpriceapi/message")),"Excel formula fetch did not return data. Use oilpriceapi.com/excel for instant download."))',
           "Waiting for API key",
           STYLE.status,
         ),
@@ -95,14 +95,7 @@ const SHEETS = [
       row(36, {
         A: text("If it does not load", STYLE.label),
         B: text(
-          "Use Windows desktop Excel. Microsoft may ask to Enable Editing and Enable Content once because this downloaded workbook contacts a web endpoint.",
-          STYLE.footnote,
-        ),
-      }),
-      row(36, {
-        A: text("No setup chores", STYLE.label),
-        B: text(
-          "No XML Expansion Packs, macros, manifest XML, Developer tools, add-in sideloading, or Trust Center catalog setup. The starter scope is WTI_USD and BRENT_CRUDE_USD.",
+          "Use the instant Excel download at oilpriceapi.com/excel if workbook formulas are blocked.",
           STYLE.footnote,
         ),
       }),

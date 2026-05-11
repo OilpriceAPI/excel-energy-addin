@@ -116,14 +116,13 @@ const requiredText = [
   "Paste key here and press Enter",
   "https://api.oilpriceapi.com",
   "/v1/prices/excel-latest.xml",
-  "Windows desktop Excel",
-  "No XML Expansion Packs",
+  "instant Excel download",
   "WTI_USD",
   "BRENT_CRUDE_USD",
   "WEBSERVICE($J$3",
   "FILTERXML($J$2",
   "auth_failed",
-  "Enable editing and external content once",
+  "instant download",
   'showGridLines="0"',
   'activeCell="B5"',
   'definedName name="ApiKey"'
@@ -143,6 +142,8 @@ const forbiddenText = [
   "Settings!B2",
   "Settings cell B2",
   "Paste your OilPriceAPI key into Settings",
+  "No setup chores",
+  "No XML Expansion Packs",
 ];
 
 for (const text of forbiddenText) {
