@@ -1,16 +1,15 @@
 {
   "name": "excel-energy-addin",
   "version": "1.0.0",
-  "description": "Excel add-in for comparing energy commodity prices across units and currencies",
+  "description": "Excel add-in for refreshable OilPriceAPI formulas",
   "main": "dist/index.js",
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "generate:icons": "node generate-icons.js",
-    "generate:starter-workbook": "node scripts/generate-starter-workbook.js",
-    "validate:starter-workbook": "node scripts/validate-starter-workbook.js",
-    "prebuild": "npm run generate:starter-workbook",
+    "legacy:generate-starter-workbook": "node scripts/generate-starter-workbook.js",
+    "legacy:validate-starter-workbook": "node scripts/validate-starter-workbook.js",
     "build": "webpack --mode production",
     "dev": "webpack serve --config webpack.dev.js",
     "start": "npm run dev"

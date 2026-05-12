@@ -2,9 +2,12 @@ const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-  entry: './src/index.ts',
+  entry: {
+    bundle: './src/index.ts',
+    functions: './src/functions/functions.ts'
+  },
   output: {
-    filename: 'bundle.js',
+    filename: '[name].js',
     path: path.resolve(__dirname, 'dist'),
     library: 'ExcelEnergyAddin',
     libraryTarget: 'window',
@@ -28,6 +31,7 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         { from: 'public', to: '../dist' },
+        { from: 'src/functions/functions.json', to: '../dist/functions.json' },
         { from: 'manifest.xml', to: '../dist' }
       ]
     })

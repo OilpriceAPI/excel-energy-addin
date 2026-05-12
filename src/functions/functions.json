@@ -3,355 +3,52 @@
   "allowErrorForDataTypeAny": true,
   "functions": [
     {
-      "id": "OILPRICE.LATEST",
-      "name": "OILPRICE.LATEST",
-      "description": "Gets the latest price for a commodity code (auto-refreshes every 5 minutes)",
-      "helpUrl": "https://www.oilpriceapi.com/docs",
+      "id": "PRICE",
+      "name": "PRICE",
+      "description": "Gets the latest OilPriceAPI price for a commodity code.",
+      "helpUrl": "https://docs.oilpriceapi.com",
       "parameters": [
         {
           "name": "code",
-          "description": "Commodity code (e.g., BRENT_CRUDE_USD, WTI_USD, NATURAL_GAS_USD)",
+          "description": "Commodity code, for example BRENT_CRUDE_USD.",
           "type": "string",
           "optional": false
         }
       ],
       "result": {
-        "type": "number",
-        "dimensionality": "scalar"
-      },
-      "options": {
-        "stream": true,
-        "cancelable": true
-      }
-    },
-    {
-      "id": "OILPRICE",
-      "name": "OILPRICE",
-      "description": "Gets the latest price for a commodity code (alias for OILPRICE.LATEST)",
-      "helpUrl": "https://www.oilpriceapi.com/docs",
-      "parameters": [
-        {
-          "name": "code",
-          "description": "Commodity code (e.g., BRENT_CRUDE_USD, WTI_USD, NATURAL_GAS_USD)",
-          "type": "string",
-          "optional": false
-        }
-      ],
-      "result": {
-        "type": "number",
-        "dimensionality": "scalar"
-      },
-      "options": {
-        "stream": true,
-        "cancelable": true
-      }
-    },
-    {
-      "id": "OILPRICE.HISTORY",
-      "name": "OILPRICE.HISTORY",
-      "description": "Returns historical price data for a commodity as a table",
-      "helpUrl": "https://www.oilpriceapi.com/docs",
-      "parameters": [
-        {
-          "name": "code",
-          "description": "Commodity code (e.g., WTI_USD, BRENT_CRUDE_USD)",
-          "type": "string",
-          "optional": false
-        },
-        {
-          "name": "startDate",
-          "description": "Start date in YYYY-MM-DD format",
-          "type": "string",
-          "optional": false
-        },
-        {
-          "name": "endDate",
-          "description": "End date in YYYY-MM-DD format",
-          "type": "string",
-          "optional": false
-        }
-      ],
-      "result": {
-        "type": "string",
-        "dimensionality": "matrix"
-      }
-    },
-    {
-      "id": "OILPRICE.CONVERT",
-      "name": "OILPRICE.CONVERT",
-      "description": "Converts a commodity price between different units",
-      "helpUrl": "https://www.oilpriceapi.com/docs",
-      "parameters": [
-        {
-          "name": "code",
-          "description": "Commodity code (e.g., BRENT_CRUDE_USD)",
-          "type": "string",
-          "optional": false
-        },
-        {
-          "name": "fromUnit",
-          "description": "Source unit (e.g., barrel, gallon)",
-          "type": "string",
-          "optional": false
-        },
-        {
-          "name": "toUnit",
-          "description": "Target unit (e.g., MBtu, liter)",
-          "type": "string",
-          "optional": false
-        }
-      ],
-      "result": {
-        "type": "number",
+        "type": "any",
         "dimensionality": "scalar"
       }
     },
     {
-      "id": "OILPRICE_AVG",
-      "name": "OILPRICE_AVG",
-      "description": "Calculates the average price for a commodity over specified days",
-      "helpUrl": "https://www.oilpriceapi.com/docs",
+      "id": "GET",
+      "name": "GET",
+      "description": "Calls a supported OilPriceAPI GET endpoint and returns a table.",
+      "helpUrl": "https://docs.oilpriceapi.com",
       "parameters": [
         {
-          "name": "code",
-          "description": "Commodity code (e.g., BRENT_CRUDE_USD)",
+          "name": "path",
+          "description": "Supported API path, for example /v1/prices/latest.",
           "type": "string",
           "optional": false
         },
         {
-          "name": "days",
-          "description": "Number of days to average (e.g., 30 for 30-day average)",
-          "type": "number",
-          "optional": false
-        }
-      ],
-      "result": {
-        "type": "number",
-        "dimensionality": "scalar"
-      }
-    },
-    {
-      "id": "OILPRICE_MIN",
-      "name": "OILPRICE_MIN",
-      "description": "Gets the minimum price across all commodities or for a specific commodity",
-      "helpUrl": "https://www.oilpriceapi.com/docs",
-      "parameters": [
-        {
-          "name": "code",
-          "description": "Optional commodity code (if omitted, returns min across all commodities)",
+          "name": "query",
+          "description": "Query string, for example by_code=BRENT_CRUDE_USD.",
           "type": "string",
           "optional": true
         }
       ],
       "result": {
-        "type": "number",
-        "dimensionality": "scalar"
-      }
-    },
-    {
-      "id": "OILPRICE_MAX",
-      "name": "OILPRICE_MAX",
-      "description": "Gets the maximum price across all commodities or for a specific commodity",
-      "helpUrl": "https://www.oilpriceapi.com/docs",
-      "parameters": [
-        {
-          "name": "code",
-          "description": "Optional commodity code (if omitted, returns max across all commodities)",
-          "type": "string",
-          "optional": true
-        }
-      ],
-      "result": {
-        "type": "number",
-        "dimensionality": "scalar"
-      }
-    },
-    {
-      "id": "DIESEL_PRICE",
-      "name": "DIESEL_PRICE",
-      "description": "Gets the latest diesel price for a US state (auto-refreshes every 60 minutes)",
-      "helpUrl": "https://www.oilpriceapi.com/docs",
-      "parameters": [
-        {
-          "name": "state",
-          "description": "Two-letter state code (e.g., CA, TX, NY)",
-          "type": "string",
-          "optional": false
-        }
-      ],
-      "result": {
-        "type": "number",
-        "dimensionality": "scalar"
-      },
-      "options": {
-        "stream": true,
-        "cancelable": true
-      }
-    },
-    {
-      "id": "OILPRICE.CODES",
-      "name": "OILPRICE.CODES",
-      "description": "Returns all available commodity codes, names, and categories from the API",
-      "helpUrl": "https://www.oilpriceapi.com/docs",
-      "parameters": [],
-      "result": {
         "type": "string",
         "dimensionality": "matrix"
       }
     },
     {
-      "id": "FUTURES_PRICE",
-      "name": "FUTURES_PRICE",
-      "description": "Gets the latest futures price for a contract",
-      "helpUrl": "https://www.oilpriceapi.com/docs",
-      "parameters": [
-        {
-          "name": "contract",
-          "description": "Futures contract code (e.g., ice-brent, ice-wti, natural-gas)",
-          "type": "string",
-          "optional": false
-        }
-      ],
-      "result": {
-        "type": "number",
-        "dimensionality": "scalar"
-      }
-    },
-    {
-      "id": "FUTURES_CURVE",
-      "name": "FUTURES_CURVE",
-      "description": "Gets the futures curve for a contract",
-      "helpUrl": "https://www.oilpriceapi.com/docs",
-      "parameters": [
-        {
-          "name": "contract",
-          "description": "Futures contract code (e.g., ice-brent, ice-wti, natural-gas)",
-          "type": "string",
-          "optional": false
-        }
-      ],
-      "result": {
-        "type": "string",
-        "dimensionality": "matrix"
-      }
-    },
-    {
-      "id": "STORAGE_CUSHING",
-      "name": "STORAGE_CUSHING",
-      "description": "Gets the latest Cushing storage level in million barrels",
-      "helpUrl": "https://www.oilpriceapi.com/docs",
-      "parameters": [],
-      "result": {
-        "type": "number",
-        "dimensionality": "scalar"
-      }
-    },
-    {
-      "id": "STORAGE_SPR",
-      "name": "STORAGE_SPR",
-      "description": "Gets the latest Strategic Petroleum Reserve level in million barrels",
-      "helpUrl": "https://www.oilpriceapi.com/docs",
-      "parameters": [],
-      "result": {
-        "type": "number",
-        "dimensionality": "scalar"
-      }
-    },
-    {
-      "id": "RIG_COUNT",
-      "name": "RIG_COUNT",
-      "description": "Gets the latest rig count by type (oil, gas, or total)",
-      "helpUrl": "https://www.oilpriceapi.com/docs",
-      "parameters": [
-        {
-          "name": "type",
-          "description": "Rig type: oil, gas, or total",
-          "type": "string",
-          "optional": false
-        }
-      ],
-      "result": {
-        "type": "number",
-        "dimensionality": "scalar"
-      }
-    },
-    {
-      "id": "FORECAST_PRICE",
-      "name": "FORECAST_PRICE",
-      "description": "Gets monthly forecast price for a commodity",
-      "helpUrl": "https://www.oilpriceapi.com/docs",
-      "parameters": [
-        {
-          "name": "commodity",
-          "description": "Commodity code (e.g., WTI_USD, BRENT_CRUDE_USD)",
-          "type": "string",
-          "optional": false
-        },
-        {
-          "name": "period",
-          "description": "Forecast period in YYYY-MM format (e.g., 2026-03)",
-          "type": "string",
-          "optional": false
-        }
-      ],
-      "result": {
-        "type": "number",
-        "dimensionality": "scalar"
-      }
-    },
-    {
-      "id": "OILPRICE_STATS",
-      "name": "OILPRICE_STATS",
-      "description": "Gets statistical analytics for a commodity (mean, median, std dev, min, max)",
-      "helpUrl": "https://www.oilpriceapi.com/docs",
-      "parameters": [
-        {
-          "name": "code",
-          "description": "Commodity code (e.g., BRENT_CRUDE_USD)",
-          "type": "string",
-          "optional": false
-        },
-        {
-          "name": "days",
-          "description": "Number of days for analysis (e.g., 30)",
-          "type": "number",
-          "optional": false
-        }
-      ],
-      "result": {
-        "type": "string",
-        "dimensionality": "matrix"
-      }
-    },
-    {
-      "id": "OILPRICE_SPREAD",
-      "name": "OILPRICE_SPREAD",
-      "description": "Gets the price spread between two commodities (code1 - code2)",
-      "helpUrl": "https://www.oilpriceapi.com/docs",
-      "parameters": [
-        {
-          "name": "code1",
-          "description": "First commodity code (e.g., BRENT_CRUDE_USD)",
-          "type": "string",
-          "optional": false
-        },
-        {
-          "name": "code2",
-          "description": "Second commodity code (e.g., WTI_USD)",
-          "type": "string",
-          "optional": false
-        }
-      ],
-      "result": {
-        "type": "number",
-        "dimensionality": "scalar"
-      }
-    },
-    {
-      "id": "OILPRICE.DEMO",
-      "name": "OILPRICE.DEMO",
-      "description": "Returns the list of demo commodity codes that work without an API key (9 free commodities, 20 req/hour)",
-      "helpUrl": "https://www.oilpriceapi.com/docs",
+      "id": "CODES",
+      "name": "CODES",
+      "description": "Returns available OilPriceAPI commodity codes when supported by the API key.",
+      "helpUrl": "https://docs.oilpriceapi.com",
       "parameters": [],
       "result": {
         "type": "string",

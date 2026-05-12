@@ -6,9 +6,12 @@ const os = require('os');
 const certPath = path.join(os.homedir(), '.office-addin-dev-certs');
 
 module.exports = {
-  entry: './src/index.ts',
+  entry: {
+    bundle: './src/index.ts',
+    functions: './src/functions/functions.ts'
+  },
   output: {
-    filename: 'bundle.js',
+    filename: '[name].js',
     path: path.resolve(__dirname, 'dist'),
     library: 'ExcelEnergyAddin',
     libraryTarget: 'window',
@@ -32,6 +35,7 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         { from: 'public', to: '.' },
+        { from: 'src/functions/functions.json', to: 'functions.json' },
         { from: 'manifest.xml', to: '.' }
       ]
     })
