@@ -85,20 +85,20 @@
 <body>
     <div class="container">
         <h1>Privacy Policy</h1>
-        <p><strong>Excel Energy Price Comparison Add-in</strong></p>
+        <p><strong>OilPrice Excel Add-in</strong></p>
         <p><strong>Effective Date:</strong> October 7, 2025</p>
-        <p><strong>Last Updated:</strong> October 7, 2025</p>
+        <p><strong>Last Updated:</strong> May 12, 2026</p>
 
         <div class="highlight">
-            <p><strong>Summary:</strong> This add-in stores your API key locally in your browser and uses it to fetch energy commodity prices from OilPriceAPI. We do not collect, store, or transmit any personal information to our servers.</p>
+            <p><strong>Summary:</strong> This add-in stores your API key in the Office add-in runtime where available and uses it to fetch OilPriceAPI data. We do not collect spreadsheet contents or workbook files.</p>
         </div>
 
         <h2>1. Information We Collect</h2>
         
         <h3>1.1 Information You Provide</h3>
         <ul>
-            <li><strong>API Key:</strong> When you configure the add-in, you provide an OilPriceAPI API key. This key is stored locally in your browser's localStorage and is never transmitted to us.</li>
-            <li><strong>Commodity Selections:</strong> Your choices of which commodities to fetch (e.g., Brent, WTI, Natural Gas) are stored locally in your browser.</li>
+            <li><strong>API Key:</strong> When you configure the add-in, you provide an OilPriceAPI API key. The add-in stores this key in Office runtime storage where available, with local browser storage used only as a development fallback.</li>
+            <li><strong>Formula Inputs:</strong> Formula arguments such as commodity codes or endpoint paths are sent to OilPriceAPI only when Excel recalculates a formula.</li>
         </ul>
 
         <h3>1.2 Automatically Collected Information</h3>
@@ -130,12 +130,12 @@
                 <tr>
                     <td>API Key</td>
                     <td>Authenticate requests to OilPriceAPI</td>
-                    <td>Your browser's localStorage (local only)</td>
+                    <td>Office runtime storage where available; local browser storage fallback in development</td>
                 </tr>
                 <tr>
-                    <td>Commodity Preferences</td>
-                    <td>Remember your selected commodities</td>
-                    <td>Your browser's localStorage (local only)</td>
+                    <td>Formula Inputs</td>
+                    <td>Request the selected OilPriceAPI endpoint</td>
+                    <td>Worksheet cells controlled by the user</td>
                 </tr>
                 <tr>
                     <td>API Request Logs</td>
@@ -147,13 +147,13 @@
 
         <h2>3. Data Storage and Security</h2>
 
-        <h3>3.1 Local Storage</h3>
-        <p>Your API key and preferences are stored in your browser's localStorage. This data:</p>
+        <h3>3.1 Add-in Storage</h3>
+        <p>Your API key is stored by the add-in runtime where available. In development fallback mode, browser local storage may be used. This data:</p>
         <ul>
             <li>Remains on your device only</li>
             <li>Is not transmitted to our servers</li>
-            <li>Persists until you clear your browser cache or uninstall the add-in</li>
-            <li>Can be deleted at any time through browser settings</li>
+            <li>Persists until you clear it from the add-in or remove the add-in storage</li>
+            <li>Can be deleted at any time from the add-in key manager</li>
         </ul>
 
         <h3>3.2 Data Transmission</h3>
@@ -167,13 +167,13 @@
         <p>This add-in integrates with:</p>
         <ul>
             <li><strong>OilPriceAPI</strong> - Commodity price data provider. See <a href="https://www.oilpriceapi.com/privacy">OilPriceAPI Privacy Policy</a>.</li>
-            <li><strong>Azure Static Web Apps</strong> - Hosting provider (Microsoft). See <a href="https://privacy.microsoft.com/en-us/privacystatement">Microsoft Privacy Statement</a>.</li>
+            <li><strong>GitHub Pages</strong> - Static hosting for add-in assets. See <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub Privacy Statement</a>.</li>
         </ul>
 
         <h2>4. Data Retention</h2>
 
         <ul>
-            <li><strong>Local Data:</strong> Your API key and preferences are retained indefinitely in localStorage until you manually delete them.</li>
+            <li><strong>Add-in Data:</strong> Your API key is retained until you clear it from the add-in key manager or remove the add-in storage.</li>
             <li><strong>API Logs:</strong> OilPriceAPI retains request logs for 90 days for security and billing purposes.</li>
         </ul>
 
@@ -183,7 +183,7 @@
         <p>You can:</p>
         <ul>
             <li><strong>View your API key:</strong> Open the add-in Settings panel</li>
-            <li><strong>Delete your API key:</strong> Clear it in Settings or clear your browser's localStorage</li>
+            <li><strong>Delete your API key:</strong> Clear it in the add-in key manager</li>
             <li><strong>Request API log deletion:</strong> Contact <a href="mailto:privacy@oilpriceapi.com">privacy@oilpriceapi.com</a></li>
         </ul>
 
@@ -200,9 +200,9 @@
         <p>We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated "Last Updated" date. Continued use of the add-in after changes constitutes acceptance of the updated policy.</p>
 
         <h2>9. Compliance</h2>
-        <p>This add-in complies with:</p>
+        <p>This add-in is designed to align with:</p>
         <ul>
-            <li>Microsoft AppSource Privacy Requirements</li>
+            <li>Microsoft Office add-in privacy expectations</li>
             <li>California Consumer Privacy Act (CCPA)</li>
             <li>General Data Protection Regulation (GDPR) - EU users</li>
         </ul>

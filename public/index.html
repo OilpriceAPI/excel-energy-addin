@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OilPriceAPI Excel Starter Workbook</title>
-    <meta name="description" content="Download a no-macro Excel API runner workbook for OilPriceAPI GET endpoint lookups.">
+    <title>OilPrice Excel Add-in</title>
+    <meta name="description" content="OilPrice Excel add-in for refreshable OilPriceAPI formulas.">
     <style>
         body {
             font-family: Georgia, "Times New Roman", serif;
@@ -47,6 +47,11 @@
         .feature li {
             margin: 10px 0;
         }
+        code {
+            background: #fff;
+            border: 1px solid #d8d1c5;
+            padding: 2px 6px;
+        }
         .footer {
             margin-top: 40px;
             padding-top: 20px;
@@ -59,43 +64,27 @@
 </head>
 <body>
     <main>
-        <h1>OilPriceAPI Excel API Runner</h1>
-        <p class="subtitle">One visible sheet. Paste an API key, edit the endpoint path or query string, and return a normalized results table from Excel.</p>
-        
-        <p>The formula workbook is available for Windows desktop Excel. Mac and web users should use the browser export on oilpriceapi.com/excel until the Power Query or add-in path is verified.</p>
-        
+        <h1>OilPrice Excel Add-in</h1>
+        <p class="subtitle">Refresh OilPriceAPI data inside Excel with formulas.</p>
+
+        <p>The Excel product path is the OilPrice add-in: set an API key once, then use formulas that recalculate in the workbook after validation.</p>
+
         <div style="margin: 30px 0;">
-            <a href="./Energy_Price_Comparison_Template.xlsx" class="button">Download Starter Workbook</a>
-            <a href="https://www.oilpriceapi.com/signup?utm_source=excel&utm_medium=starter_workbook&utm_campaign=github_pages" class="button">Get API Key</a>
+            <a href="https://www.oilpriceapi.com/signup?utm_source=excel&utm_medium=addin&utm_campaign=github_pages" class="button">Get API Key</a>
             <a href="https://github.com/OilpriceAPI/excel-energy-addin" class="button">View on GitHub</a>
         </div>
-        
-        <h2>First Use</h2>
+
+        <h2>Formula Scope</h2>
         <ul class="feature">
-            <li>Open the workbook in Windows desktop Excel.</li>
-            <li>If Excel asks, choose <strong>Enable Editing</strong> and <strong>Enable Content</strong>. Microsoft controls those prompts for downloaded workbooks that call web endpoints.</li>
-            <li>Paste your OilPriceAPI key into the highlighted key cell.</li>
-            <li>Use the default WTI lookup, or edit the visible endpoint path and query string cells.</li>
-            <li>Press <strong>Enter</strong>.</li>
-            <li>If values do not populate immediately, use <strong>Formulas &gt; Calculate Now</strong>.</li>
-        </ul>
-        <p>Formula refresh uses Excel <strong>WEBSERVICE</strong> and <strong>FILTERXML</strong>, which are intended for Windows desktop Excel. This starter workbook is not the recommended path for Excel for Mac or Excel for the web.</p>
-        
-        <h2>What It Includes</h2>
-        <ul class="feature">
-            <li>One-page API runner with visible API key, endpoint path, and query string cells.</li>
-            <li>Starter examples for latest price, price history, and futures curve endpoint shapes.</li>
-            <li>Visible worksheet messages for missing key, auth, quota/rate-limit, and no-data states.</li>
-            <li>No embedded API key or customer data.</li>
-            <li>No VBA, macros, or Office add-in dependency for first use.</li>
+            <li><code>=OILPRICE.PRICE("BRENT_CRUDE_USD")</code></li>
+            <li><code>=OILPRICE.PRICE(A2)</code></li>
+            <li><code>=OILPRICE.GET("/v1/prices/latest", "by_code=BRENT_CRUDE_USD")</code></li>
+            <li><code>=OILPRICE.CODES()</code></li>
         </ul>
 
-        <h2>Developer Add-in</h2>
-        <ol class="feature">
-            <li>The Office add-in manifest remains available in the GitHub repo for development and testing.</li>
-            <li>Use the starter workbook first unless you specifically need to test the add-in path.</li>
-        </ol>
-        
+        <h2>Support Posture</h2>
+        <p>Customer setup instructions should wait for Windows Excel smoke that proves the add-in loads, stores the API key, calls production, and recalculates formulas after a symbol change.</p>
+
         <div class="footer">
             <p>Built by the <a href="https://www.oilpriceapi.com">OilPriceAPI</a> team</p>
             <p><a href="https://github.com/OilpriceAPI/excel-energy-addin">GitHub repository</a></p>
