@@ -45,6 +45,7 @@
   <Requirements>
     <Sets DefaultMinVersion="1.1">
       <Set Name="CustomFunctionsRuntime" MinVersion="1.1"/>
+      <Set Name="SharedRuntime" MinVersion="1.1"/>
     </Sets>
   </Requirements>
 
@@ -62,13 +63,17 @@
     <Hosts>
       <Host xsi:type="Workbook">
 
+        <Runtimes>
+          <Runtime resid="Taskpane.Url" lifetime="long"/>
+        </Runtimes>
+
         <AllFormFactors>
           <ExtensionPoint xsi:type="CustomFunctions">
             <Script>
               <SourceLocation resid="Functions.Script.Url"/>
             </Script>
             <Page>
-              <SourceLocation resid="Functions.Page.Url"/>
+              <SourceLocation resid="Taskpane.Url"/>
             </Page>
             <Metadata>
               <SourceLocation resid="Functions.Metadata.Url"/>
@@ -134,7 +139,6 @@
         <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://www.oilpriceapi.com/tools/excel-support"/>
         <bt:Url id="Taskpane.Url" DefaultValue="https://oilpriceapi.github.io/excel-energy-addin/taskpane.html"/>
         <bt:Url id="Functions.Script.Url" DefaultValue="https://oilpriceapi.github.io/excel-energy-addin/functions.js"/>
-        <bt:Url id="Functions.Page.Url" DefaultValue="https://oilpriceapi.github.io/excel-energy-addin/functions.html"/>
         <bt:Url id="Functions.Metadata.Url" DefaultValue="https://oilpriceapi.github.io/excel-energy-addin/functions.json"/>
       </bt:Urls>
 

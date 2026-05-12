@@ -85,6 +85,17 @@ describe("OilPrice custom functions MVP", () => {
         "#RATE_LIMITED: Limit reached. Try later",
       );
     });
+
+    it("maps payment required responses to a quota or upgrade worksheet error", async () => {
+      ((globalThis as any).fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: 402,
+      });
+
+      await expect(oilpricePrice("BRENT_CRUDE_USD")).resolves.toBe(
+        "#UPGRADE_REQUIRED: Quota or plan limit reached",
+      );
+    });
   });
 
   describe("OILPRICE.GET", () => {

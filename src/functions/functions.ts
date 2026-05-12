@@ -60,6 +60,13 @@ function parseResponseError(response: Response): ResponseError {
     };
   }
 
+  if (response.status === 402) {
+    return {
+      code: "UPGRADE_REQUIRED",
+      message: "Quota or plan limit reached",
+    };
+  }
+
   if (response.status === 404) {
     return { code: "NO_DATA", message: "No data returned" };
   }
