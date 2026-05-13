@@ -1,5 +1,9 @@
 # Development Guide
 
+This guide is for the current OilPrice Excel add-in only. Historical crawl/walk,
+AppSource, workbook-export, Power Query, `WEBSERVICE`, and `FILTERXML` notes are
+archived under `docs/legacy` and must not be used for customer instructions.
+
 This guide is for contributors working on the add-in source code. For **installation instructions**, see [INSTALL.md](INSTALL.md).
 
 ## Prerequisites
@@ -79,7 +83,7 @@ Current coverage: ~98%.
 ```
 src/
 ├── functions/
-│   ├── functions.ts     # Custom Excel functions (=OILPRICE, etc.)
+│   ├── functions.ts     # Custom Excel functions (=OILPRICE.PRICE, OILPRICE.GET, etc.)
 │   └── functions.json   # Function metadata for Office.js
 ├── utils/
 │   ├── api-client.ts    # OilPriceAPI HTTP client
@@ -108,11 +112,11 @@ To deploy:
 
 - **Shared Runtime**: The add-in uses Office.js Shared Runtime so custom functions and the taskpane share state
 - **Storage**: API keys are stored in `OfficeRuntime.storage` (encrypted, per-user)
-- **Streaming Functions**: `OILPRICE()` and `DIESEL_PRICE()` auto-refresh via `invocation.setResult()`
+- **Refreshable formulas**: `OILPRICE.PRICE`, `OILPRICE.GET`, and `OILPRICE.CODES` recalculate through Excel custom functions.
 - **Tier Gating**: Historical data and some features check user plan tier before executing
 
 ## Debugging
 
-1. In Excel Online, press F12 to open browser dev tools
+1. In Excel on the web, press F12 to open browser dev tools
 2. In Excel Desktop, use the "Attach Debugger" option from the add-in menu
 3. Console logs from `taskpane.js` and custom functions appear in the dev tools console
