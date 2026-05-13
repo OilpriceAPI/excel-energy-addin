@@ -1,124 +1,124 @@
-# Installing the Energy Price Comparison Add-in
+# OilPrice Excel Add-in Install Instructions
 
-## Prerequisites
+These instructions are for internal preview validation only.
 
-- Microsoft Excel (2016 or later, or Excel Online)
-- An OilPriceAPI key ([get one free](https://www.oilpriceapi.com))
+Do not send them to customers until the Windows Excel runtime smoke in [ADDIN_ACTIVATION_CHECKLIST.md](ADDIN_ACTIVATION_CHECKLIST.md) is green and the customer distribution path in `#16` is selected.
 
----
+## Product Position
 
-## Option A: Excel Online (Easiest)
+The supported Excel path is the OilPrice Excel add-in for refreshable formulas.
 
-1. Open [Excel Online](https://www.office.com/launch/excel) and create or open a workbook
-2. Click **Insert** > **Office Add-ins** > **Upload My Add-in**
-3. Enter this manifest URL or upload the file from:
-   ```
+Primary formulas:
+
+```excel
+=OILPRICE.PRICE("BRENT_CRUDE_USD")
+=OILPRICE.PRICE(A2)
+=OILPRICE.GET("/v1/prices/latest", "by_code=BRENT_CRUDE_USD")
+=OILPRICE.CODES()
+```
+
+Do not use workbook exports, Power Query, `WEBSERVICE`, `FILTERXML`, VBA, or one-time snapshots as customer-primary instructions.
+
+## Before You Start
+
+You need:
+
+- Windows Excel Desktop.
+- A non-customer OilPriceAPI test key.
+- Access to production API logs to confirm the add-in request.
+
+Do not put the raw API key in screenshots, logs, GitHub issues, pull requests, or support replies.
+
+## Preview Install
+
+1. Open Windows Excel Desktop.
+2. Add the add-in manifest:
+
+   ```text
    https://oilpriceapi.github.io/excel-energy-addin/manifest.xml
    ```
-4. Click **Upload** — the add-in appears in the **Home** ribbon
 
-> If "Upload My Add-in" asks for a file, [download the manifest](https://oilpriceapi.github.io/excel-energy-addin/manifest.xml) first, then upload it.
+3. Open the **OilPrice** task pane from the Excel ribbon.
+4. Paste the non-customer test key.
+5. Click **Save Key**.
+6. Click **Test Key**.
 
----
+Expected result:
 
-## Option B: Excel Desktop (Windows)
+- The pane reports `Connected` for a valid key, or a plain auth/quota/plan/rate-limit error for a non-valid key.
+- The pane must not report `Key saved` if shared Excel add-in storage is unavailable.
 
-### Sideload via Shared Folder Catalog
+## Formula Smoke
 
-1. Create a folder for add-in manifests, e.g. `C:\ExcelAddins\`
-2. [Download the manifest.xml](https://oilpriceapi.github.io/excel-energy-addin/manifest.xml) and save it to that folder
-3. In Excel, go to **File** > **Options** > **Trust Center** > **Trust Center Settings**
-4. Click **Trusted Add-in Catalogs**
-5. In "Catalog Url", enter `C:\ExcelAddins\` and click **Add Catalog**
-6. Check the **Show in Menu** checkbox, click **OK**, then **OK** again
-7. Restart Excel
-8. Go to **Insert** > **My Add-ins** > **Shared Folder** tab
-9. Select **Energy Price Comparison** and click **Add**
+In a worksheet cell:
 
-### Sideload via Upload (Microsoft 365)
+```excel
+=OILPRICE.PRICE("BRENT_CRUDE_USD")
+```
 
-1. In Excel, go to **Insert** > **Get Add-ins** > **My Add-ins**
-2. Click **Upload My Add-in** (top right corner)
-3. Browse to the downloaded `manifest.xml` file
-4. Click **Upload**
+Expected result:
 
----
+- A numeric production value for a valid key.
+- A clear worksheet error string for missing key, invalid key, quota, plan, no data, network, or server failures.
+- No `#NAME?`.
 
-## Option C: Excel Desktop (Mac)
+Then test cell-reference recalculation:
 
-1. [Download the manifest.xml](https://oilpriceapi.github.io/excel-energy-addin/manifest.xml)
-2. Save it to `~/Library/Containers/com.microsoft.Excel/Data/Documents/wef/`
-   - Create the `wef` folder if it doesn't exist
-3. Restart Excel
-4. The add-in will appear under **Insert** > **My Add-ins**
+1. Put `BRENT_CRUDE_USD` in `A1`.
+2. In another cell, enter:
 
----
+   ```excel
+   =OILPRICE.PRICE(A1)
+   ```
 
-## First-Time Setup
+3. Change `A1` to another supported code.
+4. Recalculate.
 
-Once the add-in is loaded:
+Expected result:
 
-1. Click **Show Prices** in the Home ribbon to open the panel
-2. Enter your OilPriceAPI key in the Settings section
-3. Click **Save**, then **Test Connection** to verify
-4. Select commodities and click **Fetch Prices**
+- The formula updates after the referenced cell changes.
 
----
+Then test the table function:
 
-## Using Custom Functions
+```excel
+=OILPRICE.GET("/v1/prices/latest", "by_code=BRENT_CRUDE_USD")
+```
 
-Type these directly in any cell:
+Expected result:
 
-| Function                              | Example                                                    | Description                    |
-| ------------------------------------- | ---------------------------------------------------------- | ------------------------------ |
-| `=OILPRICE(code)`                     | `=OILPRICE("BRENT_CRUDE_USD")`                             | Current price (auto-refreshes) |
-| `=OILPRICE.HISTORY(code, start, end)` | `=OILPRICE.HISTORY("WTI_USD", "2025-01-01", "2025-12-31")` | Historical prices as table     |
-| `=OILPRICE.CONVERT(code, from, to)`   | `=OILPRICE.CONVERT("BRENT_CRUDE_USD", "barrel", "MBtu")`   | Unit conversion                |
-| `=OILPRICE_AVG(code, days)`           | `=OILPRICE_AVG("WTI_USD", 30)`                             | N-day average price            |
-| `=OILPRICE_MIN(code)`                 | `=OILPRICE_MIN("NATURAL_GAS_USD")`                         | Minimum price                  |
-| `=OILPRICE_MAX(code)`                 | `=OILPRICE_MAX("NATURAL_GAS_USD")`                         | Maximum price                  |
-| `=DIESEL_PRICE(state)`                | `=DIESEL_PRICE("TX")`                                      | US state diesel average        |
+- A readable spilled table or a clear worksheet error.
 
----
+## Production Log Proof
 
-## Common Commodity Codes
+Confirm the production API saw the add-in request:
 
-| Code              | Commodity               |
-| ----------------- | ----------------------- |
-| `BRENT_CRUDE_USD` | Brent Crude Oil         |
-| `WTI_USD`         | WTI Crude Oil           |
-| `NATURAL_GAS_USD` | Natural Gas (Henry Hub) |
-| `HEATING_OIL_USD` | Heating Oil             |
-| `DIESEL_USD`      | Diesel                  |
-| `GASOLINE_USD`    | Gasoline                |
-| `COAL_USD`        | Coal                    |
-| `PROPANE_USD`     | Propane                 |
+- expected endpoint: `/v1/prices/latest`;
+- expected code: `BRENT_CRUDE_USD`;
+- expected header: `X-Excel-Addin-Version: 1.0.0`;
+- expected user/key: the non-customer test account;
+- no raw API key exposure.
 
-For the full list of 100+ commodity codes, visit [docs.oilpriceapi.com](https://docs.oilpriceapi.com).
+## Customer Instruction Gate
 
----
+Only after all preview checks pass:
 
-## Troubleshooting
+1. Record the exact Excel platform that passed.
+2. Record the redacted production log proof.
+3. Update website/support copy to one customer path.
+4. Route distribution through `#16`: AppSource, Microsoft 365 centralized deployment, or explicitly labeled preview install.
 
-### Add-in doesn't appear in ribbon
+Until then, customer replies should say that we are validating the Excel add-in path and will send tested instructions when it is ready.
 
-- Make sure you restarted Excel after adding the manifest
-- Check that the catalog folder is correctly configured in Trust Center
+## Troubleshooting During Preview
 
-### "Could not connect" error
-
-- Verify your API key is correct
-- Check your internet connection
-- Try the **Test Connection** button in the panel
-
-### Functions return #ERROR
-
-- Ensure your API key is saved in the panel settings
-- Check that the commodity code is valid (see table above)
-- `#UPGRADE_REQUIRED` means the feature needs a paid plan
-
-### Need help?
-
-- Documentation: [docs.oilpriceapi.com](https://docs.oilpriceapi.com)
-- Email: support@oilpriceapi.com
-- Issues: [GitHub](https://github.com/OilpriceAPI/excel-energy-addin/issues)
+| Symptom | Meaning | Action |
+| --- | --- | --- |
+| `#AUTH_REQUIRED` | No key is saved for formulas. | Open the OilPrice pane and save the key. |
+| `#AUTH_INVALID` | The key is invalid or expired. | Use a valid non-customer test key. |
+| `#UPGRADE_REQUIRED` | The key plan or quota does not cover the request. | Use an eligible test key or note the quota state. |
+| `#RATE_LIMITED` | The key hit a rate limit. | Wait or use a test key with available quota. |
+| `#NO_DATA` | The API returned no matching data. | Check the code/query. |
+| `#NETWORK_ERROR` | Excel could not reach the API. | Check network and add-in connectivity. |
+| `#SERVER_ERROR` | API returned a server error. | Check production logs before retrying. |
+| `#UNSUPPORTED_ENDPOINT` | The add-in blocked the endpoint. | Use only supported MVP endpoints. |
+| `#NAME?` | Excel did not load the custom function. | Do not send customer instructions; file the runtime defect on `#12`. |
