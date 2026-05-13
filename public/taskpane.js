@@ -5,7 +5,10 @@ const TEST_URL =
   "https://api.oilpriceapi.com/v1/prices/latest?by_code=BRENT_CRUDE_USD";
 
 Office.onReady((info) => {
-  if (info.host !== Office.HostType.Excel) return;
+  if (info.host !== Office.HostType.Excel) {
+    showError("Open this pane from Excel to save and test an API key.");
+    return;
+  }
 
   setupEventListeners();
   loadApiKeyState();
@@ -20,35 +23,61 @@ function setupEventListeners() {
 }
 
 async function storageGet(key) {
+  if (!hasSharedStorage()) {
+    throw new Error("SHARED_STORAGE_UNAVAILABLE");
+  }
+
   try {
     return await OfficeRuntime.storage.getItem(key);
   } catch {
-    return localStorage.getItem(key);
+    throw new Error("SHARED_STORAGE_UNAVAILABLE");
   }
 }
 
 async function storageSet(key, value) {
+  if (!hasSharedStorage()) {
+    throw new Error("SHARED_STORAGE_UNAVAILABLE");
+  }
+
   try {
     await OfficeRuntime.storage.setItem(key, value);
-  } finally {
     localStorage.setItem(key, value);
+  } catch {
+    localStorage.removeItem(key);
+    throw new Error("SHARED_STORAGE_UNAVAILABLE");
   }
 }
 
 async function storageRemove(key) {
+  if (!hasSharedStorage()) {
+    localStorage.removeItem(key);
+    return;
+  }
+
   try {
     await OfficeRuntime.storage.removeItem(key);
-  } catch {
-    await storageSet(key, "");
   } finally {
     localStorage.removeItem(key);
   }
 }
 
+function hasSharedStorage() {
+  return (
+    typeof OfficeRuntime !== "undefined" &&
+    OfficeRuntime.storage &&
+    typeof OfficeRuntime.storage.getItem === "function" &&
+    typeof OfficeRuntime.storage.setItem === "function"
+  );
+}
+
 async function loadApiKeyState() {
-  const apiKey = await storageGet(API_KEY_STORAGE);
-  if (apiKey) {
-    setConnectionStatus("Key saved", "success");
+  try {
+    const apiKey = await storageGet(API_KEY_STORAGE);
+    if (apiKey) {
+      setConnectionStatus("Key saved", "success");
+    }
+  } catch {
+    setConnectionStatus("Storage unavailable", "error");
   }
 }
 
@@ -61,20 +90,38 @@ async function saveApiKey() {
     return;
   }
 
-  await storageSet(API_KEY_STORAGE, apiKey);
-  if (input) input.value = "";
-  showStatus("API key saved. Use Formulas > Calculate Now to refresh formulas.");
-  setConnectionStatus("Key saved", "success");
+  try {
+    await storageSet(API_KEY_STORAGE, apiKey);
+    if (input) input.value = "";
+    showStatus("API key saved. Use Formulas > Calculate Now to refresh formulas.");
+    setConnectionStatus("Key saved", "success");
+  } catch {
+    setConnectionStatus("Storage unavailable", "error");
+    showError("Excel shared storage is unavailable. Reload the add-in, then save the key again.");
+  }
 }
 
 async function clearApiKey() {
-  await storageRemove(API_KEY_STORAGE);
-  setConnectionStatus("No key saved", "");
-  showStatus("API key cleared.");
+  try {
+    await storageRemove(API_KEY_STORAGE);
+    setConnectionStatus("No key saved", "");
+    showStatus("API key cleared.");
+  } catch {
+    setConnectionStatus("Storage unavailable", "error");
+    showError("Excel shared storage is unavailable. Reload the add-in, then try again.");
+  }
 }
 
 async function testConnection() {
-  const apiKey = await storageGet(API_KEY_STORAGE);
+  let apiKey;
+  try {
+    apiKey = await storageGet(API_KEY_STORAGE);
+  } catch {
+    setConnectionStatus("Storage unavailable", "error");
+    showError("Excel shared storage is unavailable. Reload the add-in, save the key, then test again.");
+    return;
+  }
+
   if (!apiKey) {
     showError("Save an API key before testing.");
     setConnectionStatus("No key", "error");
@@ -104,9 +151,27 @@ async function testConnection() {
       return;
     }
 
+    if (response.status === 402) {
+      setConnectionStatus("Quota reached", "error");
+      showError("Quota or plan limit reached.");
+      return;
+    }
+
+    if (response.status === 403) {
+      setConnectionStatus("Upgrade required", "error");
+      showError("Your plan does not include this endpoint.");
+      return;
+    }
+
     if (response.status === 429) {
       setConnectionStatus("Rate limited", "error");
       showError("Rate limit reached. Try later.");
+      return;
+    }
+
+    if (response.status >= 500) {
+      setConnectionStatus("Server error", "error");
+      showError("OilPriceAPI is temporarily unavailable.");
       return;
     }
 
