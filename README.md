@@ -25,6 +25,7 @@ See [ADDIN_ACTIVATION_CHECKLIST.md](ADDIN_ACTIVATION_CHECKLIST.md) for the proof
 ## Current Documentation
 
 - [ADDIN_ACTIVATION_CHECKLIST.md](ADDIN_ACTIVATION_CHECKLIST.md) is the gate for runtime proof.
+- [DISTRIBUTION.md](DISTRIBUTION.md) is the internal runbook for managed-customer and public self-serve distribution after runtime proof.
 - [INSTALL.md](INSTALL.md) and [QUICK_INSTALL.md](QUICK_INSTALL.md) are internal preview instructions only.
 - [docs/legacy](docs/legacy) contains historical planning notes. Do not use those files for customer setup, support replies, AppSource copy, screenshots, or launch status.
 
