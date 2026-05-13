@@ -56,6 +56,30 @@
         <div id="error-message" class="error-message"></div>
       </section>
 
+      <section class="diagnostics-section">
+        <h2>Diagnostics</h2>
+        <dl class="diagnostics-list">
+          <div>
+            <dt>Version</dt>
+            <dd id="diag-version">1.0.0</dd>
+          </div>
+          <div>
+            <dt>Excel</dt>
+            <dd id="diag-excel">Detecting</dd>
+          </div>
+          <div>
+            <dt>Storage</dt>
+            <dd id="diag-storage">Detecting</dd>
+          </div>
+          <div>
+            <dt>Last test</dt>
+            <dd id="diag-last-test">Not tested</dd>
+          </div>
+        </dl>
+        <button id="copy-diagnostics-btn" class="btn-secondary" type="button">Copy Diagnostics</button>
+        <p class="diagnostics-note">Copies version, Excel host, storage state, and last test result. API keys are never copied.</p>
+      </section>
+
       <section class="help-section">
         <details>
           <summary>Formula errors</summary>
