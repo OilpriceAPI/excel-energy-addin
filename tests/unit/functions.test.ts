@@ -124,8 +124,219 @@ describe("OilPrice custom functions MVP", () => {
       ]);
     });
 
-    it("rejects unsupported endpoints without making a request", async () => {
-      const result = await oilpriceGet("/v1/users/me");
+    it("allows the supported preview endpoint catalog", async () => {
+      const supportedPaths = [
+        "/v1/status",
+        "/v1/prices",
+        "/v1/prices/latest",
+        "/v1/prices/past_day",
+        "/v1/prices/past_week",
+        "/v1/prices/past_month",
+        "/v1/prices/past_year",
+        "/v1/prices/historical",
+        "/v1/prices/all",
+        "/v1/prices/all/health",
+        "/v1/diesel-prices",
+        "/v1/commodities",
+        "/v1/commodities/categories",
+        "/v1/commodities/BRENT_CRUDE_USD",
+      ];
+
+      for (const path of supportedPaths) {
+        ((globalThis as any).fetch as jest.Mock).mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({ data: { ok: true } }),
+        });
+
+        await expect(oilpriceGet(path)).resolves.toEqual([
+          ["Field", "Value"],
+          ["ok", "true"],
+        ]);
+      }
+
+      expect((globalThis as any).fetch).toHaveBeenCalledTimes(
+        supportedPaths.length,
+      );
+    });
+
+    it("supports leading question marks in query strings", async () => {
+      ((globalThis as any).fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ data: { code: "BRENT_CRUDE_USD" } }),
+      });
+
+      await oilpriceGet("/v1/prices/latest", "?by_code=BRENT_CRUDE_USD");
+
+      expect((globalThis as any).fetch).toHaveBeenCalledWith(
+        "https://api.oilpriceapi.com/v1/prices/latest?by_code=BRENT_CRUDE_USD",
+        expect.any(Object),
+      );
+    });
+
+    it("allows normal data query keys", async () => {
+      ((globalThis as any).fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ data: { code: "BRENT_CRUDE_USD" } }),
+      });
+
+      await oilpriceGet(
+        "/v1/prices/historical",
+        "by_code=BRENT_CRUDE_USD&start_date=2026-05-01&end_date=2026-05-13",
+      );
+
+      expect((globalThis as any).fetch).toHaveBeenCalledWith(
+        "https://api.oilpriceapi.com/v1/prices/historical?by_code=BRENT_CRUDE_USD&start_date=2026-05-01&end_date=2026-05-13",
+        expect.any(Object),
+      );
+    });
+
+    it("renders prices hash responses as a worksheet table", async () => {
+      ((globalThis as any).fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          data: {
+            prices: {
+              BRENT_CRUDE_USD: {
+                price: 85.45,
+                currency: "USD",
+                timestamp: "2026-05-13T10:00:00Z",
+              },
+              WTI_USD: {
+                price: 81.12,
+                currency: "USD",
+                timestamp: "2026-05-13T10:00:00Z",
+              },
+            },
+          },
+        }),
+      });
+
+      await expect(oilpriceGet("/v1/prices/all")).resolves.toEqual([
+        ["Code", "price", "currency", "timestamp"],
+        ["BRENT_CRUDE_USD", "85.45", "USD", "2026-05-13T10:00:00Z"],
+        ["WTI_USD", "81.12", "USD", "2026-05-13T10:00:00Z"],
+      ]);
+    });
+
+    it("renders prices array envelopes as worksheet table rows", async () => {
+      ((globalThis as any).fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          data: {
+            prices: [
+              {
+                code: "BRENT_CRUDE_USD",
+                price: 85.45,
+                currency: "USD",
+                date: "2026-05-13",
+              },
+              {
+                code: "WTI_USD",
+                price: 81.12,
+                currency: "USD",
+                date: "2026-05-13",
+              },
+            ],
+          },
+        }),
+      });
+
+      await expect(oilpriceGet("/v1/prices")).resolves.toEqual([
+        ["code", "price", "currency", "date"],
+        ["BRENT_CRUDE_USD", "85.45", "USD", "2026-05-13"],
+        ["WTI_USD", "81.12", "USD", "2026-05-13"],
+      ]);
+    });
+
+    it("renders historical prices array envelopes as worksheet table rows", async () => {
+      ((globalThis as any).fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          data: {
+            prices: [
+              {
+                code: "BRENT_CRUDE_USD",
+                price: 84.01,
+                currency: "USD",
+                date: "2026-05-12",
+              },
+            ],
+          },
+        }),
+      });
+
+      await expect(
+        oilpriceGet(
+          "/v1/prices/historical",
+          "by_code=BRENT_CRUDE_USD&start_date=2026-05-12&end_date=2026-05-13",
+        ),
+      ).resolves.toEqual([
+        ["code", "price", "currency", "date"],
+        ["BRENT_CRUDE_USD", "84.01", "USD", "2026-05-12"],
+      ]);
+    });
+
+    it("renders primitive prices hash responses as code and value rows", async () => {
+      ((globalThis as any).fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          data: {
+            prices: {
+              BRENT_CRUDE_USD: 85.45,
+              WTI_USD: 81.12,
+            },
+          },
+        }),
+      });
+
+      await expect(oilpriceGet("/v1/prices/all")).resolves.toEqual([
+        ["Code", "Value"],
+        ["BRENT_CRUDE_USD", "85.45"],
+        ["WTI_USD", "81.12"],
+      ]);
+    });
+
+    it("rejects sensitive query keys without making a request", async () => {
+      const sensitiveKeys = [
+        "token",
+        "api_key",
+        "key",
+        "authorization",
+        "password",
+        "secret",
+        "credential",
+        "x-api-key",
+        "api-key",
+        "api.key",
+        "apiKey",
+        "accessToken",
+        "bearerToken",
+        "token[]",
+        "auth[token]",
+        "credentials[password]",
+        "user[api_key]",
+        "token[value]",
+      ];
+
+      for (const key of sensitiveKeys) {
+        await expect(
+          oilpriceGet(
+            "/v1/prices/latest",
+            `by_code=BRENT_CRUDE_USD&${key}=should-not-send`,
+          ),
+        ).resolves.toEqual([
+          [
+            "#UNSUPPORTED_QUERY",
+            "Do not pass API keys or credentials in query strings",
+          ],
+        ]);
+      }
+
+      expect((globalThis as any).fetch).not.toHaveBeenCalled();
+    });
+
+    it("rejects unsafe commodity path parameters without making a request", async () => {
+      const result = await oilpriceGet("/v1/commodities/BRENT/extra");
 
       expect(result).toEqual([
         [
@@ -133,6 +344,27 @@ describe("OilPrice custom functions MVP", () => {
           "Use supported OilPriceAPI GET endpoints only",
         ],
       ]);
+      expect((globalThis as any).fetch).not.toHaveBeenCalled();
+    });
+
+    it("rejects unsupported endpoints without making a request", async () => {
+      const unsupportedPaths = [
+        "/v1/users/me",
+        "/v1/futures",
+        "/v1/drilling",
+        "/v1/account",
+        "/v1/admin/users",
+      ];
+
+      for (const path of unsupportedPaths) {
+        await expect(oilpriceGet(path)).resolves.toEqual([
+          [
+            "#UNSUPPORTED_ENDPOINT",
+            "Use supported OilPriceAPI GET endpoints only",
+          ],
+        ]);
+      }
+
       expect((globalThis as any).fetch).not.toHaveBeenCalled();
     });
   });
