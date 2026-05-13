@@ -21,9 +21,119 @@ declare const CustomFunctions: {
 
 const API_ORIGIN = "https://api.oilpriceapi.com";
 const API_KEY_STORAGE = "oilpriceapi_key";
-const SUPPORTED_GET_PATHS = new Set([
-  "/v1/prices/latest",
-  "/v1/commodities",
+
+type EndpointCatalogEntry = {
+  id: string;
+  path: string;
+  pattern: RegExp;
+  description: string;
+};
+
+const ENDPOINT_CATALOG: EndpointCatalogEntry[] = [
+  {
+    id: "status",
+    path: "/v1/status",
+    pattern: /^\/v1\/status$/,
+    description: "API status",
+  },
+  {
+    id: "prices",
+    path: "/v1/prices",
+    pattern: /^\/v1\/prices$/,
+    description: "Price listing",
+  },
+  {
+    id: "prices-latest",
+    path: "/v1/prices/latest",
+    pattern: /^\/v1\/prices\/latest$/,
+    description: "Latest prices",
+  },
+  {
+    id: "prices-past-day",
+    path: "/v1/prices/past_day",
+    pattern: /^\/v1\/prices\/past_day$/,
+    description: "Past day prices",
+  },
+  {
+    id: "prices-past-week",
+    path: "/v1/prices/past_week",
+    pattern: /^\/v1\/prices\/past_week$/,
+    description: "Past week prices",
+  },
+  {
+    id: "prices-past-month",
+    path: "/v1/prices/past_month",
+    pattern: /^\/v1\/prices\/past_month$/,
+    description: "Past month prices",
+  },
+  {
+    id: "prices-past-year",
+    path: "/v1/prices/past_year",
+    pattern: /^\/v1\/prices\/past_year$/,
+    description: "Past year prices",
+  },
+  {
+    id: "prices-historical",
+    path: "/v1/prices/historical",
+    pattern: /^\/v1\/prices\/historical$/,
+    description: "Historical prices",
+  },
+  {
+    id: "prices-all",
+    path: "/v1/prices/all",
+    pattern: /^\/v1\/prices\/all$/,
+    description: "All latest prices",
+  },
+  {
+    id: "prices-all-health",
+    path: "/v1/prices/all/health",
+    pattern: /^\/v1\/prices\/all\/health$/,
+    description: "All-prices health",
+  },
+  {
+    id: "diesel-prices",
+    path: "/v1/diesel-prices",
+    pattern: /^\/v1\/diesel-prices$/,
+    description: "Diesel prices",
+  },
+  {
+    id: "commodities",
+    path: "/v1/commodities",
+    pattern: /^\/v1\/commodities$/,
+    description: "Commodity catalog",
+  },
+  {
+    id: "commodity-categories",
+    path: "/v1/commodities/categories",
+    pattern: /^\/v1\/commodities\/categories$/,
+    description: "Commodity categories",
+  },
+  {
+    id: "commodity-by-code",
+    path: "/v1/commodities/{code}",
+    pattern: /^\/v1\/commodities\/[A-Za-z0-9_.-]+$/,
+    description: "Commodity details by code",
+  },
+];
+
+const SENSITIVE_QUERY_KEYS = new Set([
+  "accesstoken",
+  "api_key",
+  "apikey",
+  "authorization",
+  "auth",
+  "bearer",
+  "bearertoken",
+  "client_secret",
+  "clientsecret",
+  "credential",
+  "credentials",
+  "key",
+  "password",
+  "secret",
+  "token",
+  "access_token",
+  "xapikey",
 ]);
 
 type ResponseError = {
@@ -90,13 +200,62 @@ function normalizePath(path: string): string {
   return trimmed;
 }
 
+function findEndpoint(path: string): EndpointCatalogEntry | undefined {
+  return ENDPOINT_CATALOG.find((endpoint) => endpoint.pattern.test(path));
+}
+
+function normalizeQueryKey(key: string): string {
+  return key
+    .trim()
+    .toLowerCase()
+    .replace(/[-_.]/g, "");
+}
+
+function queryKeyParts(key: string): string[] {
+  const parts = [key.split("[", 1)[0]];
+  const bracketPattern = /\[([^\]]*)\]/g;
+  let match = bracketPattern.exec(key);
+
+  while (match) {
+    if (match[1]) parts.push(match[1]);
+    match = bracketPattern.exec(key);
+  }
+
+  return parts.filter((part) => part.trim());
+}
+
+function isSensitiveQueryKey(key: string): boolean {
+  return queryKeyParts(key).some((part) =>
+    SENSITIVE_QUERY_KEYS.has(normalizeQueryKey(part)),
+  );
+}
+
+function normalizeQuery(query?: string): string {
+  const cleanedQuery = (query || "").trim().replace(/^\?/, "");
+  if (!cleanedQuery) return "";
+
+  const params = new URLSearchParams(cleanedQuery);
+  let hasSensitiveKey = false;
+  params.forEach((_, key) => {
+    if (isSensitiveQueryKey(key)) {
+      hasSensitiveKey = true;
+    }
+  });
+
+  if (hasSensitiveKey) {
+    throw new Error("UNSUPPORTED_QUERY");
+  }
+
+  return cleanedQuery;
+}
+
 function buildUrl(path: string, query?: string): string {
   const normalizedPath = normalizePath(path);
-  if (!SUPPORTED_GET_PATHS.has(normalizedPath)) {
+  if (!findEndpoint(normalizedPath)) {
     throw new Error("UNSUPPORTED_ENDPOINT");
   }
 
-  const cleanedQuery = (query || "").trim().replace(/^\?/, "");
+  const cleanedQuery = normalizeQuery(query);
   return `${API_ORIGIN}${normalizedPath}${cleanedQuery ? `?${cleanedQuery}` : ""}`;
 }
 
@@ -140,23 +299,72 @@ function objectToTable(value: Record<string, unknown>): string[][] {
   return [["Field", "Value"], ...rows];
 }
 
+function arrayToTable(data: unknown[]): string[][] {
+  if (data.length === 0) return tableError("NO_DATA", "No data returned");
+  if (typeof data[0] !== "object" || data[0] === null) {
+    return [["Value"], ...data.map((entry) => [String(valueToCell(entry))])];
+  }
+
+  const headers = Object.keys(data[0]);
+  const rows = data.map((entry: any) =>
+    headers.map((header) => String(valueToCell(entry[header]))),
+  );
+  return [headers, ...rows];
+}
+
+function pricesHashToTable(prices: Record<string, unknown>): string[][] {
+  const entries = Object.entries(prices);
+  if (entries.length === 0) return tableError("NO_DATA", "No data returned");
+
+  const objectEntries = entries.filter(
+    ([, value]) =>
+      value !== null && typeof value === "object" && !Array.isArray(value),
+  ) as Array<[string, Record<string, unknown>]>;
+
+  if (objectEntries.length !== entries.length) {
+    return [
+      ["Code", "Value"],
+      ...entries.map(([code, value]) => [code, String(valueToCell(value))]),
+    ];
+  }
+
+  const fieldSet = new Set<string>();
+  objectEntries.forEach(([, value]) => {
+    Object.keys(value).forEach((key) => {
+      if (key !== "code") fieldSet.add(key);
+    });
+  });
+  const fields = Array.from(fieldSet);
+
+  return [
+    ["Code", ...fields],
+    ...objectEntries.map(([code, value]) => [
+      code,
+      ...fields.map((field) => String(valueToCell(value[field]))),
+    ]),
+  ];
+}
+
 function responseToTable(payload: any): string[][] {
   const data = payload?.data;
 
   if (Array.isArray(data)) {
-    if (data.length === 0) return tableError("NO_DATA", "No data returned");
-    if (typeof data[0] !== "object" || data[0] === null) {
-      return [["Value"], ...data.map((entry) => [String(valueToCell(entry))])];
-    }
-
-    const headers = Object.keys(data[0]);
-    const rows = data.map((entry) =>
-      headers.map((header) => String(valueToCell(entry[header]))),
-    );
-    return [headers, ...rows];
+    return arrayToTable(data);
   }
 
   if (data && typeof data === "object") {
+    if (Array.isArray(data.prices)) {
+      return arrayToTable(data.prices);
+    }
+
+    if (
+      data.prices &&
+      typeof data.prices === "object" &&
+      !Array.isArray(data.prices)
+    ) {
+      return pricesHashToTable(data.prices);
+    }
+
     if (Array.isArray(data.commodities)) {
       const commodities = data.commodities;
       if (commodities.length === 0) return tableError("NO_DATA", "No data returned");
@@ -236,6 +444,12 @@ export async function oilpriceGet(
       return tableError(
         "UNSUPPORTED_ENDPOINT",
         "Use supported OilPriceAPI GET endpoints only",
+      );
+    }
+    if (error instanceof Error && error.message === "UNSUPPORTED_QUERY") {
+      return tableError(
+        "UNSUPPORTED_QUERY",
+        "Do not pass API keys or credentials in query strings",
       );
     }
     if (isResponseError(error)) {
