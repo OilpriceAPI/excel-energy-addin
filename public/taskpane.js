@@ -28,10 +28,19 @@ async function storageGet(key) {
 }
 
 async function storageSet(key, value) {
+  let sharedStorageSaved = false;
+
   try {
     await OfficeRuntime.storage.setItem(key, value);
-  } finally {
-    localStorage.setItem(key, value);
+    sharedStorageSaved = true;
+  } catch {
+    // Formulas read OfficeRuntime.storage, so localStorage alone is not enough.
+  }
+
+  localStorage.setItem(key, value);
+
+  if (!sharedStorageSaved) {
+    throw new Error("SHARED_STORAGE_UNAVAILABLE");
   }
 }
 
@@ -61,10 +70,17 @@ async function saveApiKey() {
     return;
   }
 
-  await storageSet(API_KEY_STORAGE, apiKey);
-  if (input) input.value = "";
-  showStatus("API key saved. Use Formulas > Calculate Now to refresh formulas.");
-  setConnectionStatus("Key saved", "success");
+  try {
+    await storageSet(API_KEY_STORAGE, apiKey);
+    if (input) input.value = "";
+    showStatus("API key saved. Use Formulas > Calculate Now to refresh formulas.");
+    setConnectionStatus("Key saved", "success");
+  } catch {
+    setConnectionStatus("Storage unavailable", "error");
+    showError(
+      "Excel could not save the shared add-in key. Close and reopen the add-in, then try again.",
+    );
+  }
 }
 
 async function clearApiKey() {
@@ -107,6 +123,12 @@ async function testConnection() {
     if (response.status === 429) {
       setConnectionStatus("Rate limited", "error");
       showError("Rate limit reached. Try later.");
+      return;
+    }
+
+    if (response.status === 402 || response.status === 403) {
+      setConnectionStatus("Plan or quota limit", "error");
+      showError("Quota or plan limit reached for this API key.");
       return;
     }
 

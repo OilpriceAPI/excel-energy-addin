@@ -20,6 +20,8 @@ The customer-facing Excel path is the add-in. Other spreadsheet setup variants a
 
 Do not send customer instructions until Windows Excel smoke proves install, key save/test, production API log hit, formula recalculation after symbol change, and no `#NAME?`.
 
+See [ADDIN_ACTIVATION_CHECKLIST.md](ADDIN_ACTIVATION_CHECKLIST.md) for the proof checklist that gates customer instructions.
+
 ## Development
 
 ```bash
