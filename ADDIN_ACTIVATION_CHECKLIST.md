@@ -22,7 +22,7 @@ Run this with a non-customer test API key. Do not paste the key in logs, screens
 6. Enter `=OILPRICE.PRICE("BRENT_CRUDE_USD")` and confirm it returns a numeric production value for a valid key.
 7. Put `BRENT_CRUDE_USD` in a worksheet cell, enter `=OILPRICE.PRICE(A1)`, then change the symbol cell and confirm the formula recalculates.
 8. Enter `=OILPRICE.GET("/v1/prices/latest","by_code=BRENT_CRUDE_USD")` and confirm it spills a readable table or a plain worksheet error.
-9. Confirm production API logs show the expected add-in request with `X-Excel-Addin-Version: 1.0.0`.
+9. Confirm production API logs show the expected add-in request for the non-customer test account and the browser request shape is limited to `authorization,content-type`.
 10. Confirm no formula shows `#NAME?` after reload, workbook save/reopen, and recalculation.
 
 ## Customer Instructions Gate

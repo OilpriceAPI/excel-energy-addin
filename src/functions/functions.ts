@@ -264,7 +264,6 @@ async function apiGet(path: string, query: string | undefined, apiKey: string): 
     headers: {
       Authorization: `Token ${apiKey}`,
       "Content-Type": "application/json",
-      "X-Excel-Addin-Version": "1.0.0",
     },
   });
 

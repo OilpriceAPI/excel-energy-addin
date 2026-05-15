@@ -175,7 +175,6 @@ async function testConnection() {
       headers: {
         Authorization: `Token ${apiKey}`,
         "Content-Type": "application/json",
-        "X-Excel-Addin-Version": ADDIN_VERSION,
       },
     });
 

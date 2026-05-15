@@ -363,7 +363,6 @@ export class OilPriceAPIClient {
         headers: {
           Authorization: `Token ${this.apiKey}`,
           "Content-Type": "application/json",
-          "X-Excel-Addin-Version": "1.0.0",
         },
       });
 
@@ -486,7 +485,6 @@ export class OilPriceAPIClient {
         headers: {
           Authorization: `Token ${this.apiKey}`,
           "Content-Type": "application/json",
-          "X-Excel-Addin-Version": "1.0.0",
         },
       });
 

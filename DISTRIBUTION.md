@@ -22,7 +22,7 @@ All gates must be green before support or marketing sends customer install instr
    - `OILPRICE.PRICE` returns production data;
    - cell-reference recalc works after symbol change;
    - `OILPRICE.GET` returns a readable table;
-   - production logs show `X-Excel-Addin-Version: 1.0.0`;
+   - production logs show the expected non-customer test-account request and the browser request shape is limited to `authorization,content-type`;
    - no raw API key appears in logs, screenshots, GitHub, or support text.
 2. Hosted assets pass:
    - `manifest.xml`, `functions.json`, `functions.js`, and `taskpane.html` return HTTP 200;
@@ -141,6 +141,6 @@ Track:
 - first successful formula call;
 - common worksheet errors;
 - support tickets per install;
-- API errors with `X-Excel-Addin-Version`.
+- API request IDs, status codes, and task-pane diagnostics for formula/test failures.
 
 Escalate if support tickets per install are nonzero for the same setup step.
