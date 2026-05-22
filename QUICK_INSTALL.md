@@ -33,15 +33,16 @@ Use these only for internal validation.
 
 ### Windows Excel Desktop
 
-1. Run:
+1. Open PowerShell as Administrator on the Windows machine with Excel Desktop.
+2. Run:
 
-   ```bash
-   ./copy-manifest-to-desktop.sh
+   ```powershell
+   .\scripts\setup-windows-desktop-sideload.ps1 -ClearOfficeCache
    ```
 
-2. Follow the printed shared-folder catalog instructions.
-3. Open **Insert > My Add-ins > Shared Folder** in Excel Desktop.
-4. Select **OilPriceAPI** and repeat the formula smoke above.
+3. Close and reopen Excel Desktop.
+4. Open **Insert > My Add-ins > Shared Folder**.
+5. Select **OilPrice Excel Add-in** and repeat the formula smoke above.
 
 Do not paste the hosted `manifest.xml` URL directly into desktop Excel during preview testing.
 
