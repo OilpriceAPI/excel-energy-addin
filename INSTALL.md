@@ -47,21 +47,29 @@ Do not put the raw API key in screenshots, logs, GitHub issues, pull requests, o
 
 ### Windows Excel Desktop
 
-Use a trusted shared-folder catalog for desktop sideloading. Do not try to paste the hosted manifest URL directly into desktop Excel.
+Use a trusted shared-folder catalog for desktop sideloading. Do not try to paste the hosted manifest URL directly into desktop Excel; desktop Excel loads preview manifests from a local/shared catalog.
 
-1. Run:
+1. On the Windows machine that has Excel Desktop, open PowerShell as Administrator.
+2. From the repo root, run:
 
-   ```bash
-   ./copy-manifest-to-desktop.sh
+   ```powershell
+   .\scripts\setup-windows-desktop-sideload.ps1 -ClearOfficeCache
    ```
 
-2. In Windows, share the printed `OfficeAddins` folder with your Windows user.
-3. Open Excel Desktop.
-4. Go to **File > Options > Trust Center > Trust Center Settings > Trusted Add-in Catalogs**.
-5. Add the printed shared-folder catalog path.
-6. Check **Show in Menu**, then restart Excel.
-7. Go to **Insert > My Add-ins > Shared Folder** and select **OilPriceAPI**.
-8. Open the **OilPrice** task pane, save the non-customer test key, and run the formula smoke below.
+   This downloads the hosted manifest, creates a local `OilPriceAPIAddins` SMB share, and writes the Office `TrustedCatalogs` registry entry.
+
+3. Close all Excel windows.
+4. Reopen Excel Desktop.
+5. Go to **Insert > My Add-ins > Shared Folder** and select **OilPrice Excel Add-in**.
+6. Open the **OilPrice** task pane, save the non-customer test key, and run the formula smoke below.
+
+Manual fallback if the script cannot run:
+
+1. Put `manifest.xml` in a Windows folder.
+2. Share that folder and copy its UNC path, for example `\\YOUR-PC\OilPriceAPIAddins`.
+3. In Excel, go to **File > Options > Trust Center > Trust Center Settings > Trusted Add-in Catalogs**.
+4. Add the UNC path, check **Show in Menu**, close Excel, and reopen it.
+5. Go to **Insert > My Add-ins > Shared Folder** and select **OilPrice Excel Add-in**.
 
 Expected result:
 
@@ -142,4 +150,5 @@ Until then, customer replies should say that we are validating the Excel add-in 
 | `#SERVER_ERROR` | API returned a server error. | Check production logs before retrying. |
 | `#UNSUPPORTED_ENDPOINT` | The add-in blocked the endpoint. | Use only supported MVP endpoints. |
 | `#NAME?` | Excel did not load the custom function. | Do not send customer instructions; file the runtime defect on `#12`. |
-| Desktop Excel cannot load the hosted `manifest.xml` URL | Desktop sideloading needs a local/shared catalog path for this preview flow. | Use the Windows Excel Desktop shared-folder catalog steps above. |
+| Desktop Excel cannot load the hosted `manifest.xml` URL | Desktop sideloading needs a local/shared catalog path for this preview flow. | Run `.\scripts\setup-windows-desktop-sideload.ps1 -ClearOfficeCache`, then load from **Insert > My Add-ins > Shared Folder**. |
+| **Shared Folder** tab does not appear | Excel has not trusted the catalog yet, or Excel was not restarted after the registry/catalog change. | Confirm the catalog URL is a UNC path such as `\\YOUR-PC\OilPriceAPIAddins`, confirm **Show in Menu**, then restart Excel. |

@@ -2,6 +2,8 @@
 set -euo pipefail
 
 # Copy manifest.xml to a Windows folder that can be used as an Excel shared-folder catalog.
+# This is a WSL helper only. The supported Windows setup path is:
+# powershell -ExecutionPolicy Bypass -File scripts/setup-windows-desktop-sideload.ps1 -ClearOfficeCache
 
 # Get Windows username
 WIN_USER=$(cmd.exe /c "echo %USERNAME%" 2>/dev/null | tr -d '\r')
@@ -23,7 +25,8 @@ echo "Windows folder:"
 echo "C:\\Users\\$WIN_USER\\Documents\\OfficeAddins"
 echo ""
 echo "Desktop Excel setup:"
-echo "1. Share C:\\Users\\$WIN_USER\\Documents\\OfficeAddins with your Windows user."
-echo "2. Excel: File > Options > Trust Center > Trust Center Settings > Trusted Add-in Catalogs."
-echo "3. Add the shared-folder UNC path, check Show in Menu, then restart Excel."
-echo "4. Excel: Insert > My Add-ins > Shared Folder > OilPriceAPI."
+echo "1. Prefer the PowerShell setup script: scripts\\setup-windows-desktop-sideload.ps1"
+echo "2. Or manually share C:\\Users\\$WIN_USER\\Documents\\OfficeAddins with your Windows user."
+echo "3. Excel: File > Options > Trust Center > Trust Center Settings > Trusted Add-in Catalogs."
+echo "4. Add the shared-folder UNC path, check Show in Menu, then restart Excel."
+echo "5. Excel: Insert > My Add-ins > Shared Folder > OilPrice Excel Add-in."
