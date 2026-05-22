@@ -16,7 +16,7 @@
         }
       ],
       "result": {
-        "type": "any",
+        "type": "number",
         "dimensionality": "scalar"
       }
     },
@@ -40,7 +40,7 @@
         }
       ],
       "result": {
-        "type": "string",
+        "type": "any",
         "dimensionality": "matrix"
       }
     },
@@ -51,7 +51,7 @@
       "helpUrl": "https://docs.oilpriceapi.com",
       "parameters": [],
       "result": {
-        "type": "string",
+        "type": "any",
         "dimensionality": "matrix"
       }
     }
