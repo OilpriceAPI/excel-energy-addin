@@ -31,8 +31,10 @@ Do not put the raw API key in screenshots, logs, GitHub issues, pull requests, o
 
 ## Preview Install
 
-1. Open Windows Excel Desktop.
-2. Add the add-in manifest:
+### Excel on the web
+
+1. Open Excel on the web.
+2. Upload the add-in manifest:
 
    ```text
    https://oilpriceapi.github.io/excel-energy-addin/manifest.xml
@@ -42,6 +44,24 @@ Do not put the raw API key in screenshots, logs, GitHub issues, pull requests, o
 4. Paste the non-customer test key.
 5. Click **Save Key**.
 6. Click **Test Key**.
+
+### Windows Excel Desktop
+
+Use a trusted shared-folder catalog for desktop sideloading. Do not try to paste the hosted manifest URL directly into desktop Excel.
+
+1. Run:
+
+   ```bash
+   ./copy-manifest-to-desktop.sh
+   ```
+
+2. In Windows, share the printed `OfficeAddins` folder with your Windows user.
+3. Open Excel Desktop.
+4. Go to **File > Options > Trust Center > Trust Center Settings > Trusted Add-in Catalogs**.
+5. Add the printed shared-folder catalog path.
+6. Check **Show in Menu**, then restart Excel.
+7. Go to **Insert > My Add-ins > Shared Folder** and select **OilPriceAPI**.
+8. Open the **OilPrice** task pane, save the non-customer test key, and run the formula smoke below.
 
 Expected result:
 
@@ -122,3 +142,4 @@ Until then, customer replies should say that we are validating the Excel add-in 
 | `#SERVER_ERROR` | API returned a server error. | Check production logs before retrying. |
 | `#UNSUPPORTED_ENDPOINT` | The add-in blocked the endpoint. | Use only supported MVP endpoints. |
 | `#NAME?` | Excel did not load the custom function. | Do not send customer instructions; file the runtime defect on `#12`. |
+| Desktop Excel cannot load the hosted `manifest.xml` URL | Desktop sideloading needs a local/shared catalog path for this preview flow. | Use the Windows Excel Desktop shared-folder catalog steps above. |

@@ -2,12 +2,14 @@
 
 The OilPrice Excel add-in is in preview validation. Do not send this page as customer setup instructions until the Windows Excel runtime smoke in [ADDIN_ACTIVATION_CHECKLIST.md](ADDIN_ACTIVATION_CHECKLIST.md) is green.
 
-## Current Preview Path
+## Current Preview Paths
 
-Use this only for internal validation:
+Use these only for internal validation.
 
-1. Open Windows Excel Desktop.
-2. Add the manifest from:
+### Excel on the web
+
+1. Open Excel on the web.
+2. Upload the manifest from:
 
    ```text
    https://oilpriceapi.github.io/excel-energy-addin/manifest.xml
@@ -28,6 +30,20 @@ Use this only for internal validation:
    ```
 
 7. Change `A1` to another supported code and confirm the formula recalculates.
+
+### Windows Excel Desktop
+
+1. Run:
+
+   ```bash
+   ./copy-manifest-to-desktop.sh
+   ```
+
+2. Follow the printed shared-folder catalog instructions.
+3. Open **Insert > My Add-ins > Shared Folder** in Excel Desktop.
+4. Select **OilPriceAPI** and repeat the formula smoke above.
+
+Do not paste the hosted `manifest.xml` URL directly into desktop Excel during preview testing.
 
 ## Not Customer-Ready Yet
 
