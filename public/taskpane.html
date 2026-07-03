@@ -97,6 +97,12 @@
       </section>
     </div>
 
+    <!-- Load the custom-functions bundle in the shared runtime page: the
+         manifest's CustomFunctions ExtensionPoint uses Page->Taskpane.Url, so
+         CustomFunctions.associate must run HERE. Without this, Mac Excel
+         resolves =OILPRICE.* to a runtime where no key/storage is visible ->
+         #BUSY! then #VALUE! (found in the 2026-07-03 Mac smoke). -->
+    <script src="functions.js"></script>
     <script src="taskpane.js"></script>
   </body>
 </html>
