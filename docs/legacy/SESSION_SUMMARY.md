@@ -354,7 +354,7 @@ All issues are post-launch enhancements. No blockers for AppSource submission.
 - Plausible: https://plausible.io/excel.oilpriceapi.com
 
 **API Testing:**
-- Admin API Key: 3839c085460dd3a9dac1291f937f5a6d1740e8c668c766bc9f95e166af59cb11
+- Admin API Key: [REDACTED - do not commit API keys]
 - Test /users/me: `curl -H "Authorization: Token {key}" https://api.oilpriceapi.com/users/me`
 
 ---

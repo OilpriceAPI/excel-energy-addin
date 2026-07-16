@@ -62,7 +62,7 @@ NATURAL_GAS_GBP | 750.00 | GBp | therm | $9.93 | 0.1 | $9.93
 
 ### Step 2: Fetch Prices Again
 
-1. Enter API key: `3839c085460dd3a9dac1291f937f5a6d1740e8c668c766bc9f95e166af59cb11`
+1. Enter API key: `[REDACTED - do not commit API keys]`
 2. Select commodities (including NATURAL_GAS_GBP)
 3. Click "Fetch Prices"
 4. Click "Convert to MBtu"
