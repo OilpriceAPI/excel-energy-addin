@@ -7,6 +7,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "lint:secrets": "node scripts/lint-secret-shapes.js",
     "generate:icons": "node generate-icons.js",
     "legacy:generate-starter-workbook": "node scripts/generate-starter-workbook.js",
     "legacy:validate-starter-workbook": "node scripts/validate-starter-workbook.js",

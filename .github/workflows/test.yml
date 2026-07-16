@@ -22,6 +22,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Secret shape lint
+        run: npm run lint:secrets
+
       - name: Build
         run: npm run build
 
