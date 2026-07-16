@@ -14,6 +14,7 @@ import {
   getHeatContent,
   CommodityType,
 } from "./utils/conversions";
+import { oilpriceAttributionHeaders } from "./utils/client-attribution";
 
 /**
  * Commodity code to commodity type mapping
@@ -109,6 +110,7 @@ async function fetchExchangeRates(
         headers: {
           Authorization: `Token ${apiKey}`,
           "Content-Type": "application/json",
+          ...oilpriceAttributionHeaders(),
         },
       },
     );
