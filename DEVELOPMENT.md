@@ -8,7 +8,7 @@ This guide is for contributors working on the add-in source code. For **installa
 
 ## Prerequisites
 
-- Node.js 18+
+- Node.js 20.9+
 - npm
 - Microsoft Excel (for testing)
 
