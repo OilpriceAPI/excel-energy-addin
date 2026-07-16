@@ -38,6 +38,9 @@ describe("OilPrice custom functions MVP", () => {
         expect.objectContaining({
           headers: expect.objectContaining({
             Authorization: "Token test-api-key-123",
+            "X-Api-Client": "oilpriceapi-excel/1.0.0",
+            "X-Client-Version": "1.0.0",
+            "X-Excel-Addin-Version": "1.0.0",
           }),
         }),
       );

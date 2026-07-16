@@ -9,6 +9,8 @@
 
 /// <reference types="@types/office-js" />
 
+import { oilpriceAttributionHeaders } from "../utils/client-attribution";
+
 declare const OfficeRuntime: {
   storage: {
     getItem(key: string): Promise<string | null>;
@@ -264,6 +266,7 @@ async function apiGet(path: string, query: string | undefined, apiKey: string): 
     headers: {
       Authorization: `Token ${apiKey}`,
       "Content-Type": "application/json",
+      ...oilpriceAttributionHeaders(),
     },
   });
 

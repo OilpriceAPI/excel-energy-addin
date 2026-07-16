@@ -2,6 +2,7 @@
 
 const API_KEY_STORAGE = "oilpriceapi_key";
 const ADDIN_VERSION = "1.0.0";
+const CLIENT_MARKER = `oilpriceapi-excel/${ADDIN_VERSION}`;
 const TEST_URL =
   "https://api.oilpriceapi.com/v1/prices/latest?by_code=BRENT_CRUDE_USD";
 const TEST_ENDPOINT_LABEL = "/v1/prices/latest?by_code=BRENT_CRUDE_USD";
@@ -16,6 +17,14 @@ const diagnostics = {
   lastEndpoint: TEST_ENDPOINT_LABEL,
   lastTestAt: "",
 };
+
+function attributionHeaders() {
+  return {
+    "X-Api-Client": CLIENT_MARKER,
+    "X-Client-Version": ADDIN_VERSION,
+    "X-Excel-Addin-Version": ADDIN_VERSION,
+  };
+}
 
 Office.onReady((info) => {
   if (info.host !== Office.HostType.Excel) {
@@ -175,6 +184,7 @@ async function testConnection() {
       headers: {
         Authorization: `Token ${apiKey}`,
         "Content-Type": "application/json",
+        ...attributionHeaders(),
       },
     });
 

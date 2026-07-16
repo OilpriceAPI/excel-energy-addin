@@ -3,6 +3,7 @@ import {
   PriceData,
   APIError,
 } from "../../src/utils/api-client";
+import { oilpriceAttributionHeaders } from "../../src/utils/client-attribution";
 
 // Mock fetch globally
 const mockFetch = jest.fn() as jest.MockedFunction<typeof fetch>;
@@ -11,6 +12,11 @@ const mockFetch = jest.fn() as jest.MockedFunction<typeof fetch>;
 describe("OilPriceAPIClient", () => {
   let client: OilPriceAPIClient;
   const mockApiKey = "test-api-key-12345";
+  const expectedHeaders = {
+    Authorization: `Token ${mockApiKey}`,
+    "Content-Type": "application/json",
+    ...oilpriceAttributionHeaders(),
+  };
 
   beforeEach(() => {
     client = new OilPriceAPIClient(mockApiKey);
@@ -58,10 +64,7 @@ describe("OilPriceAPIClient", () => {
       expect(mockFetch).toHaveBeenCalledWith(
         "https://api.oilpriceapi.com/v1/prices/latest?by_code=BRENT_CRUDE_USD",
         {
-          headers: {
-            Authorization: `Token ${mockApiKey}`,
-            "Content-Type": "application/json",
-          },
+          headers: expectedHeaders,
         },
       );
     });
@@ -940,10 +943,7 @@ describe("OilPriceAPIClient", () => {
       expect(mockFetch).toHaveBeenCalledWith(
         "https://api.oilpriceapi.com/v1/webhooks",
         {
-          headers: {
-            Authorization: `Token ${mockApiKey}`,
-            "Content-Type": "application/json",
-          },
+          headers: expectedHeaders,
         },
       );
     });
@@ -1042,10 +1042,7 @@ describe("OilPriceAPIClient", () => {
         "https://api.oilpriceapi.com/v1/webhooks",
         {
           method: "POST",
-          headers: {
-            Authorization: `Token ${mockApiKey}`,
-            "Content-Type": "application/json",
-          },
+          headers: expectedHeaders,
           body: JSON.stringify({
             url: "https://example.com/webhook",
             events: ["price.updated"],
@@ -1122,10 +1119,7 @@ describe("OilPriceAPIClient", () => {
         "https://api.oilpriceapi.com/v1/webhooks/wh_123",
         {
           method: "DELETE",
-          headers: {
-            Authorization: `Token ${mockApiKey}`,
-            "Content-Type": "application/json",
-          },
+          headers: expectedHeaders,
         },
       );
     });
@@ -1201,10 +1195,7 @@ describe("OilPriceAPIClient", () => {
         "https://api.oilpriceapi.com/v1/webhooks/wh_123/test",
         {
           method: "POST",
-          headers: {
-            Authorization: `Token ${mockApiKey}`,
-            "Content-Type": "application/json",
-          },
+          headers: expectedHeaders,
         },
       );
     });

@@ -7,6 +7,7 @@ import {
   UpgradeRequiredError,
   PLAN_FEATURES,
 } from "../types/user-tier";
+import { oilpriceAttributionHeaders } from "./client-attribution";
 
 const API_BASE_URL = "https://api.oilpriceapi.com/v1";
 
@@ -180,6 +181,14 @@ export class OilPriceAPIClient {
     this.apiKey = apiKey;
   }
 
+  private requestHeaders(): Record<string, string> {
+    return {
+      Authorization: `Token ${this.apiKey}`,
+      "Content-Type": "application/json",
+      ...oilpriceAttributionHeaders(),
+    };
+  }
+
   /**
    * Fetch a single price for a commodity code
    */
@@ -189,10 +198,7 @@ export class OilPriceAPIClient {
       console.log("[API] Fetching:", url);
 
       const response = await fetch(url, {
-        headers: {
-          Authorization: `Token ${this.apiKey}`,
-          "Content-Type": "application/json",
-        },
+        headers: this.requestHeaders(),
       });
 
       console.log(
@@ -258,10 +264,7 @@ export class OilPriceAPIClient {
     try {
       const url = `${API_BASE_URL.replace("/v1", "")}/users/me`;
       const response = await fetch(url, {
-        headers: {
-          Authorization: `Token ${this.apiKey}`,
-          "Content-Type": "application/json",
-        },
+        headers: this.requestHeaders(),
       });
 
       if (!response.ok) {
@@ -310,10 +313,7 @@ export class OilPriceAPIClient {
     try {
       const url = `${API_BASE_URL}/prices/all`;
       const response = await fetch(url, {
-        headers: {
-          Authorization: `Token ${this.apiKey}`,
-          "Content-Type": "application/json",
-        },
+        headers: this.requestHeaders(),
       });
 
       if (!response.ok) {
@@ -360,10 +360,7 @@ export class OilPriceAPIClient {
 
       const url = `${API_BASE_URL}/prices/past_year?by_code=${code}`;
       const response = await fetch(url, {
-        headers: {
-          Authorization: `Token ${this.apiKey}`,
-          "Content-Type": "application/json",
-        },
+        headers: this.requestHeaders(),
       });
 
       if (response.status === 403) {
@@ -432,10 +429,7 @@ export class OilPriceAPIClient {
 
       const url = `${API_BASE_URL}/prices/past_month?by_code=${code}`;
       const response = await fetch(url, {
-        headers: {
-          Authorization: `Token ${this.apiKey}`,
-          "Content-Type": "application/json",
-        },
+        headers: this.requestHeaders(),
       });
 
       if (!response.ok) {
@@ -482,10 +476,7 @@ export class OilPriceAPIClient {
       console.log("[API] Fetching Data Connector:", url);
 
       const response = await fetch(url, {
-        headers: {
-          Authorization: `Token ${this.apiKey}`,
-          "Content-Type": "application/json",
-        },
+        headers: this.requestHeaders(),
       });
 
       console.log(
@@ -528,10 +519,7 @@ export class OilPriceAPIClient {
     try {
       const url = `${API_BASE_URL}/webhooks`;
       const response = await fetch(url, {
-        headers: {
-          Authorization: `Token ${this.apiKey}`,
-          "Content-Type": "application/json",
-        },
+        headers: this.requestHeaders(),
       });
 
       if (!response.ok) {
@@ -558,10 +546,7 @@ export class OilPriceAPIClient {
       const url = `${API_BASE_URL}/webhooks`;
       const response = await fetch(url, {
         method: "POST",
-        headers: {
-          Authorization: `Token ${this.apiKey}`,
-          "Content-Type": "application/json",
-        },
+        headers: this.requestHeaders(),
         body: JSON.stringify(options),
       });
 
@@ -588,10 +573,7 @@ export class OilPriceAPIClient {
       const url = `${API_BASE_URL}/webhooks/${id}`;
       const response = await fetch(url, {
         method: "DELETE",
-        headers: {
-          Authorization: `Token ${this.apiKey}`,
-          "Content-Type": "application/json",
-        },
+        headers: this.requestHeaders(),
       });
 
       if (!response.ok) {
@@ -614,10 +596,7 @@ export class OilPriceAPIClient {
       const url = `${API_BASE_URL}/webhooks/${id}/test`;
       const response = await fetch(url, {
         method: "POST",
-        headers: {
-          Authorization: `Token ${this.apiKey}`,
-          "Content-Type": "application/json",
-        },
+        headers: this.requestHeaders(),
       });
 
       if (!response.ok) {
