@@ -27,7 +27,7 @@
 
 2. **Enter your admin API key:**
    ```
-   3839c085460dd3a9dac1291f937f5a6d1740e8c668c766bc9f95e166af59cb11
+   [REDACTED - do not commit API keys]
    ```
 
 3. **Click "Save"**
@@ -195,7 +195,7 @@
 ### Issue: "Invalid API key"
 **Solution:** Make sure you copied the full key:
 ```
-3839c085460dd3a9dac1291f937f5a6d1740e8c668c766bc9f95e166af59cb11
+[REDACTED - do not commit API keys]
 ```
 
 ### Issue: "Network error"

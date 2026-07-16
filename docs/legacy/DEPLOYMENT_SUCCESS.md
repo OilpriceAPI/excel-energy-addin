@@ -61,7 +61,7 @@ Your Excel Energy Price Comparison add-in is now **fully deployed** and accessib
 3. **Open Add-in**
    - Add-in appears in Home ribbon
    - Click to open taskpane
-   - Enter API key: `3839c085460dd3a9dac1291f937f5a6d1740e8c668c766bc9f95e166af59cb11`
+   - Enter API key: `[REDACTED - do not commit API keys]`
    - Click "Fetch Prices"
 
 4. **Verify Features**
