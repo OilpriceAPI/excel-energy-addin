@@ -6,6 +6,8 @@
 
 This repository contains the OilPrice Excel add-in for refreshable OilPriceAPI formulas.
 
+**Installing it?** See the **[2-minute customer quickstart](CUSTOMER_QUICKSTART.md)** — Excel on the web (no install), Windows desktop (one-click script or Microsoft 365 admin deploy), and Mac (one Terminal line).
+
 The customer-facing Excel path is the add-in. Other spreadsheet setup variants are not the current support path.
 
 ## MVP Scope
