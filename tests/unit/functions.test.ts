@@ -137,7 +137,7 @@ describe("OilPrice custom functions MVP", () => {
 
       const [storageKey, rawDiagnostic] =
         mockStorage.setItem.mock.calls[mockStorage.setItem.mock.calls.length - 1];
-      expect(storageKey).toBe("oilpriceapi_last_runtime_diagnostic");
+      expect(storageKey).toBe("opa_excel_last_runtime_diagnostic");
       expect(JSON.parse(rawDiagnostic)).toEqual(
         expect.objectContaining({
           result: "success",

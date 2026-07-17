@@ -1,5 +1,5 @@
 export const RUNTIME_DIAGNOSTIC_STORAGE_KEY =
-  "oilpriceapi_last_runtime_diagnostic";
+  "opa_excel_last_runtime_diagnostic";
 
 export type RuntimeDiagnosticSource = "taskpane" | "custom-function";
 
