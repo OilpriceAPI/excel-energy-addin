@@ -7,7 +7,6 @@ import {
   UpgradeRequiredError,
   PLAN_FEATURES,
 } from "../types/user-tier";
-import { oilpriceAttributionHeaders } from "./client-attribution";
 
 const API_BASE_URL = "https://api.oilpriceapi.com/v1";
 
@@ -185,7 +184,6 @@ export class OilPriceAPIClient {
     return {
       Authorization: `Token ${this.apiKey}`,
       "Content-Type": "application/json",
-      ...oilpriceAttributionHeaders(),
     };
   }
 

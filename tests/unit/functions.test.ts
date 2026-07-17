@@ -37,14 +37,12 @@ describe("OilPrice custom functions MVP", () => {
       expect(result).toBe(85.45);
       expect((globalThis as any).fetch).toHaveBeenCalledWith(
         "https://api.oilpriceapi.com/v1/prices/latest?by_code=BRENT_CRUDE_USD",
-        expect.objectContaining({
-          headers: expect.objectContaining({
+        {
+          headers: {
             Authorization: "Token test-api-key-123",
-            "X-Api-Client": "oilpriceapi-excel/1.0.2",
-            "X-Client-Version": "1.0.2",
-            "X-Excel-Addin-Version": "1.0.2",
-          }),
-        }),
+            "Content-Type": "application/json",
+          },
+        },
       );
     });
 

@@ -87,13 +87,17 @@ the OilPrice frame.
 The July 17, 2026 reproduction failed because the add-in requested
 `x-api-client`, but Cloudflare's preflight response did not allow it. The browser
 therefore blocked the GET before it reached the API. This is not a bad-key or
-Excel-connectivity failure.
+Excel-connectivity failure. Version 1.0.2 restores browser compatibility by
+keeping cross-origin request headers to the edge-approved authorization and
+content-type set. The add-in version remains available in copied diagnostics.
 
 ## Required Production Proof
 
-- The public preflight allows `authorization`, `content-type`, `x-api-client`,
-  `x-client-version`, and `x-excel-addin-version`.
+- The public preflight allows `authorization` and `content-type`.
+- Version 1.0.2 does not request `x-api-client`, `x-client-version`, or
+  `x-excel-addin-version` from Excel Online.
 - **Test Key** reports **Connected** and records an HTTP 200 diagnostic.
 - `OILPRICE.PRICE` returns a number and records a custom-function diagnostic.
-- Production logs contain the attributed Excel request and no raw key.
+- Production logs contain the request at the matching diagnostic timestamp and
+  no raw key.
 - Copied diagnostics contain no API key or query values.

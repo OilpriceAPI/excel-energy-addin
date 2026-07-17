@@ -9,7 +9,6 @@
 
 /// <reference types="@types/office-js" />
 
-import { oilpriceAttributionHeaders } from "../utils/client-attribution";
 import {
   RUNTIME_DIAGNOSTIC_STORAGE_KEY,
   classifyNetworkFailure,
@@ -296,7 +295,6 @@ async function apiGet(path: string, query: string | undefined, apiKey: string): 
       headers: {
         Authorization: `Token ${apiKey}`,
         "Content-Type": "application/json",
-        ...oilpriceAttributionHeaders(),
       },
     });
   } catch {

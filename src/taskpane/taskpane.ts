@@ -1,7 +1,6 @@
 import {
   OILPRICEAPI_EXCEL_CLIENT,
   OILPRICEAPI_EXCEL_VERSION,
-  oilpriceAttributionHeaders,
 } from "../utils/client-attribution";
 import {
   RUNTIME_DIAGNOSTIC_STORAGE_KEY,
@@ -324,7 +323,6 @@ async function testConnection(): Promise<void> {
       headers: {
         Authorization: `Token ${apiKey}`,
         "Content-Type": "application/json",
-        ...oilpriceAttributionHeaders(),
       },
     });
 
