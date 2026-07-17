@@ -1,5 +1,6 @@
 const mockStorage = {
   getItem: jest.fn().mockResolvedValue("test-api-key-123"),
+  setItem: jest.fn().mockResolvedValue(undefined),
 };
 
 (globalThis as any).OfficeRuntime = { storage: mockStorage };
@@ -19,6 +20,7 @@ describe("OilPrice custom functions MVP", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockStorage.getItem.mockResolvedValue("test-api-key-123");
+    mockStorage.setItem.mockResolvedValue(undefined);
   });
 
   describe("OILPRICE.PRICE", () => {
@@ -35,14 +37,12 @@ describe("OilPrice custom functions MVP", () => {
       expect(result).toBe(85.45);
       expect((globalThis as any).fetch).toHaveBeenCalledWith(
         "https://api.oilpriceapi.com/v1/prices/latest?by_code=BRENT_CRUDE_USD",
-        expect.objectContaining({
-          headers: expect.objectContaining({
+        {
+          headers: {
             Authorization: "Token test-api-key-123",
-            "X-Api-Client": "oilpriceapi-excel/1.0.0",
-            "X-Client-Version": "1.0.0",
-            "X-Excel-Addin-Version": "1.0.0",
-          }),
-        }),
+            "Content-Type": "application/json",
+          },
+        },
       );
     });
 
@@ -97,6 +97,54 @@ describe("OilPrice custom functions MVP", () => {
       await expect(oilpricePrice("BRENT_CRUDE_USD")).resolves.toBe(
         "#UPGRADE_REQUIRED: Quota or plan limit reached",
       );
+    });
+
+    it("distinguishes browser/CORS failures from authentication failures", async () => {
+      ((globalThis as any).fetch as jest.Mock).mockRejectedValueOnce(
+        new TypeError("Failed to fetch"),
+      );
+
+      await expect(oilpricePrice("BRENT_CRUDE_USD")).resolves.toBe(
+        "#NETWORK_OR_CORS: The browser or CORS policy blocked the API request",
+      );
+
+      const [, rawDiagnostic] =
+        mockStorage.setItem.mock.calls[mockStorage.setItem.mock.calls.length - 1];
+      expect(JSON.parse(rawDiagnostic)).toEqual(
+        expect.objectContaining({
+          schemaVersion: 1,
+          source: "custom-function",
+          result: "network-or-cors",
+          code: "NETWORK_OR_CORS",
+          endpoint: "/v1/prices/latest",
+        }),
+      );
+      expect(rawDiagnostic).not.toContain("test-api-key-123");
+      expect(rawDiagnostic).not.toContain("BRENT_CRUDE_USD");
+    });
+
+    it("records successful formula diagnostics without the API key", async () => {
+      ((globalThis as any).fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        headers: new Headers({ "x-request-id": "request-123" }),
+        json: async () => ({ data: { price: 80 } }),
+      });
+
+      await expect(oilpricePrice("BRENT_CRUDE_USD")).resolves.toBe(80);
+
+      const [storageKey, rawDiagnostic] =
+        mockStorage.setItem.mock.calls[mockStorage.setItem.mock.calls.length - 1];
+      expect(storageKey).toBe("opa_excel_last_runtime_diagnostic");
+      expect(JSON.parse(rawDiagnostic)).toEqual(
+        expect.objectContaining({
+          result: "success",
+          code: "OK",
+          httpStatus: 200,
+          requestId: "request-123",
+        }),
+      );
+      expect(rawDiagnostic).not.toContain("test-api-key-123");
     });
   });
 

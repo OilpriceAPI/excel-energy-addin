@@ -61,23 +61,36 @@
         <dl class="diagnostics-list">
           <div>
             <dt>Version</dt>
-            <dd id="diag-version">1.0.0</dd>
+            <dd id="diag-version">1.0.2</dd>
           </div>
           <div>
             <dt>Excel</dt>
             <dd id="diag-excel">Detecting</dd>
           </div>
           <div>
+            <dt>Runtime</dt>
+            <dd id="diag-requirements">Detecting</dd>
+          </div>
+          <div>
+            <dt>Network</dt>
+            <dd id="diag-online">Detecting</dd>
+          </div>
+          <div>
             <dt>Storage</dt>
             <dd id="diag-storage">Detecting</dd>
           </div>
           <div>
-            <dt>Last test</dt>
-            <dd id="diag-last-test">Not tested</dd>
+            <dt>Last request</dt>
+            <dd id="diag-last-request">Not run</dd>
+          </div>
+          <div>
+            <dt>Request ID</dt>
+            <dd id="diag-request-id">Not available</dd>
           </div>
         </dl>
+        <button id="refresh-diagnostics-btn" class="btn-secondary" type="button">Refresh</button>
         <button id="copy-diagnostics-btn" class="btn-secondary" type="button">Copy Diagnostics</button>
-        <p class="diagnostics-note">Copies version, Excel host, storage state, and last test result. API keys are never copied.</p>
+        <p class="diagnostics-note">Captures runtime, storage, network/CORS, HTTP status, duration, and the last task-pane or formula request. API keys are never stored in diagnostics or copied.</p>
       </section>
 
       <section class="help-section">
@@ -89,7 +102,9 @@
             <p><strong>#RATE_LIMITED</strong>: wait for quota reset, then recalculate.</p>
             <p><strong>#UPGRADE_REQUIRED</strong>: your plan does not include that endpoint.</p>
             <p><strong>#NO_DATA</strong>: the API returned no matching data.</p>
-            <p><strong>#NETWORK_ERROR</strong>: Excel could not reach OilPriceAPI.</p>
+            <p><strong>#NETWORK_OR_CORS</strong>: Excel loaded the add-in, but the browser, CORS, or a network policy blocked the API request.</p>
+            <p><strong>#OFFLINE</strong>: the device reports that it is offline.</p>
+            <p><strong>#INVALID_RESPONSE</strong>: the API responded, but the add-in could not read the payload.</p>
             <p><strong>#SERVER_ERROR</strong>: OilPriceAPI is temporarily unavailable.</p>
             <p><strong>#UNSUPPORTED_ENDPOINT</strong>: use a supported endpoint path.</p>
           </div>

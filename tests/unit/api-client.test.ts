@@ -3,7 +3,6 @@ import {
   PriceData,
   APIError,
 } from "../../src/utils/api-client";
-import { oilpriceAttributionHeaders } from "../../src/utils/client-attribution";
 
 // Mock fetch globally
 const mockFetch = jest.fn() as jest.MockedFunction<typeof fetch>;
@@ -15,7 +14,6 @@ describe("OilPriceAPIClient", () => {
   const expectedHeaders = {
     Authorization: `Token ${mockApiKey}`,
     "Content-Type": "application/json",
-    ...oilpriceAttributionHeaders(),
   };
 
   beforeEach(() => {

@@ -217,7 +217,7 @@ button {
 
 .diagnostics-list div {
   display: grid;
-  grid-template-columns: 72px 1fr;
+  grid-template-columns: 82px 1fr;
   gap: 8px;
   padding: 4px 0;
 }
@@ -239,6 +239,11 @@ button {
   font-size: 11px;
   line-height: 1.4;
   color: #666;
+}
+
+.diagnostics-section .btn-secondary {
+  margin-right: 6px;
+  margin-bottom: 4px;
 }
 
 /* Help Section */
