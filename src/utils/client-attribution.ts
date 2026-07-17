@@ -1,4 +1,4 @@
-export const OILPRICEAPI_EXCEL_VERSION = "1.0.0";
+export const OILPRICEAPI_EXCEL_VERSION = "1.0.2";
 export const OILPRICEAPI_EXCEL_CLIENT = `oilpriceapi-excel/${OILPRICEAPI_EXCEL_VERSION}`;
 
 export function oilpriceAttributionHeaders(): Record<string, string> {

@@ -122,4 +122,7 @@ To deploy:
 
 1. In Excel on the web, press F12 to open browser dev tools
 2. In Excel Desktop, use the "Attach Debugger" option from the add-in menu
-3. Console logs from `taskpane.js` and custom functions appear in the dev tools console
+3. Select the `oilpriceapi.github.io/excel-energy-addin/` frame in the Console context dropdown
+4. Filter Network for `oilprice` before rerunning **Test Key** or a formula
+5. Use the task pane's **Refresh** and **Copy Diagnostics** controls; copied diagnostics never include the API key
+6. See [EXCEL_SUPPORT_RUNBOOK.md](EXCEL_SUPPORT_RUNBOOK.md) for stage-by-stage interpretation

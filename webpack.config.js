@@ -4,7 +4,8 @@ const CopyPlugin = require('copy-webpack-plugin');
 module.exports = {
   entry: {
     bundle: './src/index.ts',
-    functions: './src/functions/functions.ts'
+    functions: './src/functions/functions.ts',
+    taskpane: './src/taskpane/taskpane.ts'
   },
   output: {
     filename: '[name].js',

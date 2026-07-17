@@ -10,10 +10,18 @@
 /// <reference types="@types/office-js" />
 
 import { oilpriceAttributionHeaders } from "../utils/client-attribution";
+import {
+  RUNTIME_DIAGNOSTIC_STORAGE_KEY,
+  classifyNetworkFailure,
+  createRuntimeDiagnostic,
+  requestIdFromResponse,
+  RuntimeDiagnostic,
+} from "../utils/runtime-diagnostics";
 
 declare const OfficeRuntime: {
   storage: {
     getItem(key: string): Promise<string | null>;
+    setItem(key: string, value: string): Promise<void>;
   };
 };
 
@@ -160,6 +168,23 @@ async function getApiKey(): Promise<string | null> {
   }
 }
 
+function browserOnlineState(): boolean | undefined {
+  return typeof navigator === "undefined" ? undefined : navigator.onLine;
+}
+
+async function persistRuntimeDiagnostic(
+  diagnostic: RuntimeDiagnostic,
+): Promise<void> {
+  try {
+    await OfficeRuntime.storage.setItem(
+      RUNTIME_DIAGNOSTIC_STORAGE_KEY,
+      JSON.stringify(diagnostic),
+    );
+  } catch {
+    // Diagnostics must never break a worksheet function.
+  }
+}
+
 function parseResponseError(response: Response): ResponseError {
   if (response.status === 401) {
     return { code: "AUTH_INVALID", message: "API key invalid or expired" };
@@ -262,19 +287,83 @@ function buildUrl(path: string, query?: string): string {
 }
 
 async function apiGet(path: string, query: string | undefined, apiKey: string): Promise<any> {
-  const response = await fetch(buildUrl(path, query), {
-    headers: {
-      Authorization: `Token ${apiKey}`,
-      "Content-Type": "application/json",
-      ...oilpriceAttributionHeaders(),
-    },
-  });
+  const url = buildUrl(path, query);
+  const startedAt = Date.now();
+  let response: Response;
 
-  if (!response.ok) {
-    throw parseResponseError(response);
+  try {
+    response = await fetch(url, {
+      headers: {
+        Authorization: `Token ${apiKey}`,
+        "Content-Type": "application/json",
+        ...oilpriceAttributionHeaders(),
+      },
+    });
+  } catch {
+    const failure = classifyNetworkFailure(browserOnlineState());
+    await persistRuntimeDiagnostic(
+      createRuntimeDiagnostic({
+        source: "custom-function",
+        result: failure.result,
+        code: failure.code,
+        endpoint: path,
+        durationMs: Date.now() - startedAt,
+      }),
+    );
+    throw { code: failure.code, message: failure.message } satisfies ResponseError;
   }
 
-  return response.json();
+  const durationMs = Date.now() - startedAt;
+  const requestId = requestIdFromResponse(response);
+
+  if (!response.ok) {
+    const responseError = parseResponseError(response);
+    await persistRuntimeDiagnostic(
+      createRuntimeDiagnostic({
+        source: "custom-function",
+        result: "http-error",
+        code: responseError.code,
+        endpoint: path,
+        durationMs,
+        httpStatus: response.status,
+        requestId,
+      }),
+    );
+    throw responseError;
+  }
+
+  try {
+    const payload = await response.json();
+    await persistRuntimeDiagnostic(
+      createRuntimeDiagnostic({
+        source: "custom-function",
+        result: "success",
+        code: "OK",
+        endpoint: path,
+        durationMs,
+        httpStatus: response.status,
+        requestId,
+      }),
+    );
+    return payload;
+  } catch {
+    const responseError: ResponseError = {
+      code: "INVALID_RESPONSE",
+      message: "API returned an unreadable response",
+    };
+    await persistRuntimeDiagnostic(
+      createRuntimeDiagnostic({
+        source: "custom-function",
+        result: "invalid-response",
+        code: responseError.code,
+        endpoint: path,
+        durationMs,
+        httpStatus: response.status,
+        requestId,
+      }),
+    );
+    throw responseError;
+  }
 }
 
 function isResponseError(error: unknown): error is ResponseError {
