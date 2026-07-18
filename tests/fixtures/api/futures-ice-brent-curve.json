@@ -1,0 +1,142 @@
+{
+  "analysis_date": "2026-07-17",
+  "curve_type": "backwardation",
+  "total_contracts": 16,
+  "front_month": {
+    "contract_month": "2026-09",
+    "contract_code": "BRENT_FUTURES_2026_09",
+    "settlement_price": 88.26,
+    "trading_date": "2026-07-17",
+    "months_to_expiry": 2
+  },
+  "back_month": {
+    "contract_month": null,
+    "contract_code": "BRENT_FUTURES_CONTINUOUS",
+    "settlement_price": 85.62,
+    "trading_date": "2026-07-17",
+    "months_to_expiry": 999
+  },
+  "contracts": [
+    {
+      "contract_month": "2026-09",
+      "contract_code": "BRENT_FUTURES_2026_09",
+      "settlement_price": 88.26,
+      "trading_date": "2026-07-17",
+      "months_to_expiry": 2
+    },
+    {
+      "contract_month": "2026-10",
+      "contract_code": "BRENT_FUTURES_2026_10",
+      "settlement_price": 86.4,
+      "trading_date": "2026-07-17",
+      "months_to_expiry": 3
+    },
+    {
+      "contract_month": "2026-11",
+      "contract_code": "BRENT_FUTURES_2026_11",
+      "settlement_price": 84.62,
+      "trading_date": "2026-07-17",
+      "months_to_expiry": 4
+    },
+    {
+      "contract_month": "2026-12",
+      "contract_code": "BRENT_FUTURES_2026_12",
+      "settlement_price": 83.17,
+      "trading_date": "2026-07-17",
+      "months_to_expiry": 5
+    },
+    {
+      "contract_month": "2027-01",
+      "contract_code": "BRENT_FUTURES_2027_01",
+      "settlement_price": 82.04,
+      "trading_date": "2026-07-17",
+      "months_to_expiry": 6
+    },
+    {
+      "contract_month": "2027-02",
+      "contract_code": "BRENT_FUTURES_2027_02",
+      "settlement_price": 80.95,
+      "trading_date": "2026-07-17",
+      "months_to_expiry": 7
+    },
+    {
+      "contract_month": "2027-03",
+      "contract_code": "BRENT_FUTURES_2027_03",
+      "settlement_price": 80.09,
+      "trading_date": "2026-07-17",
+      "months_to_expiry": 8
+    },
+    {
+      "contract_month": "2027-04",
+      "contract_code": "BRENT_FUTURES_2027_04",
+      "settlement_price": 79.28,
+      "trading_date": "2026-07-17",
+      "months_to_expiry": 9
+    },
+    {
+      "contract_month": "2027-05",
+      "contract_code": "BRENT_FUTURES_2027_05",
+      "settlement_price": 78.59,
+      "trading_date": "2026-07-17",
+      "months_to_expiry": 10
+    },
+    {
+      "contract_month": "2027-06",
+      "contract_code": "BRENT_FUTURES_2027_06",
+      "settlement_price": 77.95,
+      "trading_date": "2026-07-17",
+      "months_to_expiry": 11
+    },
+    {
+      "contract_month": "2027-07",
+      "contract_code": "BRENT_FUTURES_2027_07",
+      "settlement_price": 77.37,
+      "trading_date": "2026-07-17",
+      "months_to_expiry": 12
+    },
+    {
+      "contract_month": "2027-08",
+      "contract_code": "BRENT_FUTURES_2027_08",
+      "settlement_price": 76.89,
+      "trading_date": "2026-07-17",
+      "months_to_expiry": 13
+    },
+    {
+      "contract_month": "2027-09",
+      "contract_code": "BRENT_FUTURES_2027_09",
+      "settlement_price": 76.45,
+      "trading_date": "2026-07-17",
+      "months_to_expiry": 14
+    },
+    {
+      "contract_month": "2027-11",
+      "contract_code": "BRENT_FUTURES_2027_11",
+      "settlement_price": 75.79,
+      "trading_date": "2026-07-17",
+      "months_to_expiry": 16
+    },
+    {
+      "contract_month": "2027-12",
+      "contract_code": "BRENT_FUTURES_2027_12",
+      "settlement_price": 75.33,
+      "trading_date": "2026-07-17",
+      "months_to_expiry": 17
+    },
+    {
+      "contract_month": null,
+      "contract_code": "BRENT_FUTURES_CONTINUOUS",
+      "settlement_price": 85.62,
+      "trading_date": "2026-07-17",
+      "months_to_expiry": 999
+    }
+  ],
+  "curve_metrics": {
+    "front_month_price": 88.26,
+    "back_month_price": 85.62,
+    "total_slope": -2.64,
+    "slope_percentage": -2.9912,
+    "average_price": 80.55,
+    "price_range": 12.93,
+    "steepness": -0.839301
+  }
+}

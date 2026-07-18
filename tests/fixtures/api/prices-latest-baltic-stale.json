@@ -1,0 +1,37 @@
+{
+  "status": "success",
+  "data": {
+    "price": 4655.0,
+    "formatted": "$4655.00",
+    "currency": "INDEX",
+    "code": "BALTIC_CAPESIZE_INDEX",
+    "created_at": "2026-07-10T14:24:30.140Z",
+    "updated_at": "2026-07-10T14:24:30.140Z",
+    "type": "spot_price",
+    "unit": "index",
+    "source": "market_reporting",
+    "data_status": "stale",
+    "freshness": {
+      "status": "stale",
+      "age_seconds": 708600,
+      "expected_max_age_seconds": 86400
+    },
+    "stale": true,
+    "is_stale": true,
+    "stale_reason": "no_recent_data",
+    "changes": {
+      "24h": {
+        "amount": 175.0,
+        "percent": 3.91,
+        "previous_price": 4480.0
+      }
+    },
+    "as_of": "2026-07-10T14:24:30.140Z",
+    "collected_at": "2026-07-10T14:24:30.140Z",
+    "age_days": 8,
+    "metadata": {
+      "source": "market_reporting",
+      "source_description": "Aggregated from published market sources"
+    }
+  }
+}

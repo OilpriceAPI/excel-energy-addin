@@ -54,6 +54,60 @@
         "type": "any",
         "dimensionality": "matrix"
       }
+    },
+    {
+      "id": "PRICE.STATUS",
+      "name": "PRICE.STATUS",
+      "description": "Reports the freshness of the latest quote (current, stale, ...) so stale data is distinguishable.",
+      "helpUrl": "https://docs.oilpriceapi.com",
+      "parameters": [
+        {
+          "name": "code",
+          "description": "Commodity code, for example BALTIC_CAPESIZE_INDEX.",
+          "type": "string",
+          "optional": false
+        }
+      ],
+      "result": {
+        "type": "string",
+        "dimensionality": "scalar"
+      }
+    },
+    {
+      "id": "PRICE.UNIT",
+      "name": "PRICE.UNIT",
+      "description": "Returns the currency and unit of a quote, for example GBp/therm, so values are not misread.",
+      "helpUrl": "https://docs.oilpriceapi.com",
+      "parameters": [
+        {
+          "name": "code",
+          "description": "Commodity code, for example NATURAL_GAS_GBP.",
+          "type": "string",
+          "optional": false
+        }
+      ],
+      "result": {
+        "type": "string",
+        "dimensionality": "scalar"
+      }
+    },
+    {
+      "id": "PRICE.INFO",
+      "name": "PRICE.INFO",
+      "description": "Spills a table with the latest price, currency, unit, formatted value, and freshness.",
+      "helpUrl": "https://docs.oilpriceapi.com",
+      "parameters": [
+        {
+          "name": "code",
+          "description": "Commodity code, for example NATURAL_GAS_GBP.",
+          "type": "string",
+          "optional": false
+        }
+      ],
+      "result": {
+        "type": "any",
+        "dimensionality": "matrix"
+      }
     }
   ]
 }

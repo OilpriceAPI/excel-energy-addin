@@ -1,0 +1,1821 @@
+{
+  "status": "success",
+  "data": {
+    "status": "success",
+    "data": {
+      "summary": {
+        "fresh_count": 172,
+        "stale_count": 217,
+        "missing_count": 0,
+        "total_commodities": 389,
+        "health_percentage": 44.2
+      },
+      "change_24h": {
+        "status": "healthy",
+        "available_count": 196,
+        "missing_count": 51,
+        "total_commodities": 247,
+        "coverage_percent": 79.4,
+        "missing_codes": [
+          "DIESEL_RETAIL_STATE_DC_USD",
+          "GASOLINE_RETAIL_STATE_AK_USD",
+          "GASOLINE_RETAIL_STATE_AL_USD",
+          "GASOLINE_RETAIL_STATE_AR_USD",
+          "GASOLINE_RETAIL_STATE_AZ_USD",
+          "GASOLINE_RETAIL_STATE_CA_USD",
+          "GASOLINE_RETAIL_STATE_CO_USD",
+          "GASOLINE_RETAIL_STATE_CT_USD",
+          "GASOLINE_RETAIL_STATE_DC_USD",
+          "GASOLINE_RETAIL_STATE_DE_USD"
+        ],
+        "calculator_last_run": "2026-07-18T19:00:34Z",
+        "calculator_stale": false,
+        "calculator_stats": {
+          "calculated": 1060,
+          "failed": 51,
+          "success_rate": 95.4,
+          "duration": 19.21
+        }
+      },
+      "fresh": [
+        {
+          "code": "AZERI_LIGHT_USD",
+          "last_update": "2026-07-18T00:01:14Z"
+        },
+        {
+          "code": "BASRAH_HEAVY_USD",
+          "last_update": "2026-07-18T00:01:12Z"
+        },
+        {
+          "code": "BASRAH_MEDIUM_USD",
+          "last_update": "2026-07-18T00:01:10Z"
+        },
+        {
+          "code": "BRENT_CRUDE_USD",
+          "last_update": "2026-07-18T18:50:34Z"
+        },
+        {
+          "code": "COAL_USD",
+          "last_update": "2026-07-18T00:04:53Z"
+        },
+        {
+          "code": "COKING_COAL_USD",
+          "last_update": "2026-07-18T00:02:12Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_AR_ARS",
+          "last_update": "2026-07-18T17:30:38Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_AK_USD",
+          "last_update": "2026-07-18T14:00:10Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_AL_USD",
+          "last_update": "2026-07-18T14:00:12Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_AR_USD",
+          "last_update": "2026-07-18T14:00:12Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_AZ_USD",
+          "last_update": "2026-07-18T14:00:13Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_CA_USD",
+          "last_update": "2026-07-18T14:00:13Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_CO_USD",
+          "last_update": "2026-07-18T14:00:14Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_CT_USD",
+          "last_update": "2026-07-18T14:00:14Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_DC_USD",
+          "last_update": "2026-07-18T14:00:15Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_DE_USD",
+          "last_update": "2026-07-18T14:00:15Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_FL_USD",
+          "last_update": "2026-07-18T14:00:17Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_GA_USD",
+          "last_update": "2026-07-18T14:00:18Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_HI_USD",
+          "last_update": "2026-07-18T14:00:19Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_IA_USD",
+          "last_update": "2026-07-18T14:00:20Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_ID_USD",
+          "last_update": "2026-07-18T14:00:21Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_IL_USD",
+          "last_update": "2026-07-18T14:00:21Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_IN_USD",
+          "last_update": "2026-07-18T14:00:22Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_KS_USD",
+          "last_update": "2026-07-18T14:00:22Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_KY_USD",
+          "last_update": "2026-07-18T14:00:23Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_LA_USD",
+          "last_update": "2026-07-18T14:00:23Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_MA_USD",
+          "last_update": "2026-07-18T14:00:24Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_MD_USD",
+          "last_update": "2026-07-18T14:00:24Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_ME_USD",
+          "last_update": "2026-07-18T14:00:24Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_MI_USD",
+          "last_update": "2026-07-18T14:00:25Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_MN_USD",
+          "last_update": "2026-07-18T14:00:25Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_MO_USD",
+          "last_update": "2026-07-18T14:00:26Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_MS_USD",
+          "last_update": "2026-07-18T14:00:26Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_MT_USD",
+          "last_update": "2026-07-18T14:00:26Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_NC_USD",
+          "last_update": "2026-07-18T14:00:26Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_ND_USD",
+          "last_update": "2026-07-18T14:00:27Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_NE_USD",
+          "last_update": "2026-07-18T14:00:27Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_NH_USD",
+          "last_update": "2026-07-18T14:00:27Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_NJ_USD",
+          "last_update": "2026-07-18T14:00:27Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_NM_USD",
+          "last_update": "2026-07-18T14:00:28Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_NV_USD",
+          "last_update": "2026-07-18T14:00:28Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_NY_USD",
+          "last_update": "2026-07-18T14:00:28Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_OH_USD",
+          "last_update": "2026-07-18T14:00:29Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_OK_USD",
+          "last_update": "2026-07-18T14:00:29Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_OR_USD",
+          "last_update": "2026-07-18T14:00:29Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_PA_USD",
+          "last_update": "2026-07-18T14:00:29Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_RI_USD",
+          "last_update": "2026-07-18T14:00:29Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_SC_USD",
+          "last_update": "2026-07-18T14:00:30Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_SD_USD",
+          "last_update": "2026-07-18T14:00:30Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_TN_USD",
+          "last_update": "2026-07-18T14:00:30Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_TX_USD",
+          "last_update": "2026-07-18T14:00:30Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_UT_USD",
+          "last_update": "2026-07-18T14:00:30Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_VA_USD",
+          "last_update": "2026-07-18T14:00:30Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_VT_USD",
+          "last_update": "2026-07-18T14:00:30Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_WA_USD",
+          "last_update": "2026-07-18T14:00:31Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_WI_USD",
+          "last_update": "2026-07-18T14:00:31Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_WV_USD",
+          "last_update": "2026-07-18T14:00:31Z"
+        },
+        {
+          "code": "DIESEL_RETAIL_STATE_WY_USD",
+          "last_update": "2026-07-18T14:00:31Z"
+        },
+        {
+          "code": "DIESEL_USD",
+          "last_update": "2026-07-17T22:10:38Z"
+        },
+        {
+          "code": "DUBAI_CRUDE_USD",
+          "last_update": "2026-07-18T00:01:08Z"
+        },
+        {
+          "code": "DUTCH_TTF_EUR",
+          "last_update": "2026-07-18T15:31:27Z"
+        },
+        {
+          "code": "DUTCH_TTF_NATURAL_GAS_USD",
+          "last_update": "2026-07-18T07:15:15Z"
+        },
+        {
+          "code": "EUR_NOK",
+          "last_update": "2026-07-18T19:04:50Z"
+        },
+        {
+          "code": "EUR_USD",
+          "last_update": "2026-07-18T19:08:18Z"
+        },
+        {
+          "code": "EU_CARBON_EUR",
+          "last_update": "2026-07-18T00:02:30Z"
+        },
+        {
+          "code": "FED_FUNDS_RATE",
+          "last_update": "2026-07-17T20:17:08Z"
+        },
+        {
+          "code": "GASOIL_USD",
+          "last_update": "2026-07-18T08:25:32Z"
+        },
+        {
+          "code": "GASOLINE_RBOB_USD",
+          "last_update": "2026-07-18T18:50:41Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_AR_ARS",
+          "last_update": "2026-07-18T17:30:39Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_AK_USD",
+          "last_update": "2026-07-18T14:15:10Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_AL_USD",
+          "last_update": "2026-07-18T14:15:10Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_AR_USD",
+          "last_update": "2026-07-18T14:15:11Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_AZ_USD",
+          "last_update": "2026-07-18T14:15:11Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_CA_USD",
+          "last_update": "2026-07-18T14:15:11Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_CO_USD",
+          "last_update": "2026-07-18T14:15:12Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_CT_USD",
+          "last_update": "2026-07-18T14:15:12Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_DC_USD",
+          "last_update": "2026-07-18T14:15:12Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_DE_USD",
+          "last_update": "2026-07-18T14:15:12Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_GA_USD",
+          "last_update": "2026-07-18T14:15:12Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_HI_USD",
+          "last_update": "2026-07-18T14:15:12Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_IA_USD",
+          "last_update": "2026-07-18T14:15:12Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_ID_USD",
+          "last_update": "2026-07-18T14:15:13Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_IL_USD",
+          "last_update": "2026-07-18T14:15:13Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_IN_USD",
+          "last_update": "2026-07-18T14:15:13Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_KS_USD",
+          "last_update": "2026-07-18T14:15:13Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_KY_USD",
+          "last_update": "2026-07-18T14:15:13Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_LA_USD",
+          "last_update": "2026-07-18T14:15:13Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_MA_USD",
+          "last_update": "2026-07-18T14:15:13Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_MD_USD",
+          "last_update": "2026-07-18T14:15:13Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_ME_USD",
+          "last_update": "2026-07-18T14:15:13Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_MI_USD",
+          "last_update": "2026-07-18T14:15:13Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_MN_USD",
+          "last_update": "2026-07-18T14:15:13Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_MO_USD",
+          "last_update": "2026-07-18T14:15:14Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_MS_USD",
+          "last_update": "2026-07-18T14:15:14Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_MT_USD",
+          "last_update": "2026-07-18T14:15:14Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_NC_USD",
+          "last_update": "2026-07-18T14:15:14Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_ND_USD",
+          "last_update": "2026-07-18T14:15:14Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_NE_USD",
+          "last_update": "2026-07-18T14:15:14Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_NH_USD",
+          "last_update": "2026-07-18T14:15:14Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_NJ_USD",
+          "last_update": "2026-07-18T14:15:14Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_NM_USD",
+          "last_update": "2026-07-18T14:15:14Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_NV_USD",
+          "last_update": "2026-07-18T14:15:14Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_NY_USD",
+          "last_update": "2026-07-18T14:15:14Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_OH_USD",
+          "last_update": "2026-07-18T14:15:14Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_OK_USD",
+          "last_update": "2026-07-18T14:15:14Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_OR_USD",
+          "last_update": "2026-07-18T14:15:14Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_PA_USD",
+          "last_update": "2026-07-18T14:15:15Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_RI_USD",
+          "last_update": "2026-07-18T14:15:15Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_SC_USD",
+          "last_update": "2026-07-18T14:15:15Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_SD_USD",
+          "last_update": "2026-07-18T14:15:15Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_TN_USD",
+          "last_update": "2026-07-18T14:15:15Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_TX_USD",
+          "last_update": "2026-07-18T14:15:15Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_UT_USD",
+          "last_update": "2026-07-18T14:15:15Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_VA_USD",
+          "last_update": "2026-07-18T14:15:15Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_VT_USD",
+          "last_update": "2026-07-18T14:15:15Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_WA_USD",
+          "last_update": "2026-07-18T14:15:15Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_WI_USD",
+          "last_update": "2026-07-18T14:15:15Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_WV_USD",
+          "last_update": "2026-07-18T14:15:16Z"
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_WY_USD",
+          "last_update": "2026-07-18T14:15:16Z"
+        },
+        {
+          "code": "GASOLINE_USD",
+          "last_update": "2026-07-17T20:40:27Z"
+        },
+        {
+          "code": "GBP_USD",
+          "last_update": "2026-07-18T19:04:41Z"
+        },
+        {
+          "code": "GOLD_USD",
+          "last_update": "2026-07-18T19:04:34Z"
+        },
+        {
+          "code": "HEATING_OIL_USD",
+          "last_update": "2026-07-18T19:03:01Z"
+        },
+        {
+          "code": "HFO_380_AEFUJ_USD",
+          "last_update": "2026-07-18T18:33:40Z"
+        },
+        {
+          "code": "HFO_380_HKHKG_USD",
+          "last_update": "2026-07-18T18:53:18Z"
+        },
+        {
+          "code": "HFO_380_NLRTM_USD",
+          "last_update": "2026-07-18T18:18:46Z"
+        },
+        {
+          "code": "HFO_380_SGSIN_USD",
+          "last_update": "2026-07-18T19:11:36Z"
+        },
+        {
+          "code": "HFO_380_USD",
+          "last_update": "2026-07-18T17:45:31Z"
+        },
+        {
+          "code": "HFO_380_USHOU_USD",
+          "last_update": "2026-07-18T16:13:36Z"
+        },
+        {
+          "code": "HFO_380_USLAX_USD",
+          "last_update": "2026-07-18T16:43:27Z"
+        },
+        {
+          "code": "JET_FUEL_A4A_USD",
+          "last_update": "2026-07-17T22:00:22Z"
+        },
+        {
+          "code": "JKM_LNG_USD",
+          "last_update": "2026-07-18T00:01:44Z"
+        },
+        {
+          "code": "METHANOL_CNY",
+          "last_update": "2026-07-18T00:15:14Z"
+        },
+        {
+          "code": "METHANOL_USD",
+          "last_update": "2026-07-18T19:00:19Z"
+        },
+        {
+          "code": "MGO_05S_AEFUJ_USD",
+          "last_update": "2026-07-18T18:33:40Z"
+        },
+        {
+          "code": "MGO_05S_GIGIB_USD",
+          "last_update": "2026-07-18T16:28:33Z"
+        },
+        {
+          "code": "MGO_05S_HKHKG_USD",
+          "last_update": "2026-07-18T18:53:18Z"
+        },
+        {
+          "code": "MGO_05S_NLRTM_USD",
+          "last_update": "2026-07-18T18:18:46Z"
+        },
+        {
+          "code": "MGO_05S_SGSIN_USD",
+          "last_update": "2026-07-18T19:11:36Z"
+        },
+        {
+          "code": "MGO_05S_USD",
+          "last_update": "2026-07-18T17:45:29Z"
+        },
+        {
+          "code": "MGO_05S_USHOU_USD",
+          "last_update": "2026-07-18T16:13:36Z"
+        },
+        {
+          "code": "MGO_05S_USLAX_USD",
+          "last_update": "2026-07-18T16:43:27Z"
+        },
+        {
+          "code": "NATURAL_GAS_EASTERN_GAS_SOUTH_USD",
+          "last_update": "2026-07-17T20:38:15Z"
+        },
+        {
+          "code": "NATURAL_GAS_GBP",
+          "last_update": "2026-07-18T19:09:31Z"
+        },
+        {
+          "code": "NATURAL_GAS_SOCAL_USD",
+          "last_update": "2026-07-17T20:34:25Z"
+        },
+        {
+          "code": "NATURAL_GAS_USD",
+          "last_update": "2026-07-18T19:04:28Z"
+        },
+        {
+          "code": "NATURAL_GAS_WAHA",
+          "last_update": "2026-07-17T20:30:30Z"
+        },
+        {
+          "code": "NEWCASTLE_COAL_USD",
+          "last_update": "2026-07-18T00:02:10Z"
+        },
+        {
+          "code": "OMAN_CRUDE_USD",
+          "last_update": "2026-07-18T05:15:11Z"
+        },
+        {
+          "code": "PALLADIUM_USD",
+          "last_update": "2026-07-18T15:30:33Z"
+        },
+        {
+          "code": "PLATINUM_USD",
+          "last_update": "2026-07-18T15:30:31Z"
+        },
+        {
+          "code": "POLYETHYLENE_CNY",
+          "last_update": "2026-07-18T00:15:15Z"
+        },
+        {
+          "code": "POLYETHYLENE_USD",
+          "last_update": "2026-07-18T19:00:17Z"
+        },
+        {
+          "code": "POLYPROPYLENE_CNY",
+          "last_update": "2026-07-18T00:15:15Z"
+        },
+        {
+          "code": "POLYPROPYLENE_USD",
+          "last_update": "2026-07-18T19:00:18Z"
+        },
+        {
+          "code": "SILVER_USD",
+          "last_update": "2026-07-18T19:04:36Z"
+        },
+        {
+          "code": "STYRENE_USD",
+          "last_update": "2026-07-18T19:00:19Z"
+        },
+        {
+          "code": "UK_CARBON_GBP",
+          "last_update": "2026-07-18T00:02:49Z"
+        },
+        {
+          "code": "URALS_CRUDE_USD",
+          "last_update": "2026-07-18T00:02:51Z"
+        },
+        {
+          "code": "USD_CNY",
+          "last_update": "2026-07-18T18:53:18Z"
+        },
+        {
+          "code": "USD_NOK",
+          "last_update": "2026-07-18T19:04:46Z"
+        },
+        {
+          "code": "US_10Y_YIELD",
+          "last_update": "2026-07-17T20:17:07Z"
+        },
+        {
+          "code": "VLSFO_AEFUJ_USD",
+          "last_update": "2026-07-18T18:33:39Z"
+        },
+        {
+          "code": "VLSFO_GIGIB_USD",
+          "last_update": "2026-07-18T16:28:33Z"
+        },
+        {
+          "code": "VLSFO_HKHKG_USD",
+          "last_update": "2026-07-18T18:53:18Z"
+        },
+        {
+          "code": "VLSFO_NLRTM_USD",
+          "last_update": "2026-07-18T18:18:45Z"
+        },
+        {
+          "code": "VLSFO_SGSIN_USD",
+          "last_update": "2026-07-18T19:11:35Z"
+        },
+        {
+          "code": "VLSFO_USD",
+          "last_update": "2026-07-18T17:45:30Z"
+        },
+        {
+          "code": "VLSFO_USHOU_USD",
+          "last_update": "2026-07-18T16:13:35Z"
+        },
+        {
+          "code": "VLSFO_USLAX_USD",
+          "last_update": "2026-07-18T16:43:27Z"
+        },
+        {
+          "code": "WCS_CRUDE_USD",
+          "last_update": "2026-07-18T18:32:04Z"
+        },
+        {
+          "code": "WTI_USD",
+          "last_update": "2026-07-18T18:31:29Z"
+        }
+      ],
+      "stale": [
+        {
+          "code": "BAKKEN_WELLS_COMPLETED",
+          "last_update": "2026-07-11T20:30:23Z",
+          "hours_stale": 166.7
+        },
+        {
+          "code": "BAKKEN_WELLS_DRILLED",
+          "last_update": "2026-07-11T20:30:23Z",
+          "hours_stale": 166.7
+        },
+        {
+          "code": "BALTIC_DRY_INDEX",
+          "last_update": "2026-07-17T13:40:10Z",
+          "hours_stale": 29.6
+        },
+        {
+          "code": "BRENT_SPOT_USD",
+          "last_update": "2026-07-15T19:29:33Z",
+          "hours_stale": 71.7
+        },
+        {
+          "code": "CANADA_RIG_COUNT",
+          "last_update": "2026-07-17T17:01:01Z",
+          "hours_stale": 26.2
+        },
+        {
+          "code": "CAPP_COAL_USD",
+          "last_update": "2026-07-14T02:00:14Z",
+          "hours_stale": 113.2
+        },
+        {
+          "code": "CONTAINER_FREIGHT_CNSHA_ITGOA_USD",
+          "last_update": "2026-07-16T16:30:15Z",
+          "hours_stale": 50.7
+        },
+        {
+          "code": "CONTAINER_FREIGHT_CNSHA_NLRTM_USD",
+          "last_update": "2026-07-16T16:30:15Z",
+          "hours_stale": 50.7
+        },
+        {
+          "code": "CONTAINER_FREIGHT_CNSHA_USLAX_USD",
+          "last_update": "2026-07-16T16:30:15Z",
+          "hours_stale": 50.7
+        },
+        {
+          "code": "CONTAINER_FREIGHT_CNSHA_USNYC_USD",
+          "last_update": "2026-07-16T16:30:16Z",
+          "hours_stale": 50.7
+        },
+        {
+          "code": "CONTAINER_FREIGHT_COMPOSITE_USD",
+          "last_update": "2026-07-16T16:30:15Z",
+          "hours_stale": 50.7
+        },
+        {
+          "code": "CONTAINER_FREIGHT_NLRTM_CNSHA_USD",
+          "last_update": "2026-07-16T16:30:16Z",
+          "hours_stale": 50.7
+        },
+        {
+          "code": "CONTAINER_FREIGHT_NLRTM_USNYC_USD",
+          "last_update": "2026-07-16T16:30:16Z",
+          "hours_stale": 50.7
+        },
+        {
+          "code": "CONTAINER_FREIGHT_USNYC_NLRTM_USD",
+          "last_update": "2026-07-16T16:30:16Z",
+          "hours_stale": 50.7
+        },
+        {
+          "code": "DIESEL_RETAIL_AT_EUR",
+          "last_update": "2026-07-16T15:00:29Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "DIESEL_RETAIL_BE_EUR",
+          "last_update": "2026-07-16T15:00:30Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "DIESEL_RETAIL_BG_EUR",
+          "last_update": "2026-07-16T15:00:30Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "DIESEL_RETAIL_BR_BRL",
+          "last_update": "2026-07-17T18:00:19Z",
+          "hours_stale": 25.2
+        },
+        {
+          "code": "DIESEL_RETAIL_CALIFORNIA_USD",
+          "last_update": "2026-07-15T19:29:55Z",
+          "hours_stale": 71.7
+        },
+        {
+          "code": "DIESEL_RETAIL_CA_AB_CAD",
+          "last_update": "2026-07-13T16:00:38Z",
+          "hours_stale": 123.2
+        },
+        {
+          "code": "DIESEL_RETAIL_CA_BC_CAD",
+          "last_update": "2026-07-13T16:00:40Z",
+          "hours_stale": 123.2
+        },
+        {
+          "code": "DIESEL_RETAIL_CA_CAD",
+          "last_update": "2026-07-13T16:00:38Z",
+          "hours_stale": 123.2
+        },
+        {
+          "code": "DIESEL_RETAIL_CA_MB_CAD",
+          "last_update": "2026-07-13T16:00:40Z",
+          "hours_stale": 123.2
+        },
+        {
+          "code": "DIESEL_RETAIL_CA_NB_CAD",
+          "last_update": "2026-07-13T16:00:39Z",
+          "hours_stale": 123.2
+        },
+        {
+          "code": "DIESEL_RETAIL_CA_NL_CAD",
+          "last_update": "2026-07-13T16:00:39Z",
+          "hours_stale": 123.2
+        },
+        {
+          "code": "DIESEL_RETAIL_CA_NS_CAD",
+          "last_update": "2026-07-13T16:00:39Z",
+          "hours_stale": 123.2
+        },
+        {
+          "code": "DIESEL_RETAIL_CA_ON_CAD",
+          "last_update": "2026-07-13T16:00:40Z",
+          "hours_stale": 123.2
+        },
+        {
+          "code": "DIESEL_RETAIL_CA_PE_CAD",
+          "last_update": "2026-07-13T16:00:38Z",
+          "hours_stale": 123.2
+        },
+        {
+          "code": "DIESEL_RETAIL_CA_QC_CAD",
+          "last_update": "2026-07-13T16:00:39Z",
+          "hours_stale": 123.2
+        },
+        {
+          "code": "DIESEL_RETAIL_CA_SK_CAD",
+          "last_update": "2026-07-13T16:00:39Z",
+          "hours_stale": 123.2
+        },
+        {
+          "code": "DIESEL_RETAIL_CY_EUR",
+          "last_update": "2026-07-16T15:00:31Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "DIESEL_RETAIL_CZ_EUR",
+          "last_update": "2026-07-16T15:00:32Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "DIESEL_RETAIL_DE_EUR",
+          "last_update": "2026-07-16T15:00:32Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "DIESEL_RETAIL_DK_EUR",
+          "last_update": "2026-07-16T15:00:33Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "DIESEL_RETAIL_EAST_COAST_USD",
+          "last_update": "2026-07-14T21:01:13Z",
+          "hours_stale": 94.2
+        },
+        {
+          "code": "DIESEL_RETAIL_EE_EUR",
+          "last_update": "2026-07-16T15:00:33Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "DIESEL_RETAIL_ES_EUR",
+          "last_update": "2026-07-16T15:00:33Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "DIESEL_RETAIL_FI_EUR",
+          "last_update": "2026-07-16T15:00:34Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "DIESEL_RETAIL_FR_EUR",
+          "last_update": "2026-07-16T15:00:34Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "DIESEL_RETAIL_GR_EUR",
+          "last_update": "2026-07-16T15:00:35Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "DIESEL_RETAIL_GULF_COAST_USD",
+          "last_update": "2026-07-15T19:29:51Z",
+          "hours_stale": 71.7
+        },
+        {
+          "code": "DIESEL_RETAIL_HR_EUR",
+          "last_update": "2026-07-16T15:00:37Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "DIESEL_RETAIL_HU_EUR",
+          "last_update": "2026-07-16T15:00:38Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "DIESEL_RETAIL_IE_EUR",
+          "last_update": "2026-07-16T15:00:39Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "DIESEL_RETAIL_IN_DELHI_INR",
+          "last_update": "2026-07-15T03:00:35Z",
+          "hours_stale": 88.2
+        },
+        {
+          "code": "DIESEL_RETAIL_IN_INR",
+          "last_update": "2026-07-15T03:00:35Z",
+          "hours_stale": 88.2
+        },
+        {
+          "code": "DIESEL_RETAIL_IT_EUR",
+          "last_update": "2026-07-16T15:00:39Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "DIESEL_RETAIL_LT_EUR",
+          "last_update": "2026-07-16T15:00:40Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "DIESEL_RETAIL_LU_EUR",
+          "last_update": "2026-07-16T15:00:40Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "DIESEL_RETAIL_LV_EUR",
+          "last_update": "2026-07-16T15:00:40Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "DIESEL_RETAIL_MIDWEST_USD",
+          "last_update": "2026-07-15T19:29:50Z",
+          "hours_stale": 71.7
+        },
+        {
+          "code": "DIESEL_RETAIL_NL_EUR",
+          "last_update": "2026-07-16T15:00:41Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "DIESEL_RETAIL_PL_EUR",
+          "last_update": "2026-07-16T15:00:41Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "DIESEL_RETAIL_PT_EUR",
+          "last_update": "2026-07-16T15:00:42Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "DIESEL_RETAIL_ROCKY_MOUNTAIN_USD",
+          "last_update": "2026-07-15T19:29:53Z",
+          "hours_stale": 71.7
+        },
+        {
+          "code": "DIESEL_RETAIL_RO_EUR",
+          "last_update": "2026-07-16T15:00:42Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "DIESEL_RETAIL_SE_EUR",
+          "last_update": "2026-07-16T15:00:43Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "DIESEL_RETAIL_SI_EUR",
+          "last_update": "2026-07-16T15:00:43Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "DIESEL_RETAIL_SK_EUR",
+          "last_update": "2026-07-16T15:00:43Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "DIESEL_RETAIL_USD",
+          "last_update": "2026-07-14T21:01:00Z",
+          "hours_stale": 94.2
+        },
+        {
+          "code": "DIESEL_RETAIL_WEST_COAST_USD",
+          "last_update": "2026-07-15T19:29:54Z",
+          "hours_stale": 71.7
+        },
+        {
+          "code": "DIESEL_WHOLESALE_AU_ADELAIDE_AUD",
+          "last_update": "2026-07-17T01:00:42Z",
+          "hours_stale": 42.2
+        },
+        {
+          "code": "DIESEL_WHOLESALE_AU_AUD",
+          "last_update": "2026-07-17T01:00:49Z",
+          "hours_stale": 42.2
+        },
+        {
+          "code": "DIESEL_WHOLESALE_AU_BRISBANE_AUD",
+          "last_update": "2026-07-17T01:00:41Z",
+          "hours_stale": 42.2
+        },
+        {
+          "code": "DIESEL_WHOLESALE_AU_DARWIN_AUD",
+          "last_update": "2026-07-17T01:00:44Z",
+          "hours_stale": 42.2
+        },
+        {
+          "code": "DIESEL_WHOLESALE_AU_HOBART_AUD",
+          "last_update": "2026-07-17T01:00:48Z",
+          "hours_stale": 42.2
+        },
+        {
+          "code": "DIESEL_WHOLESALE_AU_MELBOURNE_AUD",
+          "last_update": "2026-07-17T01:00:41Z",
+          "hours_stale": 42.2
+        },
+        {
+          "code": "DIESEL_WHOLESALE_AU_PERTH_AUD",
+          "last_update": "2026-07-17T01:00:43Z",
+          "hours_stale": 42.2
+        },
+        {
+          "code": "DIESEL_WHOLESALE_AU_SYDNEY_AUD",
+          "last_update": "2026-07-17T01:00:40Z",
+          "hours_stale": 42.2
+        },
+        {
+          "code": "DXY_USD",
+          "last_update": "2026-07-13T20:17:19Z",
+          "hours_stale": 118.9
+        },
+        {
+          "code": "EAGLEFORD_WELLS_COMPLETED",
+          "last_update": "2026-07-11T20:30:24Z",
+          "hours_stale": 166.7
+        },
+        {
+          "code": "EAGLEFORD_WELLS_DRILLED",
+          "last_update": "2026-07-11T20:30:24Z",
+          "hours_stale": 166.7
+        },
+        {
+          "code": "ETHANOL_RETAIL_BR_BRL",
+          "last_update": "2026-07-17T18:00:18Z",
+          "hours_stale": 25.2
+        },
+        {
+          "code": "ETHANOL_USD",
+          "last_update": "2026-07-17T00:02:06Z",
+          "hours_stale": 43.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_AT_EUR",
+          "last_update": "2026-07-16T15:00:28Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_BE_EUR",
+          "last_update": "2026-07-16T15:00:29Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_BG_EUR",
+          "last_update": "2026-07-16T15:00:30Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_BR_BRL",
+          "last_update": "2026-07-17T18:00:18Z",
+          "hours_stale": 25.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_CALIFORNIA_USD",
+          "last_update": "2026-07-15T19:30:06Z",
+          "hours_stale": 71.7
+        },
+        {
+          "code": "GASOLINE_RETAIL_CA_AB_CAD",
+          "last_update": "2026-07-13T16:00:29Z",
+          "hours_stale": 123.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_CA_BC_CAD",
+          "last_update": "2026-07-13T16:00:32Z",
+          "hours_stale": 123.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_CA_CAD",
+          "last_update": "2026-07-13T16:00:29Z",
+          "hours_stale": 123.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_CA_MB_CAD",
+          "last_update": "2026-07-13T16:00:32Z",
+          "hours_stale": 123.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_CA_NB_CAD",
+          "last_update": "2026-07-13T16:00:30Z",
+          "hours_stale": 123.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_CA_NL_CAD",
+          "last_update": "2026-07-13T16:00:31Z",
+          "hours_stale": 123.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_CA_NS_CAD",
+          "last_update": "2026-07-13T16:00:30Z",
+          "hours_stale": 123.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_CA_ON_CAD",
+          "last_update": "2026-07-13T16:00:31Z",
+          "hours_stale": 123.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_CA_PE_CAD",
+          "last_update": "2026-07-13T16:00:29Z",
+          "hours_stale": 123.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_CA_QC_CAD",
+          "last_update": "2026-07-13T16:00:30Z",
+          "hours_stale": 123.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_CA_SK_CAD",
+          "last_update": "2026-07-13T16:00:31Z",
+          "hours_stale": 123.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_CY_EUR",
+          "last_update": "2026-07-16T15:00:31Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_CZ_EUR",
+          "last_update": "2026-07-16T15:00:32Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_DE_EUR",
+          "last_update": "2026-07-16T15:00:32Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_DK_EUR",
+          "last_update": "2026-07-16T15:00:32Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_EAST_COAST_USD",
+          "last_update": "2026-07-15T19:29:57Z",
+          "hours_stale": 71.7
+        },
+        {
+          "code": "GASOLINE_RETAIL_EE_EUR",
+          "last_update": "2026-07-16T15:00:33Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_ES_EUR",
+          "last_update": "2026-07-16T15:00:33Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_FI_EUR",
+          "last_update": "2026-07-16T15:00:33Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_FR_EUR",
+          "last_update": "2026-07-16T15:00:34Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_GR_EUR",
+          "last_update": "2026-07-16T15:00:35Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_GULF_COAST_USD",
+          "last_update": "2026-07-15T19:30:00Z",
+          "hours_stale": 71.7
+        },
+        {
+          "code": "GASOLINE_RETAIL_HR_EUR",
+          "last_update": "2026-07-16T15:00:36Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_HU_EUR",
+          "last_update": "2026-07-16T15:00:37Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_IE_EUR",
+          "last_update": "2026-07-16T15:00:38Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_IT_EUR",
+          "last_update": "2026-07-16T15:00:39Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_LT_EUR",
+          "last_update": "2026-07-16T15:00:39Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_LU_EUR",
+          "last_update": "2026-07-16T15:00:40Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_LV_EUR",
+          "last_update": "2026-07-16T15:00:40Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_MIDWEST_USD",
+          "last_update": "2026-07-15T19:29:58Z",
+          "hours_stale": 71.7
+        },
+        {
+          "code": "GASOLINE_RETAIL_NL_EUR",
+          "last_update": "2026-07-16T15:00:41Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_PL_EUR",
+          "last_update": "2026-07-16T15:00:41Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_PT_EUR",
+          "last_update": "2026-07-16T15:00:41Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_ROCKY_MOUNTAIN_USD",
+          "last_update": "2026-07-15T19:30:01Z",
+          "hours_stale": 71.7
+        },
+        {
+          "code": "GASOLINE_RETAIL_SE_EUR",
+          "last_update": "2026-07-16T15:00:42Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_SI_EUR",
+          "last_update": "2026-07-16T15:00:43Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_SK_EUR",
+          "last_update": "2026-07-16T15:00:43Z",
+          "hours_stale": 52.2
+        },
+        {
+          "code": "GASOLINE_RETAIL_STATE_FL_USD",
+          "last_update": "2026-07-16T14:15:36Z",
+          "hours_stale": 53.0
+        },
+        {
+          "code": "GASOLINE_RETAIL_USD",
+          "last_update": "2026-07-15T19:29:56Z",
+          "hours_stale": 71.7
+        },
+        {
+          "code": "GASOLINE_RETAIL_WEST_COAST_USD",
+          "last_update": "2026-07-15T19:30:03Z",
+          "hours_stale": 71.7
+        },
+        {
+          "code": "GASOLINE_WHOLESALE_AU_ADELAIDE_AUD",
+          "last_update": "2026-07-17T01:00:42Z",
+          "hours_stale": 42.2
+        },
+        {
+          "code": "GASOLINE_WHOLESALE_AU_AUD",
+          "last_update": "2026-07-17T01:00:49Z",
+          "hours_stale": 42.2
+        },
+        {
+          "code": "GASOLINE_WHOLESALE_AU_BRISBANE_AUD",
+          "last_update": "2026-07-17T01:00:41Z",
+          "hours_stale": 42.2
+        },
+        {
+          "code": "GASOLINE_WHOLESALE_AU_DARWIN_AUD",
+          "last_update": "2026-07-17T01:00:43Z",
+          "hours_stale": 42.2
+        },
+        {
+          "code": "GASOLINE_WHOLESALE_AU_HOBART_AUD",
+          "last_update": "2026-07-17T01:00:47Z",
+          "hours_stale": 42.2
+        },
+        {
+          "code": "GASOLINE_WHOLESALE_AU_MELBOURNE_AUD",
+          "last_update": "2026-07-17T01:00:40Z",
+          "hours_stale": 42.2
+        },
+        {
+          "code": "GASOLINE_WHOLESALE_AU_PERTH_AUD",
+          "last_update": "2026-07-17T01:00:42Z",
+          "hours_stale": 42.2
+        },
+        {
+          "code": "GASOLINE_WHOLESALE_AU_SYDNEY_AUD",
+          "last_update": "2026-07-17T01:00:39Z",
+          "hours_stale": 42.2
+        },
+        {
+          "code": "GOLD_AM_EUR",
+          "last_update": "2026-07-17T16:00:25Z",
+          "hours_stale": 27.2
+        },
+        {
+          "code": "GOLD_AM_GBP",
+          "last_update": "2026-07-17T16:00:25Z",
+          "hours_stale": 27.2
+        },
+        {
+          "code": "GOLD_AM_USD",
+          "last_update": "2026-07-17T16:00:25Z",
+          "hours_stale": 27.2
+        },
+        {
+          "code": "GOLD_PM_EUR",
+          "last_update": "2026-07-17T16:00:27Z",
+          "hours_stale": 27.2
+        },
+        {
+          "code": "GOLD_PM_GBP",
+          "last_update": "2026-07-17T16:00:27Z",
+          "hours_stale": 27.2
+        },
+        {
+          "code": "GOLD_PM_USD",
+          "last_update": "2026-07-17T16:00:27Z",
+          "hours_stale": 27.2
+        },
+        {
+          "code": "HAYNESVILLE_WELLS_COMPLETED",
+          "last_update": "2026-07-11T20:30:24Z",
+          "hours_stale": 166.7
+        },
+        {
+          "code": "HAYNESVILLE_WELLS_DRILLED",
+          "last_update": "2026-07-11T20:30:24Z",
+          "hours_stale": 166.7
+        },
+        {
+          "code": "ILLINOIS_COAL_USD",
+          "last_update": "2026-07-14T02:00:14Z",
+          "hours_stale": 113.2
+        },
+        {
+          "code": "IRON_ORE_USD",
+          "last_update": "2026-07-16T17:22:17Z",
+          "hours_stale": 49.9
+        },
+        {
+          "code": "JET_FUEL_USD",
+          "last_update": "2026-07-15T19:29:40Z",
+          "hours_stale": 71.7
+        },
+        {
+          "code": "LEAD_USD",
+          "last_update": "2026-07-17T12:58:15Z",
+          "hours_stale": 30.3
+        },
+        {
+          "code": "LNG_EU_AVERAGE_EUR",
+          "last_update": "2026-07-17T09:00:50Z",
+          "hours_stale": 34.2
+        },
+        {
+          "code": "LNG_NW_EUROPE_EUR",
+          "last_update": "2026-07-17T09:00:50Z",
+          "hours_stale": 34.2
+        },
+        {
+          "code": "LNG_SOUTH_EUROPE_EUR",
+          "last_update": "2026-07-17T09:00:50Z",
+          "hours_stale": 34.2
+        },
+        {
+          "code": "NAPHTHA_USD",
+          "last_update": "2026-07-17T00:16:05Z",
+          "hours_stale": 43.0
+        },
+        {
+          "code": "NATURAL_GAS_ALGONQUIN_USD",
+          "last_update": "2026-07-17T14:28:18Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "NATURAL_GAS_BASIS_ALGONQUIN_USD",
+          "last_update": "2026-07-17T14:28:18Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "NATURAL_GAS_BASIS_CHICAGO_USD",
+          "last_update": "2026-07-17T14:28:19Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "NATURAL_GAS_BASIS_EL_PASO_SAN_JUAN_USD",
+          "last_update": "2026-07-17T14:28:20Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "NATURAL_GAS_BASIS_HSC_USD",
+          "last_update": "2026-07-17T14:28:20Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "NATURAL_GAS_BASIS_PGE_CITYGATE_USD",
+          "last_update": "2026-07-17T14:28:21Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "NATURAL_GAS_BASIS_SOCAL_BORDER_USD",
+          "last_update": "2026-07-17T14:28:20Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "NATURAL_GAS_BASIS_SUMAS_USD",
+          "last_update": "2026-07-17T14:28:21Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "NATURAL_GAS_BASIS_TETCO_M3_USD",
+          "last_update": "2026-07-17T14:28:19Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "NATURAL_GAS_BASIS_TRANSCO_Z6_NY_USD",
+          "last_update": "2026-07-17T14:28:19Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "NATURAL_GAS_CEGH_EUR",
+          "last_update": "2026-07-16T08:00:09Z",
+          "hours_stale": 59.2
+        },
+        {
+          "code": "NATURAL_GAS_CHICAGO_USD",
+          "last_update": "2026-07-17T14:28:19Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "NATURAL_GAS_CZ_VTP_EUR",
+          "last_update": "2026-07-16T08:00:10Z",
+          "hours_stale": 59.2
+        },
+        {
+          "code": "NATURAL_GAS_EL_PASO_SAN_JUAN_USD",
+          "last_update": "2026-07-17T14:28:20Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "NATURAL_GAS_ETF_EUR",
+          "last_update": "2026-07-16T08:00:10Z",
+          "hours_stale": 59.2
+        },
+        {
+          "code": "NATURAL_GAS_FIN_EUR",
+          "last_update": "2026-07-16T08:00:10Z",
+          "hours_stale": 59.2
+        },
+        {
+          "code": "NATURAL_GAS_HSC_DAY_AHEAD_USD",
+          "last_update": "2026-07-17T14:28:20Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "NATURAL_GAS_HSC_USD",
+          "last_update": "2026-07-16T20:42:14Z",
+          "hours_stale": 46.5
+        },
+        {
+          "code": "NATURAL_GAS_LTU_EUR",
+          "last_update": "2026-07-16T08:00:10Z",
+          "hours_stale": 59.2
+        },
+        {
+          "code": "NATURAL_GAS_LVA_EST_EUR",
+          "last_update": "2026-07-16T08:00:11Z",
+          "hours_stale": 59.2
+        },
+        {
+          "code": "NATURAL_GAS_PEG_EUR",
+          "last_update": "2026-07-16T08:00:11Z",
+          "hours_stale": 59.2
+        },
+        {
+          "code": "NATURAL_GAS_PGE_CITYGATE_USD",
+          "last_update": "2026-07-17T14:28:21Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "NATURAL_GAS_PVB_EUR",
+          "last_update": "2026-07-16T08:00:11Z",
+          "hours_stale": 59.2
+        },
+        {
+          "code": "NATURAL_GAS_STORAGE",
+          "last_update": "2026-07-16T15:35:23Z",
+          "hours_stale": 51.6
+        },
+        {
+          "code": "NATURAL_GAS_SUMAS_USD",
+          "last_update": "2026-07-17T14:28:21Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "NATURAL_GAS_TETCO_M3_USD",
+          "last_update": "2026-07-17T14:28:19Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "NATURAL_GAS_THE_EUR",
+          "last_update": "2026-07-16T08:00:11Z",
+          "hours_stale": 59.2
+        },
+        {
+          "code": "NATURAL_GAS_TRANSCO_Z6_NY_USD",
+          "last_update": "2026-07-17T14:28:19Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "NATURAL_GAS_TTF_SPOT_EUR",
+          "last_update": "2026-07-16T08:00:11Z",
+          "hours_stale": 59.2
+        },
+        {
+          "code": "NATURAL_GAS_ZTP_EUR",
+          "last_update": "2026-07-16T08:00:11Z",
+          "hours_stale": 59.2
+        },
+        {
+          "code": "NICKEL_USD",
+          "last_update": "2026-07-17T15:57:50Z",
+          "hours_stale": 27.3
+        },
+        {
+          "code": "OPEC_BASKET_USD",
+          "last_update": "2026-07-16T12:00:00Z",
+          "hours_stale": 55.2
+        },
+        {
+          "code": "PERMIAN_WELLS_COMPLETED",
+          "last_update": "2026-07-11T20:30:24Z",
+          "hours_stale": 166.7
+        },
+        {
+          "code": "PERMIAN_WELLS_DRILLED",
+          "last_update": "2026-07-11T20:30:24Z",
+          "hours_stale": 166.7
+        },
+        {
+          "code": "POWER_ENTERGY_USD",
+          "last_update": "2026-07-17T14:28:19Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "POWER_HOUSTON_USD",
+          "last_update": "2026-07-17T14:28:20Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "POWER_MASS_HUB_USD",
+          "last_update": "2026-07-17T14:28:18Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "POWER_MID_C_USD",
+          "last_update": "2026-07-17T14:28:21Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "POWER_MISO_ILLINOIS_USD",
+          "last_update": "2026-07-17T14:28:19Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "POWER_NP15_USD",
+          "last_update": "2026-07-17T14:28:21Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "POWER_NYC_ZONE_J_USD",
+          "last_update": "2026-07-17T14:28:19Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "POWER_PALO_VERDE_USD",
+          "last_update": "2026-07-17T14:28:20Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "POWER_PJM_WEST_USD",
+          "last_update": "2026-07-17T14:28:19Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "POWER_SP15_USD",
+          "last_update": "2026-07-17T14:28:20Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "PRB_COAL_USD",
+          "last_update": "2026-07-14T02:00:14Z",
+          "hours_stale": 113.2
+        },
+        {
+          "code": "PROPANE_MONT_BELVIEU_USD",
+          "last_update": "2026-07-15T19:29:42Z",
+          "hours_stale": 71.7
+        },
+        {
+          "code": "SCFI_INDEX",
+          "last_update": "2026-07-13T00:15:58Z",
+          "hours_stale": 139.0
+        },
+        {
+          "code": "SILVER_FIX_EUR",
+          "last_update": "2026-07-17T16:00:30Z",
+          "hours_stale": 27.2
+        },
+        {
+          "code": "SILVER_FIX_GBP",
+          "last_update": "2026-07-17T16:00:30Z",
+          "hours_stale": 27.2
+        },
+        {
+          "code": "SILVER_FIX_USD",
+          "last_update": "2026-07-17T16:00:29Z",
+          "hours_stale": 27.2
+        },
+        {
+          "code": "SINGAPORE_GASOIL_USD",
+          "last_update": "2026-07-17T03:07:03Z",
+          "hours_stale": 40.1
+        },
+        {
+          "code": "SINGAPORE_JET_KEROSENE_USD",
+          "last_update": "2026-07-13T02:07:30Z",
+          "hours_stale": 137.1
+        },
+        {
+          "code": "SINGAPORE_MOGAS_92_USD",
+          "last_update": "2026-07-17T01:07:30Z",
+          "hours_stale": 42.1
+        },
+        {
+          "code": "SPARK_SPREAD_HOUSTON_USD",
+          "last_update": "2026-07-17T14:28:20Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "SPARK_SPREAD_LOUISIANA_USD",
+          "last_update": "2026-07-17T14:28:19Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "SPARK_SPREAD_MIDWEST_USD",
+          "last_update": "2026-07-17T14:28:19Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "SPARK_SPREAD_MID_ATLANTIC_USD",
+          "last_update": "2026-07-17T14:28:19Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "SPARK_SPREAD_NEW_ENGLAND_USD",
+          "last_update": "2026-07-17T14:28:19Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "SPARK_SPREAD_NORCAL_USD",
+          "last_update": "2026-07-17T14:28:21Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "SPARK_SPREAD_NORTHWEST_USD",
+          "last_update": "2026-07-17T14:28:21Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "SPARK_SPREAD_NYC_USD",
+          "last_update": "2026-07-17T14:28:19Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "SPARK_SPREAD_SOCAL_USD",
+          "last_update": "2026-07-17T14:28:21Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "SPARK_SPREAD_SOUTHWEST_USD",
+          "last_update": "2026-07-17T14:28:20Z",
+          "hours_stale": 28.8
+        },
+        {
+          "code": "STYRENE_CNY",
+          "last_update": "2026-07-17T09:39:48Z",
+          "hours_stale": 33.6
+        },
+        {
+          "code": "TIN_USD",
+          "last_update": "2026-07-17T04:34:36Z",
+          "hours_stale": 38.7
+        },
+        {
+          "code": "ULSD_DIESEL_USD",
+          "last_update": "2026-07-15T19:29:37Z",
+          "hours_stale": 71.7
+        },
+        {
+          "code": "UREA_USD",
+          "last_update": "2026-07-17T00:16:07Z",
+          "hours_stale": 43.0
+        },
+        {
+          "code": "US_CPI",
+          "last_update": "2026-07-14T14:17:34Z",
+          "hours_stale": 100.9
+        },
+        {
+          "code": "US_CPI_CORE",
+          "last_update": "2026-07-14T13:30:32Z",
+          "hours_stale": 101.7
+        },
+        {
+          "code": "US_INDUSTRIAL_PRODUCTION",
+          "last_update": "2026-07-17T14:17:17Z",
+          "hours_stale": 28.9
+        },
+        {
+          "code": "US_RIG_COUNT",
+          "last_update": "2026-07-13T00:05:27Z",
+          "hours_stale": 139.1
+        },
+        {
+          "code": "US_YIELD_SPREAD_10Y2Y",
+          "last_update": "2026-07-17T08:17:12Z",
+          "hours_stale": 34.9
+        },
+        {
+          "code": "VIX_USD",
+          "last_update": "2026-07-17T14:17:23Z",
+          "hours_stale": 28.9
+        },
+        {
+          "code": "WTI_SPOT_USD",
+          "last_update": "2026-07-15T19:29:31Z",
+          "hours_stale": 71.7
+        }
+      ],
+      "missing": [],
+      "checked_at": "2026-07-18T19:13:59Z"
+    }
+  }
+}

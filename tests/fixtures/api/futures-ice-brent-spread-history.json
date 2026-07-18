@@ -1,0 +1,302 @@
+{
+  "front_contract": "2026-09",
+  "back_contract": "2026-10",
+  "period_days": 30,
+  "data_points": 22,
+  "spread_data": [
+    {
+      "trading_date": "2026-06-18",
+      "front_contract": {
+        "contract_month": "2026-09",
+        "price": "79.0"
+      },
+      "back_contract": {
+        "contract_month": "2026-10",
+        "price": "78.14"
+      },
+      "spread_value": "-0.86",
+      "spread_percentage": "-1.0886"
+    },
+    {
+      "trading_date": "2026-06-19",
+      "front_contract": {
+        "contract_month": "2026-09",
+        "price": "79.88"
+      },
+      "back_contract": {
+        "contract_month": "2026-10",
+        "price": "79.08"
+      },
+      "spread_value": "-0.8",
+      "spread_percentage": "-1.0015"
+    },
+    {
+      "trading_date": "2026-06-22",
+      "front_contract": {
+        "contract_month": "2026-09",
+        "price": "77.81"
+      },
+      "back_contract": {
+        "contract_month": "2026-10",
+        "price": "77.26"
+      },
+      "spread_value": "-0.55",
+      "spread_percentage": "-0.7069"
+    },
+    {
+      "trading_date": "2026-06-23",
+      "front_contract": {
+        "contract_month": "2026-09",
+        "price": "76.73"
+      },
+      "back_contract": {
+        "contract_month": "2026-10",
+        "price": "76.31"
+      },
+      "spread_value": "-0.42",
+      "spread_percentage": "-0.5474"
+    },
+    {
+      "trading_date": "2026-06-24",
+      "front_contract": {
+        "contract_month": "2026-09",
+        "price": "73.38"
+      },
+      "back_contract": {
+        "contract_month": "2026-10",
+        "price": "73.01"
+      },
+      "spread_value": "-0.37",
+      "spread_percentage": "-0.5042"
+    },
+    {
+      "trading_date": "2026-06-25",
+      "front_contract": {
+        "contract_month": "2026-09",
+        "price": "75.12"
+      },
+      "back_contract": {
+        "contract_month": "2026-10",
+        "price": "74.9"
+      },
+      "spread_value": "-0.22",
+      "spread_percentage": "-0.2929"
+    },
+    {
+      "trading_date": "2026-06-26",
+      "front_contract": {
+        "contract_month": "2026-09",
+        "price": "73.59"
+      },
+      "back_contract": {
+        "contract_month": "2026-10",
+        "price": "73.56"
+      },
+      "spread_value": "-0.03",
+      "spread_percentage": "-0.0408"
+    },
+    {
+      "trading_date": "2026-06-29",
+      "front_contract": {
+        "contract_month": "2026-09",
+        "price": "73.44"
+      },
+      "back_contract": {
+        "contract_month": "2026-10",
+        "price": "73.48"
+      },
+      "spread_value": "0.04",
+      "spread_percentage": "0.0545"
+    },
+    {
+      "trading_date": "2026-06-30",
+      "front_contract": {
+        "contract_month": "2026-09",
+        "price": "73.38"
+      },
+      "back_contract": {
+        "contract_month": "2026-10",
+        "price": "73.44"
+      },
+      "spread_value": "0.06",
+      "spread_percentage": "0.0818"
+    },
+    {
+      "trading_date": "2026-07-01",
+      "front_contract": {
+        "contract_month": "2026-09",
+        "price": "71.15"
+      },
+      "back_contract": {
+        "contract_month": "2026-10",
+        "price": "71.58"
+      },
+      "spread_value": "0.43",
+      "spread_percentage": "0.6044"
+    },
+    {
+      "trading_date": "2026-07-02",
+      "front_contract": {
+        "contract_month": "2026-09",
+        "price": "71.56"
+      },
+      "back_contract": {
+        "contract_month": "2026-10",
+        "price": "71.93"
+      },
+      "spread_value": "0.37",
+      "spread_percentage": "0.517"
+    },
+    {
+      "trading_date": "2026-07-03",
+      "front_contract": {
+        "contract_month": "2026-09",
+        "price": "71.94"
+      },
+      "back_contract": {
+        "contract_month": "2026-10",
+        "price": "72.14"
+      },
+      "spread_value": "0.2",
+      "spread_percentage": "0.278"
+    },
+    {
+      "trading_date": "2026-07-06",
+      "front_contract": {
+        "contract_month": "2026-09",
+        "price": "72.23"
+      },
+      "back_contract": {
+        "contract_month": "2026-10",
+        "price": "72.5"
+      },
+      "spread_value": "0.27",
+      "spread_percentage": "0.3738"
+    },
+    {
+      "trading_date": "2026-07-07",
+      "front_contract": {
+        "contract_month": "2026-09",
+        "price": "76.23"
+      },
+      "back_contract": {
+        "contract_month": "2026-10",
+        "price": "75.9"
+      },
+      "spread_value": "-0.33",
+      "spread_percentage": "-0.4329"
+    },
+    {
+      "trading_date": "2026-07-08",
+      "front_contract": {
+        "contract_month": "2026-09",
+        "price": "78.91"
+      },
+      "back_contract": {
+        "contract_month": "2026-10",
+        "price": "78.93"
+      },
+      "spread_value": "0.02",
+      "spread_percentage": "0.0253"
+    },
+    {
+      "trading_date": "2026-07-09",
+      "front_contract": {
+        "contract_month": "2026-09",
+        "price": "76.14"
+      },
+      "back_contract": {
+        "contract_month": "2026-10",
+        "price": "75.98"
+      },
+      "spread_value": "-0.16",
+      "spread_percentage": "-0.2101"
+    },
+    {
+      "trading_date": "2026-07-10",
+      "front_contract": {
+        "contract_month": "2026-09",
+        "price": "75.22"
+      },
+      "back_contract": {
+        "contract_month": "2026-10",
+        "price": "75.27"
+      },
+      "spread_value": "0.05",
+      "spread_percentage": "0.0665"
+    },
+    {
+      "trading_date": "2026-07-13",
+      "front_contract": {
+        "contract_month": "2026-09",
+        "price": "83.32"
+      },
+      "back_contract": {
+        "contract_month": "2026-10",
+        "price": "82.42"
+      },
+      "spread_value": "-0.9",
+      "spread_percentage": "-1.0802"
+    },
+    {
+      "trading_date": "2026-07-14",
+      "front_contract": {
+        "contract_month": "2026-09",
+        "price": "85.44"
+      },
+      "back_contract": {
+        "contract_month": "2026-10",
+        "price": "83.87"
+      },
+      "spread_value": "-1.57",
+      "spread_percentage": "-1.8375"
+    },
+    {
+      "trading_date": "2026-07-15",
+      "front_contract": {
+        "contract_month": "2026-09",
+        "price": "85.61"
+      },
+      "back_contract": {
+        "contract_month": "2026-10",
+        "price": "84.12"
+      },
+      "spread_value": "-1.49",
+      "spread_percentage": "-1.7405"
+    },
+    {
+      "trading_date": "2026-07-16",
+      "front_contract": {
+        "contract_month": "2026-09",
+        "price": "84.93"
+      },
+      "back_contract": {
+        "contract_month": "2026-10",
+        "price": "83.63"
+      },
+      "spread_value": "-1.3",
+      "spread_percentage": "-1.5307"
+    },
+    {
+      "trading_date": "2026-07-17",
+      "front_contract": {
+        "contract_month": "2026-09",
+        "price": "88.26"
+      },
+      "back_contract": {
+        "contract_month": "2026-10",
+        "price": "86.4"
+      },
+      "spread_value": "-1.86",
+      "spread_percentage": "-2.1074"
+    }
+  ],
+  "spread_statistics": {
+    "mean": "-0.4282",
+    "median": "-0.275",
+    "min": "-1.86",
+    "max": "0.43",
+    "standard_deviation": 0.6478,
+    "range": "2.29"
+  }
+}
