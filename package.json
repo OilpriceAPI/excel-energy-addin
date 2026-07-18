@@ -12,6 +12,7 @@
     "legacy:generate-starter-workbook": "node scripts/generate-starter-workbook.js",
     "legacy:validate-starter-workbook": "node scripts/validate-starter-workbook.js",
     "build": "webpack --mode production",
+    "postbuild": "node scripts/stamp-cache-bust.js",
     "dev": "webpack serve --config webpack.dev.js",
     "start": "npm run dev"
   },
