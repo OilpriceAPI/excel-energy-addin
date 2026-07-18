@@ -56,8 +56,8 @@
       }
     },
     {
-      "id": "PRICE.STATUS",
-      "name": "PRICE.STATUS",
+      "id": "STATUS",
+      "name": "STATUS",
       "description": "Reports the freshness of the latest quote (current, stale, ...) so stale data is distinguishable.",
       "helpUrl": "https://docs.oilpriceapi.com",
       "parameters": [
@@ -74,8 +74,8 @@
       }
     },
     {
-      "id": "PRICE.UNIT",
-      "name": "PRICE.UNIT",
+      "id": "UNIT",
+      "name": "UNIT",
       "description": "Returns the currency and unit of a quote, for example GBp/therm, so values are not misread.",
       "helpUrl": "https://docs.oilpriceapi.com",
       "parameters": [
@@ -92,8 +92,8 @@
       }
     },
     {
-      "id": "PRICE.INFO",
-      "name": "PRICE.INFO",
+      "id": "INFO",
+      "name": "INFO",
       "description": "Spills a table with the latest price, currency, unit, formatted value, and freshness.",
       "helpUrl": "https://docs.oilpriceapi.com",
       "parameters": [
