@@ -176,7 +176,7 @@ describe("OilPrice custom functions MVP", () => {
       expect(result).toEqual([
         ["Field", "Value"],
         ["code", "BRENT_CRUDE_USD"],
-        ["price", "85.45"],
+        ["price", 85.45],
         ["currency", "USD"],
       ]);
     });
@@ -292,8 +292,8 @@ describe("OilPrice custom functions MVP", () => {
 
       await expect(oilpriceGet("/v1/prices/all")).resolves.toEqual([
         ["Code", "price", "currency", "timestamp"],
-        ["BRENT_CRUDE_USD", "85.45", "USD", "2026-05-13T10:00:00Z"],
-        ["WTI_USD", "81.12", "USD", "2026-05-13T10:00:00Z"],
+        ["BRENT_CRUDE_USD", 85.45, "USD", "2026-05-13T10:00:00Z"],
+        ["WTI_USD", 81.12, "USD", "2026-05-13T10:00:00Z"],
       ]);
     });
 
@@ -322,8 +322,8 @@ describe("OilPrice custom functions MVP", () => {
 
       await expect(oilpriceGet("/v1/prices")).resolves.toEqual([
         ["code", "price", "currency", "date"],
-        ["BRENT_CRUDE_USD", "85.45", "USD", "2026-05-13"],
-        ["WTI_USD", "81.12", "USD", "2026-05-13"],
+        ["BRENT_CRUDE_USD", 85.45, "USD", "2026-05-13"],
+        ["WTI_USD", 81.12, "USD", "2026-05-13"],
       ]);
     });
 
@@ -351,7 +351,7 @@ describe("OilPrice custom functions MVP", () => {
         ),
       ).resolves.toEqual([
         ["code", "price", "currency", "date"],
-        ["BRENT_CRUDE_USD", "84.01", "USD", "2026-05-12"],
+        ["BRENT_CRUDE_USD", 84.01, "USD", "2026-05-12"],
       ]);
     });
 
@@ -370,8 +370,8 @@ describe("OilPrice custom functions MVP", () => {
 
       await expect(oilpriceGet("/v1/prices/all")).resolves.toEqual([
         ["Code", "Value"],
-        ["BRENT_CRUDE_USD", "85.45"],
-        ["WTI_USD", "81.12"],
+        ["BRENT_CRUDE_USD", 85.45],
+        ["WTI_USD", 81.12],
       ]);
     });
 
@@ -475,7 +475,10 @@ describe("OilPrice custom functions MVP", () => {
   it("registers the public function surface (base + freshness/units helpers)", () => {
     registerOilpriceFunctions();
 
-    // 3 base functions + PRICE.STATUS (#55) + PRICE.UNIT/PRICE.INFO (#56).
+    // 3 base functions + STATUS (#55) + UNIT/INFO (#56). The three helpers are
+    // registered as bare leaves (OILPRICE.STATUS/UNIT/INFO) — NOT PRICE.* —
+    // because Namespace is OILPRICE and PRICE is already a callable function;
+    // making PRICE both a function and a namespace parent breaks in Excel (P0-2).
     expect((globalThis as any).CustomFunctions.associate).toHaveBeenCalledTimes(
       6,
     );
@@ -492,15 +495,15 @@ describe("OilPrice custom functions MVP", () => {
       oilpriceCodes,
     );
     expect((globalThis as any).CustomFunctions.associate).toHaveBeenCalledWith(
-      "PRICE.STATUS",
+      "STATUS",
       oilpricePriceStatus,
     );
     expect((globalThis as any).CustomFunctions.associate).toHaveBeenCalledWith(
-      "PRICE.UNIT",
+      "UNIT",
       oilpricePriceUnit,
     );
     expect((globalThis as any).CustomFunctions.associate).toHaveBeenCalledWith(
-      "PRICE.INFO",
+      "INFO",
       oilpricePriceInfo,
     );
   });

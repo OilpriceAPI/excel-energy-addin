@@ -45,7 +45,7 @@ function mockFetchOnce(fixture: any): void {
 }
 
 /** True when any cell looks like an unrendered JSON blob (the bug symptom). */
-function hasBlobCell(table: string[][]): boolean {
+function hasBlobCell(table: (string | number | boolean)[][]): boolean {
   return table.some((row) =>
     row.some(
       (cell) =>
@@ -85,22 +85,24 @@ describe("#52 Futures render as tables (not #NO_DATA / blob)", () => {
       "is_front_month",
       "expiry_date",
     ]);
-    // Front-month contract row, real values.
+    // Front-month contract row, real values. Numeric fields render as numbers
+    // (JSON number last_price + string-serialised OHLC coerced), booleans as
+    // booleans — text cells would break AVERAGE/SUM and charting (#58/P0-1).
     expect(table[1]).toEqual([
       "BRENT_FUTURES_2026_09",
       "2026-09",
-      "88.1",
+      88.1,
       "USD",
       "2026-07-18T04:25:18Z",
       "2026-07-17",
-      "84.95",
-      "88.26",
-      "88.35",
-      "83.73",
-      "3.8964",
-      "13",
+      84.95,
+      88.26,
+      88.35,
+      83.73,
+      3.8964,
+      13,
       "front_month",
-      "true",
+      true,
       "2026-07-31",
     ]);
     expect(table.length).toBeGreaterThan(2); // multiple contracts
@@ -114,7 +116,7 @@ describe("#52 Futures render as tables (not #NO_DATA / blob)", () => {
 
     expect(table[0][0]).toBe("code");
     expect(table[1][0]).toBe("NATGAS_FUTURES_2026_08");
-    expect(table[1][2]).toBe("2.92");
+    expect(table[1][2]).toBe(2.92);
     expect(hasBlobCell(table)).toBe(false);
   });
 
@@ -142,7 +144,7 @@ describe("#52 Futures render as tables (not #NO_DATA / blob)", () => {
     expect(table[1][0]).toBe("2026-08");
     expect(table[1][1]).toBe("BRENT_FUTURES_2026_08");
     expect(table[1][2]).toBe("2026-06-18");
-    expect(table[1][3]).toBe("78.61"); // open
+    expect(table[1][3]).toBe(78.61); // open (coerced from string)
     expect(table.length).toBeGreaterThan(10); // many contract-days flattened
     expect(hasBlobCell(table)).toBe(false);
   });
@@ -173,9 +175,9 @@ describe("#52 Futures render as tables (not #NO_DATA / blob)", () => {
     expect(table[1]).toEqual([
       "2026-09",
       "BRENT_FUTURES_2026_09",
-      "88.26",
+      88.26,
       "2026-07-17",
-      "2",
+      2,
     ]);
     expect(hasBlobCell(table)).toBe(false);
   });
@@ -194,7 +196,7 @@ describe("#52 Futures render as tables (not #NO_DATA / blob)", () => {
       "volume",
     ]);
     expect(table[1][0]).toBe("2026-09");
-    expect(table[1][3]).toBe("88.1");
+    expect(table[1][3]).toBe(88.1);
     expect(hasBlobCell(table)).toBe(false);
   });
 
@@ -237,7 +239,7 @@ describe("#52 Futures render as tables (not #NO_DATA / blob)", () => {
     ]);
     expect(table[1][0]).toBe("2026-06-18");
     expect(table[1][1]).toBe("2026-09");
-    expect(table[1][2]).toBe("79.0");
+    expect(table[1][2]).toBe(79.0); // front_price coerced from string
     expect(hasBlobCell(table)).toBe(false);
   });
 });
@@ -249,7 +251,7 @@ describe("#54 Blob endpoints render as proper tables", () => {
     const table = await oilpriceGet("/v1/diesel-prices");
 
     const flat = new Map(table.map((r) => [r[0], r[1]]));
-    expect(flat.get("price")).toBe("4.578");
+    expect(flat.get("price")).toBe(4.578);
     expect(flat.get("currency")).toBe("USD");
     expect(flat.get("unit")).toBe("gallon");
     expect(flat.get("region")).toBe("national");
@@ -267,7 +269,7 @@ describe("#54 Blob endpoints render as proper tables", () => {
     // A real code row is present with a numeric price.
     const azeri = table.find((r) => r[0] === "AZERI_LIGHT_USD");
     expect(azeri).toBeDefined();
-    expect(azeri![table[0].indexOf("price")]).toBe("92.84");
+    expect(azeri![table[0].indexOf("price")]).toBe(92.84);
     expect(hasBlobCell(table)).toBe(false);
   });
 
@@ -277,10 +279,10 @@ describe("#54 Blob endpoints render as proper tables", () => {
     const table = await oilpriceGet("/v1/prices/all/health");
 
     const flat = new Map(table.map((r) => [r[0], r[1]]));
-    expect(flat.get("fresh_count")).toBe("172");
-    expect(flat.get("stale_count")).toBe("217");
-    expect(flat.get("total_commodities")).toBe("389");
-    expect(flat.get("health_percentage")).toBe("44.2");
+    expect(flat.get("fresh_count")).toBe(172);
+    expect(flat.get("stale_count")).toBe(217);
+    expect(flat.get("total_commodities")).toBe(389);
+    expect(flat.get("health_percentage")).toBe(44.2);
     expect(hasBlobCell(table)).toBe(false);
   });
 });
@@ -351,7 +353,7 @@ describe("#56 Units are visible (PRICE.UNIT / PRICE.INFO)", () => {
     const table = await oilpricePriceInfo("NATURAL_GAS_GBP");
     const flat = new Map(table.map((r) => [r[0], r[1]]));
 
-    expect(flat.get("price")).toBe("142.19");
+    expect(flat.get("price")).toBe(142.19);
     expect(flat.get("currency")).toBe("GBp");
     expect(flat.get("unit")).toBe("therm");
     expect(flat.get("formatted")).toBe("142.19p");

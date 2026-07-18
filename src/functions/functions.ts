@@ -157,11 +157,46 @@ type ResponseError = {
   message: string;
 };
 
+/**
+ * A worksheet cell. Numeric and boolean cells MUST stay unwrapped so Excel
+ * treats them as numbers/booleans (right-aligned, chartable, AVERAGE/SUM-safe)
+ * rather than text. Mixed matrices are allowed because GET/CODES/INFO declare
+ * result.type "any" in functions.json.
+ */
+type Cell = string | number | boolean;
+type Table = Cell[][];
+
+/**
+ * Fields whose values are conceptually numeric but which the API sometimes
+ * serialises as JSON strings (verified in the captured fixtures — e.g.
+ * futures OHLC "open":"84.95" while "last_price":88.1). Values matching these
+ * field names are coerced to Number so they chart and aggregate correctly.
+ * Only string values are coerced (null/undefined stay blank, never 0), and a
+ * value that does not parse to a finite number is left untouched.
+ */
+const NUMERIC_FIELDS = new Set([
+  "open",
+  "high",
+  "low",
+  "close",
+  "settlement",
+  "settlement_price",
+  "last_price",
+  "price",
+  "spread_value",
+  "spread_percentage",
+  "front_price",
+  "back_price",
+  "change_percent",
+  "volume",
+  "open_interest",
+]);
+
 function cellError(code: string, message: string): string {
   return `#${code}: ${message}`;
 }
 
-function tableError(code: string, message: string): string[][] {
+function tableError(code: string, message: string): Table {
   return [[`#${code}`, message]];
 }
 
@@ -326,7 +361,29 @@ async function apiGet(
   const requestId = requestIdFromResponse(response);
 
   if (!response.ok) {
-    const responseError = parseResponseError(response);
+    let responseError = parseResponseError(response);
+    // Validation errors (e.g. an invalid commodity code) arrive with a helpful
+    // "did you mean" message in the JSON body. Surface that message rather than
+    // a bare "HTTP 400" so the worksheet shows the suggestion.
+    try {
+      const errorBody = await response.json();
+      const errorData = errorBody?.data ?? errorBody;
+      if (
+        errorData &&
+        typeof errorData === "object" &&
+        typeof errorData.error === "string"
+      ) {
+        responseError = {
+          code: "INVALID_CODE",
+          message:
+            typeof errorData.message === "string" && errorData.message.trim()
+              ? errorData.message
+              : responseError.message,
+        };
+      }
+    } catch {
+      // Non-JSON error body: keep the status-derived error.
+    }
     await persistRuntimeDiagnostic(
       createRuntimeDiagnostic({
         source: "custom-function",
@@ -384,35 +441,51 @@ function isResponseError(error: unknown): error is ResponseError {
   );
 }
 
-function valueToCell(value: unknown): string | number | boolean {
+function valueToCell(value: unknown): Cell {
   if (value === null || value === undefined) return "";
   if (typeof value === "number" || typeof value === "boolean") return value;
   if (typeof value === "string") return value;
   return JSON.stringify(value);
 }
 
-function objectToTable(value: Record<string, unknown>): string[][] {
-  const rows = Object.entries(value).map(([key, entry]) => [
+/**
+ * Renders one worksheet cell for a named field. Numbers and booleans are kept
+ * unwrapped so Excel does not coerce them to text. Numeric-looking STRING
+ * values (see NUMERIC_FIELDS) are converted to Number so they chart/aggregate.
+ */
+function cellFor(field: string, value: unknown): Cell {
+  if (typeof value === "string" && NUMERIC_FIELDS.has(field)) {
+    const trimmed = value.trim();
+    if (trimmed !== "") {
+      const numeric = Number(trimmed);
+      if (Number.isFinite(numeric)) return numeric;
+    }
+  }
+  return valueToCell(value);
+}
+
+function objectToTable(value: Record<string, unknown>): Table {
+  const rows: Table = Object.entries(value).map(([key, entry]) => [
     key,
-    String(valueToCell(entry)),
+    cellFor(key, entry),
   ]);
   return [["Field", "Value"], ...rows];
 }
 
-function arrayToTable(data: unknown[]): string[][] {
+function arrayToTable(data: unknown[]): Table {
   if (data.length === 0) return tableError("NO_DATA", "No data returned");
   if (typeof data[0] !== "object" || data[0] === null) {
-    return [["Value"], ...data.map((entry) => [String(valueToCell(entry))])];
+    return [["Value"], ...data.map((entry) => [valueToCell(entry)])];
   }
 
   const headers = Object.keys(data[0]);
-  const rows = data.map((entry: any) =>
-    headers.map((header) => String(valueToCell(entry[header]))),
+  const rows: Table = data.map((entry: any) =>
+    headers.map((header) => cellFor(header, entry[header])),
   );
   return [headers, ...rows];
 }
 
-function pricesHashToTable(prices: Record<string, unknown>): string[][] {
+function pricesHashToTable(prices: Record<string, unknown>): Table {
   const entries = Object.entries(prices);
   if (entries.length === 0) return tableError("NO_DATA", "No data returned");
 
@@ -424,7 +497,7 @@ function pricesHashToTable(prices: Record<string, unknown>): string[][] {
   if (objectEntries.length !== entries.length) {
     return [
       ["Code", "Value"],
-      ...entries.map(([code, value]) => [code, String(valueToCell(value))]),
+      ...entries.map(([code, value]): Cell[] => [code, valueToCell(value)]),
     ];
   }
 
@@ -438,9 +511,9 @@ function pricesHashToTable(prices: Record<string, unknown>): string[][] {
 
   return [
     ["Code", ...fields],
-    ...objectEntries.map(([code, value]) => [
+    ...objectEntries.map(([code, value]): Cell[] => [
       code,
-      ...fields.map((field) => String(valueToCell(value[field]))),
+      ...fields.map((field) => cellFor(field, value[field])),
     ]),
   ];
 }
@@ -457,7 +530,7 @@ function flattenNestedContracts(
   contracts: any[],
   childKey: string,
   parentFields: string[],
-): string[][] | undefined {
+): Table | undefined {
   const rows: Array<Record<string, unknown>> = [];
   for (const contract of contracts) {
     const children = contract?.[childKey];
@@ -473,7 +546,7 @@ function flattenNestedContracts(
 }
 
 /** /spread-history: spread_data[] with nested front/back contract objects. */
-function spreadHistoryToTable(spreadData: any[]): string[][] {
+function spreadHistoryToTable(spreadData: any[]): Table {
   if (spreadData.length === 0) return tableError("NO_DATA", "No data returned");
   const rows = spreadData.map((entry: any) => ({
     trading_date: entry?.trading_date,
@@ -488,7 +561,7 @@ function spreadHistoryToTable(spreadData: any[]): string[][] {
 }
 
 /** /spreads: spreads[].daily_data[] flattened one row per spread-day. */
-function spreadsToTable(spreads: any[]): string[][] {
+function spreadsToTable(spreads: any[]): Table {
   const flattened = flattenNestedContracts(spreads, "daily_data", [
     "front_contract",
     "back_contract",
@@ -498,7 +571,7 @@ function spreadsToTable(spreads: any[]): string[][] {
 }
 
 /** Renders any of the root-level futures shapes (#52). */
-function futuresToTable(payload: any): string[][] {
+function futuresToTable(payload: any): Table {
   if (Array.isArray(payload?.spread_data)) {
     return spreadHistoryToTable(payload.spread_data);
   }
@@ -541,7 +614,7 @@ function isFuturesPayload(payload: any): boolean {
   );
 }
 
-function responseToTable(payload: any): string[][] {
+function responseToTable(payload: any): Table {
   // Futures endpoints (#52) return shapes at the ROOT level (no data envelope).
   if (isFuturesPayload(payload)) {
     return futuresToTable(payload);
@@ -639,7 +712,7 @@ function truncationNote(path: string, payload: any): string | undefined {
   );
 }
 
-function appendNoteRow(table: string[][], note: string): string[][] {
+function appendNoteRow(table: Table, note: string): Table {
   const width = table[0]?.length ?? 1;
   const row = [note, ...Array(Math.max(0, width - 1)).fill("")];
   return [...table, row];
@@ -691,7 +764,7 @@ export async function oilpricePrice(code: string): Promise<number | string> {
 export async function oilpriceGet(
   path: string,
   query?: string,
-): Promise<string[][]> {
+): Promise<Table> {
   const apiKey = await getApiKey();
   if (!apiKey) {
     return tableError("AUTH_REQUIRED", "Set API key in OilPrice pane");
@@ -727,7 +800,7 @@ export async function oilpriceGet(
  * @customfunction OILPRICE.CODES
  * @returns Commodity code table.
  */
-export async function oilpriceCodes(): Promise<string[][]> {
+export async function oilpriceCodes(): Promise<Table> {
   return oilpriceGet("/v1/commodities");
 }
 
@@ -756,6 +829,19 @@ async function fetchLatestQuote(code: string): Promise<Record<string, any>> {
   if (!data || typeof data !== "object") {
     throw { code: "NO_DATA", message: "No data returned" } as ResponseError;
   }
+  // Belt-and-suspenders: if the API ever returns HTTP 200 with an error body
+  // (e.g. { data: { error: "invalid_code", message: "Did you mean ..." } }),
+  // surface the message instead of treating the error object as a valid quote.
+  if (typeof (data as Record<string, unknown>).error === "string") {
+    const message = (data as Record<string, unknown>).message;
+    throw {
+      code: "INVALID_CODE",
+      message:
+        typeof message === "string" && message.trim()
+          ? message
+          : "Invalid commodity code",
+    } as ResponseError;
+  }
   return data;
 }
 
@@ -763,7 +849,7 @@ async function fetchLatestQuote(code: string): Promise<Record<string, any>> {
  * Reports the freshness of the latest quote (#55) so stale data is
  * distinguishable from fresh — e.g. "current" vs "stale". Uses the API's
  * data_status, falling back to the stale boolean.
- * @customfunction PRICE.STATUS
+ * @customfunction STATUS
  * @param code Commodity code, for example BALTIC_CAPESIZE_INDEX.
  * @returns "current", "stale", or another API-reported status string.
  */
@@ -788,7 +874,7 @@ export async function oilpricePriceStatus(code: string): Promise<string> {
  * Exposes the currency and unit of the latest quote (#56) so a value like
  * NATURAL_GAS_GBP 142.19 is understood as pence/therm, not USD. PRICE stays
  * a bare number; this companion makes the units explicit.
- * @customfunction PRICE.UNIT
+ * @customfunction UNIT
  * @param code Commodity code, for example NATURAL_GAS_GBP.
  * @returns "currency/unit", for example "GBp/therm" or "USD/barrel".
  */
@@ -809,11 +895,11 @@ export async function oilpricePriceUnit(code: string): Promise<string> {
  * Spills a compact table describing the latest quote — price, currency, unit,
  * the human-formatted value, and freshness — covering both units (#56) and
  * staleness (#55) in one place without changing the numeric PRICE contract.
- * @customfunction PRICE.INFO
+ * @customfunction INFO
  * @param code Commodity code, for example NATURAL_GAS_GBP.
  * @returns A two-column Field/Value table.
  */
-export async function oilpricePriceInfo(code: string): Promise<string[][]> {
+export async function oilpricePriceInfo(code: string): Promise<Table> {
   try {
     const data = await fetchLatestQuote(code);
     const fields = [
@@ -827,9 +913,22 @@ export async function oilpricePriceInfo(code: string): Promise<string[][]> {
       "age_days",
       "as_of",
     ];
+    // A dimensionless index (currency INDEX / unit index) has no monetary unit,
+    // so the API's "$"-prefixed `formatted` (e.g. "$4655.00") is misleading.
+    // Rebuild the display from price + unit instead (e.g. "4655 index").
+    const isIndex =
+      (typeof data.currency === "string" &&
+        data.currency.toUpperCase() === "INDEX") ||
+      (typeof data.unit === "string" && data.unit.toLowerCase() === "index");
     return [
       ["Field", "Value"],
-      ...fields.map((field) => [field, String(valueToCell(data[field]))]),
+      ...fields.map((field): Cell[] => {
+        if (field === "formatted" && isIndex) {
+          const unit = typeof data.unit === "string" ? data.unit : "index";
+          return ["formatted", `${valueToCell(data.price)} ${unit}`.trim()];
+        }
+        return [field, cellFor(field, data[field])];
+      }),
     ];
   } catch (error) {
     if (isResponseError(error)) return tableError(error.code, error.message);
@@ -841,9 +940,9 @@ export function registerOilpriceFunctions(): void {
   CustomFunctions.associate("PRICE", oilpricePrice);
   CustomFunctions.associate("GET", oilpriceGet);
   CustomFunctions.associate("CODES", oilpriceCodes);
-  CustomFunctions.associate("PRICE.STATUS", oilpricePriceStatus);
-  CustomFunctions.associate("PRICE.UNIT", oilpricePriceUnit);
-  CustomFunctions.associate("PRICE.INFO", oilpricePriceInfo);
+  CustomFunctions.associate("STATUS", oilpricePriceStatus);
+  CustomFunctions.associate("UNIT", oilpricePriceUnit);
+  CustomFunctions.associate("INFO", oilpricePriceInfo);
 }
 
 registerOilpriceFunctions();

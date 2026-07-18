@@ -1,0 +1,16 @@
+{
+  "status": "fail",
+  "data": {
+    "error": "invalid_code",
+    "message": "Code 'EUA_CARBON_EUR' not found. Did you mean: 'EU_CARBON_EUR', 'EUR_USD', 'EU_CARBON_FUTURES'? See /v1/commodities for all available codes.",
+    "suggestions": [
+      "EU_CARBON_EUR",
+      "EUR_USD",
+      "EU_CARBON_FUTURES"
+    ],
+    "invalid_codes": [
+      "EUA_CARBON_EUR"
+    ],
+    "all_codes_url": "https://api.oilpriceapi.com/v1/commodities"
+  }
+}
