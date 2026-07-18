@@ -13,7 +13,7 @@
     "resolveJsonModule": true,
     "moduleResolution": "node",
     "sourceMap": true,
-    "types": ["office-js", "jest"]
+    "types": ["office-js", "jest", "node"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

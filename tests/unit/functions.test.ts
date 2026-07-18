@@ -13,6 +13,9 @@ import {
   oilpriceCodes,
   oilpriceGet,
   oilpricePrice,
+  oilpricePriceInfo,
+  oilpricePriceStatus,
+  oilpricePriceUnit,
   registerOilpriceFunctions,
 } from "../../src/functions/functions";
 
@@ -109,7 +112,9 @@ describe("OilPrice custom functions MVP", () => {
       );
 
       const [, rawDiagnostic] =
-        mockStorage.setItem.mock.calls[mockStorage.setItem.mock.calls.length - 1];
+        mockStorage.setItem.mock.calls[
+          mockStorage.setItem.mock.calls.length - 1
+        ];
       expect(JSON.parse(rawDiagnostic)).toEqual(
         expect.objectContaining({
           schemaVersion: 1,
@@ -134,7 +139,9 @@ describe("OilPrice custom functions MVP", () => {
       await expect(oilpricePrice("BRENT_CRUDE_USD")).resolves.toBe(80);
 
       const [storageKey, rawDiagnostic] =
-        mockStorage.setItem.mock.calls[mockStorage.setItem.mock.calls.length - 1];
+        mockStorage.setItem.mock.calls[
+          mockStorage.setItem.mock.calls.length - 1
+        ];
       expect(storageKey).toBe("opa_excel_last_runtime_diagnostic");
       expect(JSON.parse(rawDiagnostic)).toEqual(
         expect.objectContaining({
@@ -174,7 +181,12 @@ describe("OilPrice custom functions MVP", () => {
       ]);
     });
 
-    it("allows the supported preview endpoint catalog", async () => {
+    // NOTE(#58): this previously asserted that a *fabricated* `{data:{ok:true}}`
+    // body rendered — a synthetic mock that let real-shape breakage ship. It now
+    // asserts only that each supported path is ACCEPTED and fetched at the right
+    // URL (catalog membership). Real-shape RENDERING is verified against captured
+    // fixtures in functions-realshape.test.ts.
+    it("accepts every supported preview endpoint (incl. futures) and calls the API", async () => {
       const supportedPaths = [
         "/v1/status",
         "/v1/prices",
@@ -190,18 +202,35 @@ describe("OilPrice custom functions MVP", () => {
         "/v1/commodities",
         "/v1/commodities/categories",
         "/v1/commodities/BRENT_CRUDE_USD",
+        "/v1/futures/ice-brent",
+        "/v1/futures/ice-wti",
+        "/v1/futures/ice-gasoil",
+        "/v1/futures/natural-gas",
+        "/v1/futures/eua-carbon",
+        "/v1/futures/ice-brent/historical",
+        "/v1/futures/ice-brent/ohlc",
+        "/v1/futures/ice-brent/intraday",
+        "/v1/futures/ice-brent/spreads",
+        "/v1/futures/ice-brent/curve",
+        "/v1/futures/ice-brent/spread-history",
       ];
 
       for (const path of supportedPaths) {
         ((globalThis as any).fetch as jest.Mock).mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ data: { ok: true } }),
+          json: async () => ({ data: {} }),
         });
 
-        await expect(oilpriceGet(path)).resolves.toEqual([
-          ["Field", "Value"],
-          ["ok", "true"],
-        ]);
+        await oilpriceGet(path);
+
+        expect((globalThis as any).fetch).toHaveBeenLastCalledWith(
+          `https://api.oilpriceapi.com${path}`,
+          expect.objectContaining({
+            headers: expect.objectContaining({
+              Authorization: "Token test-api-key-123",
+            }),
+          }),
+        );
       }
 
       expect((globalThis as any).fetch).toHaveBeenCalledTimes(
@@ -443,10 +472,13 @@ describe("OilPrice custom functions MVP", () => {
     });
   });
 
-  it("registers only the MVP function surface", () => {
+  it("registers the public function surface (base + freshness/units helpers)", () => {
     registerOilpriceFunctions();
 
-    expect((globalThis as any).CustomFunctions.associate).toHaveBeenCalledTimes(3);
+    // 3 base functions + PRICE.STATUS (#55) + PRICE.UNIT/PRICE.INFO (#56).
+    expect((globalThis as any).CustomFunctions.associate).toHaveBeenCalledTimes(
+      6,
+    );
     expect((globalThis as any).CustomFunctions.associate).toHaveBeenCalledWith(
       "PRICE",
       oilpricePrice,
@@ -458,6 +490,18 @@ describe("OilPrice custom functions MVP", () => {
     expect((globalThis as any).CustomFunctions.associate).toHaveBeenCalledWith(
       "CODES",
       oilpriceCodes,
+    );
+    expect((globalThis as any).CustomFunctions.associate).toHaveBeenCalledWith(
+      "PRICE.STATUS",
+      oilpricePriceStatus,
+    );
+    expect((globalThis as any).CustomFunctions.associate).toHaveBeenCalledWith(
+      "PRICE.UNIT",
+      oilpricePriceUnit,
+    );
+    expect((globalThis as any).CustomFunctions.associate).toHaveBeenCalledWith(
+      "PRICE.INFO",
+      oilpricePriceInfo,
     );
   });
 });

@@ -1,0 +1,198 @@
+{
+  "commodity": "BRENT_FUTURES",
+  "date": "2026-07-18",
+  "total_data_points": 14,
+  "contracts": [
+    {
+      "contract_month": "2026-09",
+      "contract_code": "BRENT_FUTURES_2026_09",
+      "data_points": 1,
+      "price_data": [
+        {
+          "timestamp": "2026-07-18T04:25:18Z",
+          "price": 88.1,
+          "currency": "USD",
+          "volume": 30189
+        }
+      ]
+    },
+    {
+      "contract_month": "2026-10",
+      "contract_code": "BRENT_FUTURES_2026_10",
+      "data_points": 1,
+      "price_data": [
+        {
+          "timestamp": "2026-07-18T04:25:19Z",
+          "price": 86.32,
+          "currency": "USD",
+          "volume": 25467
+        }
+      ]
+    },
+    {
+      "contract_month": "2026-11",
+      "contract_code": "BRENT_FUTURES_2026_11",
+      "data_points": 1,
+      "price_data": [
+        {
+          "timestamp": "2026-07-18T04:25:19Z",
+          "price": 84.58,
+          "currency": "USD",
+          "volume": 16075
+        }
+      ]
+    },
+    {
+      "contract_month": "2026-12",
+      "contract_code": "BRENT_FUTURES_2026_12",
+      "data_points": 1,
+      "price_data": [
+        {
+          "timestamp": "2026-07-18T04:25:19Z",
+          "price": 83.17,
+          "currency": "USD",
+          "volume": 21191
+        }
+      ]
+    },
+    {
+      "contract_month": "2027-01",
+      "contract_code": "BRENT_FUTURES_2027_01",
+      "data_points": 1,
+      "price_data": [
+        {
+          "timestamp": "2026-07-18T04:25:19Z",
+          "price": 82.02,
+          "currency": "USD",
+          "volume": 7347
+        }
+      ]
+    },
+    {
+      "contract_month": "2027-02",
+      "contract_code": "BRENT_FUTURES_2027_02",
+      "data_points": 1,
+      "price_data": [
+        {
+          "timestamp": "2026-07-18T04:25:19Z",
+          "price": 81.02,
+          "currency": "USD",
+          "volume": 4548
+        }
+      ]
+    },
+    {
+      "contract_month": "2027-03",
+      "contract_code": "BRENT_FUTURES_2027_03",
+      "data_points": 1,
+      "price_data": [
+        {
+          "timestamp": "2026-07-18T04:25:19Z",
+          "price": 80.14,
+          "currency": "USD",
+          "volume": 6272
+        }
+      ]
+    },
+    {
+      "contract_month": "2027-04",
+      "contract_code": "BRENT_FUTURES_2027_04",
+      "data_points": 1,
+      "price_data": [
+        {
+          "timestamp": "2026-07-18T04:25:20Z",
+          "price": 79.37,
+          "currency": "USD",
+          "volume": 1948
+        }
+      ]
+    },
+    {
+      "contract_month": "2027-05",
+      "contract_code": "BRENT_FUTURES_2027_05",
+      "data_points": 1,
+      "price_data": [
+        {
+          "timestamp": "2026-07-18T04:25:20Z",
+          "price": 78.69,
+          "currency": "USD",
+          "volume": 1091
+        }
+      ]
+    },
+    {
+      "contract_month": "2027-06",
+      "contract_code": "BRENT_FUTURES_2027_06",
+      "data_points": 1,
+      "price_data": [
+        {
+          "timestamp": "2026-07-18T04:25:20Z",
+          "price": 78.06,
+          "currency": "USD",
+          "volume": 3144
+        }
+      ]
+    },
+    {
+      "contract_month": "2027-07",
+      "contract_code": "BRENT_FUTURES_2027_07",
+      "data_points": 1,
+      "price_data": [
+        {
+          "timestamp": "2026-07-18T04:25:20Z",
+          "price": 77.52,
+          "currency": "USD",
+          "volume": 35
+        }
+      ]
+    },
+    {
+      "contract_month": "2027-08",
+      "contract_code": "BRENT_FUTURES_2027_08",
+      "data_points": 1,
+      "price_data": [
+        {
+          "timestamp": "2026-07-18T04:25:20Z",
+          "price": 77.03,
+          "currency": "USD",
+          "volume": 18
+        }
+      ]
+    },
+    {
+      "contract_month": "2027-09",
+      "contract_code": "BRENT_FUTURES_2027_09",
+      "data_points": 1,
+      "price_data": [
+        {
+          "timestamp": "2026-07-18T04:25:20Z",
+          "price": 76.59,
+          "currency": "USD",
+          "volume": 242
+        }
+      ]
+    },
+    {
+      "contract_month": "2027-12",
+      "contract_code": "BRENT_FUTURES_2027_12",
+      "data_points": 1,
+      "price_data": [
+        {
+          "timestamp": "2026-07-18T04:25:20Z",
+          "price": 75.52,
+          "currency": "USD",
+          "volume": 3724
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "freshness_status": "outside_market_hours",
+    "market_status": "closed",
+    "expected_live_updates": false,
+    "latest_data_at": "2026-07-18T04:25:20Z",
+    "checked_at": "2026-07-18T19:13:14Z",
+    "stale_by_minutes": 888,
+    "market_timezone": "Europe/London"
+  }
+}

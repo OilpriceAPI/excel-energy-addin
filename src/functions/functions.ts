@@ -106,6 +106,13 @@ const ENDPOINT_CATALOG: EndpointCatalogEntry[] = [
     description: "Diesel prices",
   },
   {
+    id: "futures",
+    path: "/v1/futures/{family}",
+    pattern:
+      /^\/v1\/futures\/(ice-brent|ice-wti|ice-gasoil|natural-gas|eua-carbon)(\/(historical|ohlc|intraday|spreads|curve|spread-history))?$/,
+    description: "Futures curves, OHLC, spreads, and analytics",
+  },
+  {
     id: "commodities",
     path: "/v1/commodities",
     pattern: /^\/v1\/commodities$/,
@@ -231,10 +238,7 @@ function findEndpoint(path: string): EndpointCatalogEntry | undefined {
 }
 
 function normalizeQueryKey(key: string): string {
-  return key
-    .trim()
-    .toLowerCase()
-    .replace(/[-_.]/g, "");
+  return key.trim().toLowerCase().replace(/[-_.]/g, "");
 }
 
 function queryKeyParts(key: string): string[] {
@@ -285,7 +289,11 @@ function buildUrl(path: string, query?: string): string {
   return `${API_ORIGIN}${normalizedPath}${cleanedQuery ? `?${cleanedQuery}` : ""}`;
 }
 
-async function apiGet(path: string, query: string | undefined, apiKey: string): Promise<any> {
+async function apiGet(
+  path: string,
+  query: string | undefined,
+  apiKey: string,
+): Promise<any> {
   const url = buildUrl(path, query);
   const startedAt = Date.now();
   let response: Response;
@@ -308,7 +316,10 @@ async function apiGet(path: string, query: string | undefined, apiKey: string): 
         durationMs: Date.now() - startedAt,
       }),
     );
-    throw { code: failure.code, message: failure.message } satisfies ResponseError;
+    throw {
+      code: failure.code,
+      message: failure.message,
+    } satisfies ResponseError;
   }
 
   const durationMs = Date.now() - startedAt;
@@ -434,14 +445,144 @@ function pricesHashToTable(prices: Record<string, unknown>): string[][] {
   ];
 }
 
+/**
+ * Flattens a nested futures shape where each contract carries an array of
+ * per-day (or per-tick) records, producing one worksheet row per
+ * contract-day. Parent identity fields are prefixed onto every child row.
+ *
+ * Handles #52 shapes: /ohlc & /historical (contracts[].daily_data[]),
+ * /intraday (contracts[].price_data[]).
+ */
+function flattenNestedContracts(
+  contracts: any[],
+  childKey: string,
+  parentFields: string[],
+): string[][] | undefined {
+  const rows: Array<Record<string, unknown>> = [];
+  for (const contract of contracts) {
+    const children = contract?.[childKey];
+    if (!Array.isArray(children)) return undefined;
+    const parent: Record<string, unknown> = {};
+    for (const field of parentFields) parent[field] = contract?.[field];
+    for (const child of children) {
+      rows.push({ ...parent, ...(child as Record<string, unknown>) });
+    }
+  }
+  if (rows.length === 0) return tableError("NO_DATA", "No data returned");
+  return arrayToTable(rows);
+}
+
+/** /spread-history: spread_data[] with nested front/back contract objects. */
+function spreadHistoryToTable(spreadData: any[]): string[][] {
+  if (spreadData.length === 0) return tableError("NO_DATA", "No data returned");
+  const rows = spreadData.map((entry: any) => ({
+    trading_date: entry?.trading_date,
+    front_month: entry?.front_contract?.contract_month,
+    front_price: entry?.front_contract?.price,
+    back_month: entry?.back_contract?.contract_month,
+    back_price: entry?.back_contract?.price,
+    spread_value: entry?.spread_value,
+    spread_percentage: entry?.spread_percentage,
+  }));
+  return arrayToTable(rows);
+}
+
+/** /spreads: spreads[].daily_data[] flattened one row per spread-day. */
+function spreadsToTable(spreads: any[]): string[][] {
+  const flattened = flattenNestedContracts(spreads, "daily_data", [
+    "front_contract",
+    "back_contract",
+    "spread_type",
+  ]);
+  return flattened ?? tableError("NO_DATA", "No data returned");
+}
+
+/** Renders any of the root-level futures shapes (#52). */
+function futuresToTable(payload: any): string[][] {
+  if (Array.isArray(payload?.spread_data)) {
+    return spreadHistoryToTable(payload.spread_data);
+  }
+  if (Array.isArray(payload?.spreads)) {
+    return spreadsToTable(payload.spreads);
+  }
+
+  const contracts = payload?.contracts;
+  if (!Array.isArray(contracts) || contracts.length === 0) {
+    return tableError("NO_DATA", "No data returned");
+  }
+
+  // /ohlc & /historical: contracts[].daily_data[]
+  if (Array.isArray(contracts[0]?.daily_data)) {
+    const flattened = flattenNestedContracts(contracts, "daily_data", [
+      "contract_month",
+    ]);
+    if (flattened) return flattened;
+  }
+  // /intraday: contracts[].price_data[]
+  if (Array.isArray(contracts[0]?.price_data)) {
+    const flattened = flattenNestedContracts(contracts, "price_data", [
+      "contract_month",
+      "contract_code",
+    ]);
+    if (flattened) return flattened;
+  }
+
+  // Base curve and /curve: flat contract rows.
+  return arrayToTable(contracts);
+}
+
+function isFuturesPayload(payload: any): boolean {
+  return (
+    payload != null &&
+    typeof payload === "object" &&
+    (Array.isArray(payload.contracts) ||
+      Array.isArray(payload.spreads) ||
+      Array.isArray(payload.spread_data))
+  );
+}
+
 function responseToTable(payload: any): string[][] {
-  const data = payload?.data;
+  // Futures endpoints (#52) return shapes at the ROOT level (no data envelope).
+  if (isFuturesPayload(payload)) {
+    return futuresToTable(payload);
+  }
+
+  let data = payload?.data;
+
+  // #54: /prices/all and /prices/all/health double-wrap in data.data.
+  if (
+    data &&
+    typeof data === "object" &&
+    data.data &&
+    typeof data.data === "object"
+  ) {
+    data = data.data;
+  }
 
   if (Array.isArray(data)) {
     return arrayToTable(data);
   }
 
   if (data && typeof data === "object") {
+    // #54: diesel-prices buries the price inside data.regional_average.
+    if (
+      data.regional_average &&
+      typeof data.regional_average === "object" &&
+      !Array.isArray(data.regional_average)
+    ) {
+      return objectToTable(data.regional_average as Record<string, unknown>);
+    }
+
+    // #54: /prices/all/health exposes a summary object (and no prices).
+    if (
+      data.summary &&
+      typeof data.summary === "object" &&
+      !Array.isArray(data.summary) &&
+      !data.prices
+    ) {
+      return objectToTable(data.summary as Record<string, unknown>);
+    }
+
     if (Array.isArray(data.prices)) {
       return arrayToTable(data.prices);
     }
@@ -456,7 +597,8 @@ function responseToTable(payload: any): string[][] {
 
     if (Array.isArray(data.commodities)) {
       const commodities = data.commodities;
-      if (commodities.length === 0) return tableError("NO_DATA", "No data returned");
+      if (commodities.length === 0)
+        return tableError("NO_DATA", "No data returned");
       return [
         ["Code", "Name", "Category"],
         ...commodities.map((commodity: any) => [
@@ -471,6 +613,36 @@ function responseToTable(payload: any): string[][] {
   }
 
   return tableError("NO_DATA", "No data returned");
+}
+
+/**
+ * #53: past_week / past_month silently return only the ~100 most recent
+ * intraday ticks (~1 day), not the labeled span. When the cap is hit we
+ * append a padded note row so the truncation is visible in the worksheet
+ * and steer the user to /v1/prices/historical for the full range.
+ */
+const TRUNCATION_TICK_CAP = 100;
+
+function truncationNote(path: string, payload: any): string | undefined {
+  const match = /\/v1\/prices\/(past_week|past_month)$/.exec(
+    (path || "").trim(),
+  );
+  if (!match) return undefined;
+  const prices = payload?.data?.prices;
+  if (!Array.isArray(prices) || prices.length < TRUNCATION_TICK_CAP) {
+    return undefined;
+  }
+  return (
+    `TRUNCATED: /v1/prices/${match[1]} returned only the ${TRUNCATION_TICK_CAP} ` +
+    `most recent ticks (~1 day), not the full ${match[1].replace("past_", "")}. ` +
+    `Use /v1/prices/historical with start_date and end_date for the full range.`
+  );
+}
+
+function appendNoteRow(table: string[][], note: string): string[][] {
+  const width = table[0]?.length ?? 1;
+  const row = [note, ...Array(Math.max(0, width - 1)).fill("")];
+  return [...table, row];
 }
 
 /**
@@ -527,7 +699,9 @@ export async function oilpriceGet(
 
   try {
     const payload = await apiGet(path, query, apiKey);
-    return responseToTable(payload);
+    const table = responseToTable(payload);
+    const note = truncationNote(path, payload);
+    return note ? appendNoteRow(table, note) : table;
   } catch (error) {
     if (error instanceof Error && error.message === "UNSUPPORTED_ENDPOINT") {
       return tableError(
@@ -557,10 +731,119 @@ export async function oilpriceCodes(): Promise<string[][]> {
   return oilpriceGet("/v1/commodities");
 }
 
+/** Fetches the latest-quote object for a code, or throws a ResponseError. */
+async function fetchLatestQuote(code: string): Promise<Record<string, any>> {
+  const normalizedCode = (code || "").trim().toUpperCase();
+  if (!normalizedCode) {
+    throw {
+      code: "INVALID_CODE",
+      message: "Enter a commodity code",
+    } as ResponseError;
+  }
+  const apiKey = await getApiKey();
+  if (!apiKey) {
+    throw {
+      code: "AUTH_REQUIRED",
+      message: "Set API key in OilPrice pane",
+    } as ResponseError;
+  }
+  const payload = await apiGet(
+    "/v1/prices/latest",
+    `by_code=${encodeURIComponent(normalizedCode)}`,
+    apiKey,
+  );
+  const data = payload?.data;
+  if (!data || typeof data !== "object") {
+    throw { code: "NO_DATA", message: "No data returned" } as ResponseError;
+  }
+  return data;
+}
+
+/**
+ * Reports the freshness of the latest quote (#55) so stale data is
+ * distinguishable from fresh — e.g. "current" vs "stale". Uses the API's
+ * data_status, falling back to the stale boolean.
+ * @customfunction PRICE.STATUS
+ * @param code Commodity code, for example BALTIC_CAPESIZE_INDEX.
+ * @returns "current", "stale", or another API-reported status string.
+ */
+export async function oilpricePriceStatus(code: string): Promise<string> {
+  try {
+    const data = await fetchLatestQuote(code);
+    if (typeof data.data_status === "string") return data.data_status;
+    if (typeof data?.freshness?.status === "string") {
+      return data.freshness.status;
+    }
+    if (typeof data.stale === "boolean") {
+      return data.stale ? "stale" : "current";
+    }
+    return cellError("NO_DATA", "No status returned");
+  } catch (error) {
+    if (isResponseError(error)) return cellError(error.code, error.message);
+    return cellError("NETWORK_ERROR", "Cannot reach API");
+  }
+}
+
+/**
+ * Exposes the currency and unit of the latest quote (#56) so a value like
+ * NATURAL_GAS_GBP 142.19 is understood as pence/therm, not USD. PRICE stays
+ * a bare number; this companion makes the units explicit.
+ * @customfunction PRICE.UNIT
+ * @param code Commodity code, for example NATURAL_GAS_GBP.
+ * @returns "currency/unit", for example "GBp/therm" or "USD/barrel".
+ */
+export async function oilpricePriceUnit(code: string): Promise<string> {
+  try {
+    const data = await fetchLatestQuote(code);
+    const currency = typeof data.currency === "string" ? data.currency : "";
+    const unit = typeof data.unit === "string" ? data.unit : "";
+    if (!currency && !unit) return cellError("NO_DATA", "No unit returned");
+    return unit ? `${currency}/${unit}` : currency;
+  } catch (error) {
+    if (isResponseError(error)) return cellError(error.code, error.message);
+    return cellError("NETWORK_ERROR", "Cannot reach API");
+  }
+}
+
+/**
+ * Spills a compact table describing the latest quote — price, currency, unit,
+ * the human-formatted value, and freshness — covering both units (#56) and
+ * staleness (#55) in one place without changing the numeric PRICE contract.
+ * @customfunction PRICE.INFO
+ * @param code Commodity code, for example NATURAL_GAS_GBP.
+ * @returns A two-column Field/Value table.
+ */
+export async function oilpricePriceInfo(code: string): Promise<string[][]> {
+  try {
+    const data = await fetchLatestQuote(code);
+    const fields = [
+      "code",
+      "price",
+      "currency",
+      "unit",
+      "formatted",
+      "data_status",
+      "stale",
+      "age_days",
+      "as_of",
+    ];
+    return [
+      ["Field", "Value"],
+      ...fields.map((field) => [field, String(valueToCell(data[field]))]),
+    ];
+  } catch (error) {
+    if (isResponseError(error)) return tableError(error.code, error.message);
+    return tableError("NETWORK_ERROR", "Cannot reach API");
+  }
+}
+
 export function registerOilpriceFunctions(): void {
   CustomFunctions.associate("PRICE", oilpricePrice);
   CustomFunctions.associate("GET", oilpriceGet);
   CustomFunctions.associate("CODES", oilpriceCodes);
+  CustomFunctions.associate("PRICE.STATUS", oilpricePriceStatus);
+  CustomFunctions.associate("PRICE.UNIT", oilpricePriceUnit);
+  CustomFunctions.associate("PRICE.INFO", oilpricePriceInfo);
 }
 
 registerOilpriceFunctions();

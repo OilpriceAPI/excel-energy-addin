@@ -1,0 +1,44 @@
+{
+  "status": "success",
+  "data": {
+    "regional_average": {
+      "price": 4.578,
+      "currency": "USD",
+      "unit": "gallon",
+      "region": "national",
+      "granularity": "national",
+      "source": "EIA",
+      "updated_at": "2026-07-13T02:00:33Z",
+      "cached": true
+    },
+    "upgrade": {
+      "available": true,
+      "message": "Get specific station prices near you",
+      "endpoint": "/v1/diesel-prices/stations",
+      "method": "POST",
+      "required_params": [
+        "lat",
+        "lng"
+      ],
+      "optional_params": [
+        "radius (in meters, default: 8047 = 5 miles)",
+        "fuel_type (one of: diesel, truck_diesel, diesel_plus, biodiesel; default: diesel)"
+      ],
+      "features": [
+        "Current station prices within customizable radius",
+        "Compare prices across stations",
+        "Save up to $0.30/gallon by finding cheapest nearby station",
+        "Updated from 130,000+ US stations via Google Maps (OPIS data)"
+      ],
+      "pricing": {
+        "cost_per_query": "$0.024",
+        "free_credit": "$200/month",
+        "note": "First ~8,300 queries/month free with Google Maps credit"
+      }
+    },
+    "location": {
+      "type": "national",
+      "note": "No location provided, using national average"
+    }
+  }
+}
