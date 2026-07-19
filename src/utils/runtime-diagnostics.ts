@@ -8,6 +8,7 @@ export type RuntimeDiagnosticResult =
   | "http-error"
   | "network-or-cors"
   | "offline"
+  | "timeout"
   | "invalid-response";
 
 export interface RuntimeDiagnostic {
@@ -45,6 +46,7 @@ const DIAGNOSTIC_RESULTS = new Set<RuntimeDiagnosticResult>([
   "http-error",
   "network-or-cors",
   "offline",
+  "timeout",
   "invalid-response",
 ]);
 
@@ -165,7 +167,8 @@ export function parseRuntimeDiagnostic(
 }
 
 export function requestIdFromResponse(
-  response: Pick<Response, "headers"> | { headers?: Headers } | null | undefined,
+  response:
+    Pick<Response, "headers"> | { headers?: Headers } | null | undefined,
 ): string | undefined {
   try {
     return safeRequestId(response?.headers?.get("x-request-id"));

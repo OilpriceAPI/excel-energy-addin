@@ -7,7 +7,6 @@ const certPath = path.join(os.homedir(), '.office-addin-dev-certs');
 
 module.exports = {
   entry: {
-    bundle: './src/index.ts',
     functions: './src/functions/functions.ts',
     taskpane: './src/taskpane/taskpane.ts'
   },

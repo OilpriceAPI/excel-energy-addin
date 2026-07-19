@@ -11,7 +11,9 @@
     <div class="container">
       <header>
         <h1>OilPrice</h1>
-        <p class="subtitle">Set your API key once, then use refreshable formulas.</p>
+        <p class="subtitle">
+          Set your API key once, then use refreshable formulas.
+        </p>
       </header>
 
       <section class="settings-section" id="settings-section">
@@ -25,11 +27,17 @@
             autocomplete="off"
             title="Your OilPriceAPI key is stored in this Excel add-in runtime"
           />
-          <button id="save-key-btn" class="btn-primary" type="button">Save Key</button>
+          <button id="save-key-btn" class="btn-primary" type="button">
+            Save Key
+          </button>
         </div>
         <div class="form-group">
-          <button id="test-connection-btn" class="btn-secondary" type="button">Test Key</button>
-          <button id="clear-key-btn" class="btn-secondary" type="button">Clear Key</button>
+          <button id="test-connection-btn" class="btn-secondary" type="button">
+            Test Key
+          </button>
+          <button id="clear-key-btn" class="btn-secondary" type="button">
+            Clear Key
+          </button>
           <span id="connection-status" class="status-text"></span>
         </div>
       </section>
@@ -42,8 +50,18 @@
           <p><code>=OILPRICE.PRICE(A2)</code></p>
         </div>
         <div class="action-card">
+          <h3>Source context</h3>
+          <p><code>=OILPRICE.INFO("BRENT_CRUDE_USD")</code></p>
+          <p><code>=OILPRICE.STATUS("BRENT_CRUDE_USD")</code></p>
+          <p><code>=OILPRICE.UNIT("BRENT_CRUDE_USD")</code></p>
+        </div>
+        <div class="action-card">
           <h3>Supported GET endpoint</h3>
-          <p><code>=OILPRICE.GET("/v1/prices/latest","by_code=BRENT_CRUDE_USD")</code></p>
+          <p>
+            <code
+              >=OILPRICE.GET("/v1/prices/latest","by_code=BRENT_CRUDE_USD")</code
+            >
+          </p>
         </div>
         <div class="action-card">
           <h3>Codes</h3>
@@ -61,7 +79,7 @@
         <dl class="diagnostics-list">
           <div>
             <dt>Version</dt>
-            <dd id="diag-version">1.0.2</dd>
+            <dd id="diag-version">1.1.0</dd>
           </div>
           <div>
             <dt>Excel</dt>
@@ -88,28 +106,92 @@
             <dd id="diag-request-id">Not available</dd>
           </div>
         </dl>
-        <button id="refresh-diagnostics-btn" class="btn-secondary" type="button">Refresh</button>
-        <button id="copy-diagnostics-btn" class="btn-secondary" type="button">Copy Diagnostics</button>
-        <p class="diagnostics-note">Captures runtime, storage, network/CORS, HTTP status, duration, and the last task-pane or formula request. API keys are never stored in diagnostics or copied.</p>
+        <button
+          id="refresh-diagnostics-btn"
+          class="btn-secondary"
+          type="button"
+        >
+          Refresh
+        </button>
+        <button id="copy-diagnostics-btn" class="btn-secondary" type="button">
+          Copy Diagnostics
+        </button>
+        <p class="diagnostics-note">
+          Captures runtime, storage, network/CORS, HTTP status, duration, and
+          the last task-pane or formula request. API keys are never stored in
+          diagnostics or copied.
+        </p>
       </section>
 
       <section class="help-section">
         <details>
           <summary>Formula errors</summary>
           <div class="help-content">
-            <p><strong>#AUTH_REQUIRED</strong>: save your API key in this pane.</p>
-            <p><strong>#AUTH_INVALID</strong>: check or replace your API key.</p>
-            <p><strong>#RATE_LIMITED</strong>: wait for quota reset, then recalculate.</p>
-            <p><strong>#UPGRADE_REQUIRED</strong>: your plan does not include that endpoint.</p>
+            <p>
+              <strong>#AUTH_REQUIRED</strong>: save your API key in this pane.
+            </p>
+            <p>
+              <strong>#AUTH_INVALID</strong>: check or replace your API key.
+            </p>
+            <p>
+              <strong>#RATE_LIMITED</strong>: wait for quota reset, then
+              recalculate.
+            </p>
+            <p>
+              <strong>#TIMEOUT</strong>: retry once, then check service status.
+            </p>
+            <p>
+              <strong>#UPGRADE_REQUIRED</strong>: your plan does not include
+              that endpoint.
+            </p>
             <p><strong>#NO_DATA</strong>: the API returned no matching data.</p>
-            <p><strong>#NETWORK_OR_CORS</strong>: Excel loaded the add-in, but the browser, CORS, or a network policy blocked the API request.</p>
-            <p><strong>#OFFLINE</strong>: the device reports that it is offline.</p>
-            <p><strong>#INVALID_RESPONSE</strong>: the API responded, but the add-in could not read the payload.</p>
-            <p><strong>#SERVER_ERROR</strong>: OilPriceAPI is temporarily unavailable.</p>
-            <p><strong>#UNSUPPORTED_ENDPOINT</strong>: use a supported endpoint path.</p>
+            <p>
+              <strong>#NETWORK_OR_CORS</strong>: Excel loaded the add-in, but
+              the browser, CORS, or a network policy blocked the API request.
+            </p>
+            <p>
+              <strong>#OFFLINE</strong>: the device reports that it is offline.
+            </p>
+            <p>
+              <strong>#INVALID_RESPONSE</strong>: the API responded, but the
+              add-in could not read the payload.
+            </p>
+            <p>
+              <strong>#SERVER_ERROR</strong>: OilPriceAPI is temporarily
+              unavailable.
+            </p>
+            <p>
+              <strong>#UNSUPPORTED_ENDPOINT</strong>: use a supported endpoint
+              path.
+            </p>
+            <p>
+              <a
+                href="https://www.oilpriceapi.com/tools/excel-support"
+                target="_blank"
+                rel="noopener"
+                >Recovery and support</a
+              >
+              |
+              <a
+                href="https://status.oilpriceapi.com"
+                target="_blank"
+                rel="noopener"
+                >Service status</a
+              >
+            </p>
           </div>
         </details>
       </section>
+
+      <p class="diagnostics-note">
+        <a
+          href="https://api.oilpriceapi.com/product-facts.json"
+          target="_blank"
+          rel="noopener"
+          >Product facts reviewed July 18, 2026</a
+        >. Data cadence and access vary by source, market hours, dataset, and
+        account entitlement.
+      </p>
     </div>
 
     <!-- Load the custom-functions bundle in the shared runtime page: the

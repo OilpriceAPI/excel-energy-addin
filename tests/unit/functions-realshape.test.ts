@@ -1,7 +1,7 @@
 /**
  * Real-shape rendering tests (#58 root cause).
  *
- * These tests load fixtures captured from the LIVE OilPriceAPI
+ * These tests load minimized fixtures captured from the production OilPriceAPI
  * (tests/fixtures/api/*.json, captured 2026-07-18) and assert the RENDERED
  * worksheet table. The previous suite asserted against a synthetic
  * `{ data: { ok: true } }` mock, which let real-shape breakage ship

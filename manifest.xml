@@ -9,7 +9,7 @@
   <Id>f402ea85-7778-41f3-8cee-c3465c49ca8d</Id>
 
   <!-- Version -->
-  <Version>1.0.2.0</Version>
+  <Version>1.1.0.0</Version>
 
   <!-- Provider Name -->
   <ProviderName>OilPriceAPI</ProviderName>
@@ -21,7 +21,7 @@
   <DisplayName DefaultValue="OilPrice Excel Add-in"/>
 
   <!-- Description -->
-  <Description DefaultValue="Use refreshable OilPriceAPI formulas in Excel"/>
+  <Description DefaultValue="Use source-aware OilPriceAPI formulas in Excel"/>
 
   <!-- Icon URLs -->
   <IconUrl DefaultValue="https://oilpriceapi.github.io/excel-energy-addin/assets/icon-32.png"/>

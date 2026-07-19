@@ -30,6 +30,7 @@ declare const CustomFunctions: {
 
 const API_ORIGIN = "https://api.oilpriceapi.com";
 const API_KEY_STORAGE = "oilpriceapi_key";
+const REQUEST_TIMEOUT_MS = 15_000;
 
 type EndpointCatalogEntry = {
   id: string;
@@ -331,6 +332,8 @@ async function apiGet(
 ): Promise<any> {
   const url = buildUrl(path, query);
   const startedAt = Date.now();
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
   let response: Response;
 
   try {
@@ -339,8 +342,25 @@ async function apiGet(
         Authorization: `Token ${apiKey}`,
         "Content-Type": "application/json",
       },
+      signal: controller.signal,
     });
   } catch {
+    if (controller.signal.aborted) {
+      const responseError: ResponseError = {
+        code: "TIMEOUT",
+        message: "OilPriceAPI did not respond in time",
+      };
+      await persistRuntimeDiagnostic(
+        createRuntimeDiagnostic({
+          source: "custom-function",
+          result: "timeout",
+          code: responseError.code,
+          endpoint: path,
+          durationMs: Date.now() - startedAt,
+        }),
+      );
+      throw responseError;
+    }
     const failure = classifyNetworkFailure(browserOnlineState());
     await persistRuntimeDiagnostic(
       createRuntimeDiagnostic({
@@ -355,6 +375,8 @@ async function apiGet(
       code: failure.code,
       message: failure.message,
     } satisfies ResponseError;
+  } finally {
+    clearTimeout(timeoutId);
   }
 
   const durationMs = Date.now() - startedAt;
@@ -369,6 +391,7 @@ async function apiGet(
       const errorBody = await response.json();
       const errorData = errorBody?.data ?? errorBody;
       if (
+        (response.status === 400 || response.status === 422) &&
         errorData &&
         typeof errorData === "object" &&
         typeof errorData.error === "string"
@@ -741,9 +764,24 @@ export async function oilpricePrice(code: string): Promise<number | string> {
       `by_code=${encodeURIComponent(normalizedCode)}`,
       apiKey,
     );
-    const price = payload?.data?.price;
-    if (typeof price !== "number") {
+    const data = payload?.data;
+    if (data === null || data === undefined) {
       return cellError("NO_DATA", "No data returned");
+    }
+    if (typeof data !== "object") {
+      return cellError("INVALID_RESPONSE", "API returned a malformed price");
+    }
+    if (typeof data.error === "string") {
+      return cellError(
+        "INVALID_CODE",
+        typeof data.message === "string" && data.message.trim()
+          ? data.message
+          : "Invalid commodity code",
+      );
+    }
+    const price = data.price;
+    if (typeof price !== "number") {
+      return cellError("INVALID_RESPONSE", "API returned a malformed price");
     }
     return price;
   } catch (error) {
@@ -908,10 +946,13 @@ export async function oilpricePriceInfo(code: string): Promise<Table> {
       "currency",
       "unit",
       "formatted",
+      "source",
+      "source_description",
+      "as_of",
+      "collected_at",
       "data_status",
       "stale",
       "age_days",
-      "as_of",
     ];
     // A dimensionless index (currency INDEX / unit index) has no monetary unit,
     // so the API's "$"-prefixed `formatted` (e.g. "$4655.00") is misleading.
@@ -923,6 +964,9 @@ export async function oilpricePriceInfo(code: string): Promise<Table> {
     return [
       ["Field", "Value"],
       ...fields.map((field): Cell[] => {
+        if (field === "source_description") {
+          return [field, valueToCell(data?.metadata?.source_description)];
+        }
         if (field === "formatted" && isIndex) {
           const unit = typeof data.unit === "string" ? data.unit : "index";
           return ["formatted", `${valueToCell(data.price)} ${unit}`.trim()];

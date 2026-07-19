@@ -2,77 +2,47 @@
 
 [![Website](https://img.shields.io/badge/Website-oilpriceapi.com-blue)](https://www.oilpriceapi.com)
 [![Docs](https://img.shields.io/badge/Docs-docs.oilpriceapi.com-green)](https://docs.oilpriceapi.com)
-[![GitHub](https://img.shields.io/github/stars/OilpriceAPI/excel-energy-addin?style=social)](https://github.com/OilpriceAPI/excel-energy-addin)
 
-This repository contains the OilPrice Excel add-in for refreshable OilPriceAPI formulas.
+This repository contains the preview OilPrice Excel add-in for refreshable OilPriceAPI formulas. It is not yet listed in Microsoft AppSource.
 
-**Installing it?** See the **[2-minute customer quickstart](CUSTOMER_QUICKSTART.md)** — Excel on the web (no install), Windows desktop (one-click script or Microsoft 365 admin deploy), and Mac (one Terminal line).
+Product facts are governed by the [versioned OilPriceAPI contract](https://api.oilpriceapi.com/product-facts.json), reviewed 2026-07-18. Latest available values include source timestamps; cadence varies by source, market hours, dataset, and account entitlement.
 
-The customer-facing Excel path is the add-in. Other spreadsheet setup variants are not the current support path.
+## Formula Contract
 
-## MVP Scope
+- `=OILPRICE.PRICE("BRENT_CRUDE_USD")` returns the numeric price from the latest available API record.
+- `=OILPRICE.INFO("BRENT_CRUDE_USD")` returns price, currency, unit, source, source description, source timestamp, and freshness fields.
+- `=OILPRICE.STATUS("BRENT_CRUDE_USD")` returns the API freshness state.
+- `=OILPRICE.UNIT("BRENT_CRUDE_USD")` returns currency/unit.
+- `=OILPRICE.GET("/v1/prices/latest", "by_code=BRENT_CRUDE_USD")` returns a table for an allowlisted GET endpoint.
+- `=OILPRICE.CODES()` returns codes available to the supplied API key.
 
-- `=OILPRICE.PRICE("BRENT_CRUDE_USD")`
-- `=OILPRICE.PRICE(A2)`
-- `=OILPRICE.GET("/v1/prices/latest", "by_code=BRENT_CRUDE_USD")`
-- `=OILPRICE.CODES()`
-- API key manager in the task pane
-- Shared key storage for task pane and formulas
-- Plain worksheet error strings for auth, quota, tier, no-data, and network failures
+An OilPriceAPI account and API key are required. Dataset access, endpoint access, quotas, and limits depend on the account. The add-in does not infer plan names or limits.
 
-Do not send customer instructions until Windows Excel smoke proves install, key save/test, production API log hit, formula recalculation after symbol change, and no `#NAME?`.
+`PRICE` intentionally returns a bare number for spreadsheet calculations. Use `INFO`, `STATUS`, or `UNIT` when the source context matters.
 
-See [ADDIN_ACTIVATION_CHECKLIST.md](ADDIN_ACTIVATION_CHECKLIST.md) for the proof checklist that gates customer instructions.
+## Distribution Status
 
-## Current Documentation
-
-- [ADDIN_ACTIVATION_CHECKLIST.md](ADDIN_ACTIVATION_CHECKLIST.md) is the gate for runtime proof.
-- [EXCEL_SUPPORT_RUNBOOK.md](EXCEL_SUPPORT_RUNBOOK.md) separates install, runtime, CORS, auth, and formula failures during support.
-- [DISTRIBUTION.md](DISTRIBUTION.md) is the internal runbook for managed-customer and public self-serve distribution after runtime proof.
-- [INSTALL.md](INSTALL.md) and [QUICK_INSTALL.md](QUICK_INSTALL.md) are internal preview instructions only.
-- [docs/legacy](docs/legacy) contains historical planning notes. Do not use those files for customer setup, support replies, AppSource copy, screenshots, or launch status.
+- Mac Excel 16.110.2 on macOS passed the sideload, authentication, formula, recalculation, and secret-free diagnostics smoke on 2026-07-03.
+- Windows Excel and Excel on the web remain unclaimed until their clean runtime smoke is recorded.
+- AppSource submission remains pending. See [APPSOURCE_METADATA.md](APPSOURCE_METADATA.md).
+- [CUSTOMER_QUICKSTART.md](CUSTOMER_QUICKSTART.md) documents the currently proven Mac preview path.
 
 ## Development
 
 ```bash
-npm install
+npm ci
+npm run scan:secrets
+npm run validate:claims
 npm test -- --runInBand
 npm run build
 npx office-addin-manifest validate manifest.xml
 ```
 
-## Project Structure
+## Runtime Design
 
-```
-excel-energy-addin/
-├── manifest.xml
-├── public/
-│   ├── functions.html
-│   ├── taskpane.html
-│   ├── taskpane.css
-│   └── taskpane.js
-├── src/
-│   └── functions/
-│       ├── functions.ts
-│       └── functions.json
-├── tests/
-│   └── unit/
-│       └── functions.test.ts
-├── webpack.config.js
-└── webpack.dev.js
-```
+- `manifest.xml` wires a long-lived shared runtime.
+- `src/functions/functions.ts` implements the custom functions and an explicit endpoint allowlist.
+- `src/taskpane/taskpane.ts` stores the API key in `OfficeRuntime.storage`, tests the key, and emits diagnostics without the key or formula arguments.
+- Requests fail closed for missing/invalid keys, entitlement and quota errors, rate limits, timeouts, malformed responses, no data, and network/CORS failures.
 
-## Validation Gate
-
-Before customer use:
-
-1. Build and test pass locally.
-2. Manifest validation passes.
-3. Windows Excel sideload loads the pane and custom formulas.
-4. `=OILPRICE.PRICE("BRENT_CRUDE_USD")` returns a number from production.
-5. Changing a referenced symbol cell recalculates.
-6. Production logs show the expected request for the test key.
-
-## Backlog
-
-The old starter workbook generator is retained only as historical/internal context. It is not the customer onboarding path unless explicitly reprioritized.
+Internal validation and distribution procedures are in [ADDIN_ACTIVATION_CHECKLIST.md](ADDIN_ACTIVATION_CHECKLIST.md), [DISTRIBUTION.md](DISTRIBUTION.md), and [EXCEL_SUPPORT_RUNBOOK.md](EXCEL_SUPPORT_RUNBOOK.md).
