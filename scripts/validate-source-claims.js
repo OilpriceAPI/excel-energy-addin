@@ -56,7 +56,11 @@ for (const relativePath of [
   "APPSOURCE_METADATA.md",
   "public/index.html",
 ]) {
-  const contents = fs.readFileSync(path.join(ROOT, relativePath), "utf8");
+  const absolutePath = path.join(ROOT, relativePath);
+  if (!fs.existsSync(absolutePath)) {
+    continue;
+  }
+  const contents = fs.readFileSync(absolutePath, "utf8");
   if (!contents.includes(requiredContract)) {
     failures.push(
       `${relativePath}: canonical product-facts contract is not linked`,

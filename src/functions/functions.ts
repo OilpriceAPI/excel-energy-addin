@@ -334,124 +334,137 @@ async function apiGet(
   const startedAt = Date.now();
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-  let response: Response;
-
-  try {
-    response = await fetch(url, {
-      headers: {
-        Authorization: `Token ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      signal: controller.signal,
-    });
-  } catch {
-    if (controller.signal.aborted) {
-      const responseError: ResponseError = {
-        code: "TIMEOUT",
-        message: "OilPriceAPI did not respond in time",
-      };
-      await persistRuntimeDiagnostic(
-        createRuntimeDiagnostic({
-          source: "custom-function",
-          result: "timeout",
-          code: responseError.code,
-          endpoint: path,
-          durationMs: Date.now() - startedAt,
-        }),
-      );
-      throw responseError;
-    }
-    const failure = classifyNetworkFailure(browserOnlineState());
-    await persistRuntimeDiagnostic(
-      createRuntimeDiagnostic({
-        source: "custom-function",
-        result: failure.result,
-        code: failure.code,
-        endpoint: path,
-        durationMs: Date.now() - startedAt,
-      }),
-    );
-    throw {
-      code: failure.code,
-      message: failure.message,
-    } satisfies ResponseError;
-  } finally {
-    clearTimeout(timeoutId);
-  }
-
-  const durationMs = Date.now() - startedAt;
-  const requestId = requestIdFromResponse(response);
-
-  if (!response.ok) {
-    let responseError = parseResponseError(response);
-    // Validation errors (e.g. an invalid commodity code) arrive with a helpful
-    // "did you mean" message in the JSON body. Surface that message rather than
-    // a bare "HTTP 400" so the worksheet shows the suggestion.
-    try {
-      const errorBody = await response.json();
-      const errorData = errorBody?.data ?? errorBody;
-      if (
-        (response.status === 400 || response.status === 422) &&
-        errorData &&
-        typeof errorData === "object" &&
-        typeof errorData.error === "string"
-      ) {
-        responseError = {
-          code: "INVALID_CODE",
-          message:
-            typeof errorData.message === "string" && errorData.message.trim()
-              ? errorData.message
-              : responseError.message,
-        };
-      }
-    } catch {
-      // Non-JSON error body: keep the status-derived error.
-    }
-    await persistRuntimeDiagnostic(
-      createRuntimeDiagnostic({
-        source: "custom-function",
-        result: "http-error",
-        code: responseError.code,
-        endpoint: path,
-        durationMs,
-        httpStatus: response.status,
-        requestId,
-      }),
-    );
-    throw responseError;
-  }
-
-  try {
-    const payload = await response.json();
-    await persistRuntimeDiagnostic(
-      createRuntimeDiagnostic({
-        source: "custom-function",
-        result: "success",
-        code: "OK",
-        endpoint: path,
-        durationMs,
-        httpStatus: response.status,
-        requestId,
-      }),
-    );
-    return payload;
-  } catch {
+  const throwTimeout = async (): Promise<never> => {
     const responseError: ResponseError = {
-      code: "INVALID_RESPONSE",
-      message: "API returned an unreadable response",
+      code: "TIMEOUT",
+      message: "OilPriceAPI did not respond in time",
     };
     await persistRuntimeDiagnostic(
       createRuntimeDiagnostic({
         source: "custom-function",
-        result: "invalid-response",
+        result: "timeout",
         code: responseError.code,
         endpoint: path,
-        durationMs,
-        httpStatus: response.status,
-        requestId,
+        durationMs: Date.now() - startedAt,
       }),
     );
     throw responseError;
+  };
+
+  try {
+    let response: Response;
+    try {
+      response = await fetch(url, {
+        headers: {
+          Authorization: `Token ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        signal: controller.signal,
+      });
+    } catch {
+      if (controller.signal.aborted) {
+        await throwTimeout();
+      }
+      const failure = classifyNetworkFailure(browserOnlineState());
+      await persistRuntimeDiagnostic(
+        createRuntimeDiagnostic({
+          source: "custom-function",
+          result: failure.result,
+          code: failure.code,
+          endpoint: path,
+          durationMs: Date.now() - startedAt,
+        }),
+      );
+      throw {
+        code: failure.code,
+        message: failure.message,
+      } satisfies ResponseError;
+    }
+
+    const requestId = requestIdFromResponse(response);
+
+    if (!response.ok) {
+      let responseError = parseResponseError(response);
+      // Validation errors (e.g. an invalid commodity code) arrive with a helpful
+      // "did you mean" message in the JSON body. Surface that message rather than
+      // a bare "HTTP 400" so the worksheet shows the suggestion.
+      try {
+        const errorBody = await response.json();
+        const errorData = errorBody?.data ?? errorBody;
+        if (
+          (response.status === 400 || response.status === 422) &&
+          errorData &&
+          typeof errorData === "object" &&
+          typeof errorData.error === "string"
+        ) {
+          responseError = {
+            code: "INVALID_CODE",
+            message:
+              typeof errorData.message === "string" && errorData.message.trim()
+                ? errorData.message
+                : responseError.message,
+          };
+        }
+      } catch {
+        if (controller.signal.aborted) {
+          await throwTimeout();
+        }
+        // Non-JSON error body: keep the status-derived error.
+      }
+      await persistRuntimeDiagnostic(
+        createRuntimeDiagnostic({
+          source: "custom-function",
+          result: "http-error",
+          code: responseError.code,
+          endpoint: path,
+          durationMs: Date.now() - startedAt,
+          httpStatus: response.status,
+          requestId,
+        }),
+      );
+      throw responseError;
+    }
+
+    try {
+      const payload = await response.json();
+      await persistRuntimeDiagnostic(
+        createRuntimeDiagnostic({
+          source: "custom-function",
+          result: "success",
+          code: "OK",
+          endpoint: path,
+          durationMs: Date.now() - startedAt,
+          httpStatus: response.status,
+          requestId,
+        }),
+      );
+      return payload;
+    } catch (error) {
+      if (isResponseError(error)) {
+        throw error;
+      }
+      if (controller.signal.aborted) {
+        await throwTimeout();
+      }
+      const responseError: ResponseError = {
+        code: "INVALID_RESPONSE",
+        message: "API returned an unreadable response",
+      };
+      await persistRuntimeDiagnostic(
+        createRuntimeDiagnostic({
+          source: "custom-function",
+          result: "invalid-response",
+          code: responseError.code,
+          endpoint: path,
+          durationMs: Date.now() - startedAt,
+          httpStatus: response.status,
+          requestId,
+        }),
+      );
+      throw responseError;
+    }
+  } finally {
+    clearTimeout(timeoutId);
   }
 }
 
@@ -460,7 +473,9 @@ function isResponseError(error: unknown): error is ResponseError {
     typeof error === "object" &&
     error !== null &&
     "code" in error &&
-    "message" in error
+    typeof error.code === "string" &&
+    "message" in error &&
+    typeof error.message === "string"
   );
 }
 

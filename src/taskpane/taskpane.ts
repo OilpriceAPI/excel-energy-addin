@@ -359,7 +359,10 @@ async function testConnection(): Promise<void> {
     let payload: unknown;
     try {
       payload = await response.json();
-    } catch {
+    } catch (error) {
+      if (controller.signal.aborted) {
+        throw error;
+      }
       await recordRuntimeDiagnostic(
         createRuntimeDiagnostic({
           source: "taskpane",

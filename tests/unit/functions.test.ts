@@ -189,6 +189,62 @@ describe("OilPrice custom functions MVP", () => {
       jest.useRealTimers();
     });
 
+    it("keeps the timeout active while reading a successful response body", async () => {
+      jest.useFakeTimers();
+      ((globalThis as any).fetch as jest.Mock).mockImplementationOnce(
+        (_url: string, options: RequestInit) =>
+          Promise.resolve({
+            ok: true,
+            status: 200,
+            headers: new Headers(),
+            json: () =>
+              new Promise((_resolve, reject) => {
+                options.signal?.addEventListener("abort", () =>
+                  reject(new DOMException("Aborted", "AbortError")),
+                );
+              }),
+          }),
+      );
+
+      const resultPromise = oilpricePrice("BRENT_CRUDE_USD");
+      await Promise.resolve();
+      await Promise.resolve();
+      await jest.advanceTimersByTimeAsync(15_000);
+
+      await expect(resultPromise).resolves.toBe(
+        "#TIMEOUT: OilPriceAPI did not respond in time",
+      );
+      jest.useRealTimers();
+    });
+
+    it("classifies an aborted error-body read as TIMEOUT", async () => {
+      jest.useFakeTimers();
+      ((globalThis as any).fetch as jest.Mock).mockImplementationOnce(
+        (_url: string, options: RequestInit) =>
+          Promise.resolve({
+            ok: false,
+            status: 403,
+            headers: new Headers(),
+            json: () =>
+              new Promise((_resolve, reject) => {
+                options.signal?.addEventListener("abort", () =>
+                  reject(new DOMException("Aborted", "AbortError")),
+                );
+              }),
+          }),
+      );
+
+      const resultPromise = oilpricePrice("LOCKED_COMMODITY");
+      await Promise.resolve();
+      await Promise.resolve();
+      await jest.advanceTimersByTimeAsync(15_000);
+
+      await expect(resultPromise).resolves.toBe(
+        "#TIMEOUT: OilPriceAPI did not respond in time",
+      );
+      jest.useRealTimers();
+    });
+
     it("distinguishes browser/CORS failures from authentication failures", async () => {
       ((globalThis as any).fetch as jest.Mock).mockRejectedValueOnce(
         new TypeError("Failed to fetch"),
