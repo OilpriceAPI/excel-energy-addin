@@ -16,9 +16,9 @@
  *      relative <script src>. GitHub Pages ignores the query string, so the file
  *      still serves, but the changed URL forces Excel to refetch instead of
  *      serving a stale cached functions.js.
- *   3. Bumps the manifest <Version> to 1.0.<n>.0 (n = CI GITHUB_RUN_NUMBER, or a
- *      local patch+1 fallback) so Office detects the update and re-reads the
- *      manifest. The <Id> is never touched.
+ *   3. Bumps the manifest patch segment while preserving the source major/minor
+ *      version so Office detects the update and re-reads the manifest. The <Id>
+ *      is never touched.
  */
 
 "use strict";
@@ -53,13 +53,13 @@ function deriveToken() {
 }
 
 function deriveVersion(currentVersion) {
-  const runNumber = process.env.GITHUB_RUN_NUMBER;
-  if (runNumber && /^\d+$/.test(runNumber.trim())) {
-    return `1.0.${runNumber.trim()}.0`;
-  }
-  // Local fallback: bump the patch segment of the current 4-part version.
   const parts = (currentVersion || "1.0.0.0").split(".");
   while (parts.length < 4) parts.push("0");
+  const runNumber = process.env.GITHUB_RUN_NUMBER;
+  if (runNumber && /^\d+$/.test(runNumber.trim())) {
+    return `${parts[0]}.${parts[1]}.${runNumber.trim()}.0`;
+  }
+  // Local fallback: bump the patch segment of the current 4-part version.
   const patch = parseInt(parts[2], 10);
   parts[2] = String((Number.isFinite(patch) ? patch : 0) + 1);
   parts[3] = "0";

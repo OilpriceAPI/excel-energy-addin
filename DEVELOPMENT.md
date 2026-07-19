@@ -1,10 +1,8 @@
 # Development Guide
 
-This guide is for the current OilPrice Excel add-in only. Historical crawl/walk,
-AppSource, workbook-export, Power Query, `WEBSERVICE`, and `FILTERXML` notes are
-archived under `docs/legacy` and must not be used for customer instructions.
-
-This guide is for contributors working on the add-in source code. For **installation instructions**, see [INSTALL.md](INSTALL.md).
+This guide is for contributors working on the current OilPrice Excel add-in.
+For the smoke-proven Mac preview path, see [CUSTOMER_QUICKSTART.md](CUSTOMER_QUICKSTART.md).
+Other install procedures remain internal validation paths until their runtime receipts exist.
 
 ## Prerequisites
 
@@ -17,7 +15,7 @@ This guide is for contributors working on the add-in source code. For **installa
 ```bash
 git clone https://github.com/OilpriceAPI/excel-energy-addin.git
 cd excel-energy-addin
-npm install
+npm ci
 ```
 
 ## Development Server
@@ -26,7 +24,7 @@ npm install
 npm run dev
 ```
 
-This starts a webpack dev server at `https://localhost:3000` with hot reload.
+This starts a webpack dev server at `https://localhost:3000`. Reload manually after source changes.
 
 ### Self-Signed Certificate
 
@@ -79,7 +77,7 @@ npm test               # Run Jest unit tests
 npm run test:coverage  # With coverage report
 ```
 
-Current coverage: ~98%.
+The CI coverage thresholds are defined in `jest.config.js`; use the test output as the current receipt.
 
 ## Project Structure
 
@@ -89,15 +87,15 @@ src/
 │   ├── functions.ts     # Custom Excel functions (=OILPRICE.PRICE, OILPRICE.GET, etc.)
 │   └── functions.json   # Function metadata for Office.js
 ├── utils/
-│   ├── api-client.ts    # OilPriceAPI HTTP client
-│   └── conversions.ts   # Energy unit conversion math
-├── types/
-│   └── user-tier.ts     # Plan tier definitions
-└── index.ts             # Core Excel workbook operations
+│   ├── client-attribution.ts   # Release/client identifier
+│   └── runtime-diagnostics.ts  # Secret-free diagnostics contract
+└── taskpane/
+    └── taskpane.ts      # Key manager, connection test, diagnostics UI
 
 public/
 ├── taskpane.html        # Task pane UI
-├── taskpane.js          # Task pane logic
+├── index.html           # Hosted preview/status page
+├── privacy.html         # Add-in privacy disclosure
 └── taskpane.css         # Styles
 ```
 
@@ -105,18 +103,15 @@ public/
 
 The production add-in is hosted on GitHub Pages at `oilpriceapi.github.io/excel-energy-addin/`.
 
-To deploy:
-
-1. Run `npm run build`
-2. Push to the `gh-pages` branch (or configure GitHub Actions)
-3. The root `manifest.xml` already points to the GitHub Pages URLs
+Pushes to `main` run the test workflow and the GitHub Pages build/deploy workflow.
+The root `manifest.xml` points to the deployed GitHub Pages assets.
 
 ## Architecture
 
 - **Shared Runtime**: The add-in uses Office.js Shared Runtime so custom functions and the taskpane share state
-- **Storage**: API keys are stored in `OfficeRuntime.storage` (encrypted, per-user)
-- **Refreshable formulas**: `OILPRICE.PRICE`, `OILPRICE.GET`, and `OILPRICE.CODES` recalculate through Excel custom functions.
-- **Tier Gating**: Historical data and some features check user plan tier before executing
+- **Storage**: API keys are stored in `OfficeRuntime.storage` and never placed in worksheet cells or diagnostics.
+- **Refreshable formulas**: `OILPRICE.PRICE`, `INFO`, `STATUS`, `UNIT`, `GET`, and `CODES` recalculate through Excel custom functions.
+- **Entitlements**: The add-in does not infer plan names or limits; it renders API auth, entitlement, quota, and rate-limit responses.
 
 ## Debugging
 

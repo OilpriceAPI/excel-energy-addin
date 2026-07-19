@@ -203,7 +203,7 @@
       "freshness_warning_basis": "benchmark contract when available, otherwise front_month contract or first three non-expired contract months",
       "comparison_note": "Public market sites may show a spot benchmark, continuous futures series, settlement value, or a different contract month"
     },
-    "settlement_date_note": "settlement_date is the exchange trading session the quote belongs to (the source settlement/trading date), not updated_at/created_at which reflect our collection time. EUA futures are refreshed every 15 minutes 05:00-17:00 UTC on weekdays; the prior day's official settlement is typically available by ~03:30 UTC.",
+    "settlement_date_note": "settlement_date is the source trading session; collection timestamps are separate and cadence varies by source, market hours, dataset, and entitlement.",
     "filtered_expired_count": 0,
     "data_source": "market_reporting",
     "source_semantics": null,

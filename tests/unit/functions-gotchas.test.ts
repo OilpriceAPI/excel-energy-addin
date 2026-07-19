@@ -2,8 +2,8 @@
  * Expert-review defect guards (#51, children #52/#55/#56).
  *
  * Four correctness bugs that shipped in PR #60 and break the customer's
- * spreadsheet use case. Every assertion runs against the REAL captured
- * fixtures in tests/fixtures/api/*.json (or a real live-shape body).
+ * spreadsheet use case. Every assertion runs against minimized production-shape
+ * fixtures in tests/fixtures/api/*.json (or an equivalent response shape).
  *
  *   P0-1  Numeric cells must be typeof "number", not text — text cells are
  *         left-aligned, non-chartable, and break AVERAGE/SUM. The API also
@@ -185,6 +185,20 @@ describe("P1-1 INFO does not surface '$' for a dimensionless index", () => {
     expect(flat.get("currency")).toBe("INDEX");
     const rendered = JSON.stringify(table);
     expect(rendered).not.toContain("$");
+  });
+
+  it("INFO exposes the API source, source timestamp, and stale state", async () => {
+    mockFetchOnce(loadFixture("prices-latest-baltic-stale"));
+    const table = await oilpricePriceInfo("BALTIC_CAPESIZE_INDEX");
+    const flat = new Map(table.map((row) => [row[0], row[1]]));
+
+    expect(flat.get("source")).toBe("market_reporting");
+    expect(flat.get("source_description")).toBe(
+      "Aggregated from published market sources",
+    );
+    expect(flat.get("as_of")).toBe("2026-07-10T14:24:30.140Z");
+    expect(flat.get("stale")).toBe(true);
+    expect(flat.get("data_status")).toBe("stale");
   });
 });
 

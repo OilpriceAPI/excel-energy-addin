@@ -5,6 +5,7 @@ npm-debug.log*
 # Build outputs
 dist/
 build/
+coverage/
 *.js.map
 
 # Environment files

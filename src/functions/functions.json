@@ -5,8 +5,8 @@
     {
       "id": "PRICE",
       "name": "PRICE",
-      "description": "Gets the latest OilPriceAPI price for a commodity code.",
-      "helpUrl": "https://docs.oilpriceapi.com",
+      "description": "Gets the numeric price from the latest available OilPriceAPI record.",
+      "helpUrl": "https://www.oilpriceapi.com/tools/excel-support",
       "parameters": [
         {
           "name": "code",
@@ -24,7 +24,7 @@
       "id": "GET",
       "name": "GET",
       "description": "Calls a supported OilPriceAPI GET endpoint and returns a table.",
-      "helpUrl": "https://docs.oilpriceapi.com",
+      "helpUrl": "https://www.oilpriceapi.com/tools/excel-support",
       "parameters": [
         {
           "name": "path",
@@ -48,7 +48,7 @@
       "id": "CODES",
       "name": "CODES",
       "description": "Returns available OilPriceAPI commodity codes when supported by the API key.",
-      "helpUrl": "https://docs.oilpriceapi.com",
+      "helpUrl": "https://www.oilpriceapi.com/tools/excel-support",
       "parameters": [],
       "result": {
         "type": "any",
@@ -59,7 +59,7 @@
       "id": "STATUS",
       "name": "STATUS",
       "description": "Reports the freshness of the latest quote (current, stale, ...) so stale data is distinguishable.",
-      "helpUrl": "https://docs.oilpriceapi.com",
+      "helpUrl": "https://www.oilpriceapi.com/tools/excel-support",
       "parameters": [
         {
           "name": "code",
@@ -77,7 +77,7 @@
       "id": "UNIT",
       "name": "UNIT",
       "description": "Returns the currency and unit of a quote, for example GBp/therm, so values are not misread.",
-      "helpUrl": "https://docs.oilpriceapi.com",
+      "helpUrl": "https://www.oilpriceapi.com/tools/excel-support",
       "parameters": [
         {
           "name": "code",
@@ -94,8 +94,8 @@
     {
       "id": "INFO",
       "name": "INFO",
-      "description": "Spills a table with the latest price, currency, unit, formatted value, and freshness.",
-      "helpUrl": "https://docs.oilpriceapi.com",
+      "description": "Returns the latest available value with currency, unit, source, source timestamp, and freshness.",
+      "helpUrl": "https://www.oilpriceapi.com/tools/excel-support",
       "parameters": [
         {
           "name": "code",

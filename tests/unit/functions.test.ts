@@ -40,12 +40,13 @@ describe("OilPrice custom functions MVP", () => {
       expect(result).toBe(85.45);
       expect((globalThis as any).fetch).toHaveBeenCalledWith(
         "https://api.oilpriceapi.com/v1/prices/latest?by_code=BRENT_CRUDE_USD",
-        {
+        expect.objectContaining({
           headers: {
             Authorization: "Token test-api-key-123",
             "Content-Type": "application/json",
           },
-        },
+          signal: expect.any(Object),
+        }),
       );
     });
 
@@ -100,6 +101,148 @@ describe("OilPrice custom functions MVP", () => {
       await expect(oilpricePrice("BRENT_CRUDE_USD")).resolves.toBe(
         "#UPGRADE_REQUIRED: Quota or plan limit reached",
       );
+    });
+
+    it("maps an entitlement-locked commodity to an upgrade worksheet error", async () => {
+      ((globalThis as any).fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: 403,
+        json: async () => ({ error: "commodity_locked" }),
+      });
+
+      await expect(oilpricePrice("LOCKED_COMMODITY")).resolves.toBe(
+        "#UPGRADE_REQUIRED: Plan does not include this endpoint",
+      );
+    });
+
+    it("returns NO_DATA for an empty successful response", async () => {
+      ((globalThis as any).fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        headers: new Headers(),
+        json: async () => ({ data: null }),
+      });
+
+      await expect(oilpricePrice("BRENT_CRUDE_USD")).resolves.toBe(
+        "#NO_DATA: No data returned",
+      );
+    });
+
+    it("returns INVALID_RESPONSE when a successful payload has a non-numeric price", async () => {
+      ((globalThis as any).fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        headers: new Headers(),
+        json: async () => ({
+          data: { code: "BRENT_CRUDE_USD", price: "not-a-number" },
+        }),
+      });
+
+      await expect(oilpricePrice("BRENT_CRUDE_USD")).resolves.toBe(
+        "#INVALID_RESPONSE: API returned a malformed price",
+      );
+    });
+
+    it("surfaces a successful error payload instead of treating it as no data", async () => {
+      ((globalThis as any).fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        headers: new Headers(),
+        json: async () => ({
+          data: {
+            error: "invalid_code",
+            message: "Code not found. Did you mean BRENT_CRUDE_USD?",
+          },
+        }),
+      });
+
+      await expect(oilpricePrice("BRENT")).resolves.toBe(
+        "#INVALID_CODE: Code not found. Did you mean BRENT_CRUDE_USD?",
+      );
+    });
+
+    it("returns TIMEOUT and records no key when the request is aborted", async () => {
+      jest.useFakeTimers();
+      ((globalThis as any).fetch as jest.Mock).mockImplementationOnce(
+        (_url: string, options: RequestInit) =>
+          new Promise((_resolve, reject) => {
+            options.signal?.addEventListener("abort", () =>
+              reject(new DOMException("Aborted", "AbortError")),
+            );
+          }),
+      );
+
+      const resultPromise = oilpricePrice("BRENT_CRUDE_USD");
+      await Promise.resolve();
+      await Promise.resolve();
+      await jest.advanceTimersByTimeAsync(15_000);
+
+      await expect(resultPromise).resolves.toBe(
+        "#TIMEOUT: OilPriceAPI did not respond in time",
+      );
+      const [, rawDiagnostic] =
+        mockStorage.setItem.mock.calls[
+          mockStorage.setItem.mock.calls.length - 1
+        ];
+      expect(rawDiagnostic).toContain('"code":"TIMEOUT"');
+      expect(rawDiagnostic).not.toContain("test-api-key-123");
+      jest.useRealTimers();
+    });
+
+    it("keeps the timeout active while reading a successful response body", async () => {
+      jest.useFakeTimers();
+      ((globalThis as any).fetch as jest.Mock).mockImplementationOnce(
+        (_url: string, options: RequestInit) =>
+          Promise.resolve({
+            ok: true,
+            status: 200,
+            headers: new Headers(),
+            json: () =>
+              new Promise((_resolve, reject) => {
+                options.signal?.addEventListener("abort", () =>
+                  reject(new DOMException("Aborted", "AbortError")),
+                );
+              }),
+          }),
+      );
+
+      const resultPromise = oilpricePrice("BRENT_CRUDE_USD");
+      await Promise.resolve();
+      await Promise.resolve();
+      await jest.advanceTimersByTimeAsync(15_000);
+
+      await expect(resultPromise).resolves.toBe(
+        "#TIMEOUT: OilPriceAPI did not respond in time",
+      );
+      jest.useRealTimers();
+    });
+
+    it("classifies an aborted error-body read as TIMEOUT", async () => {
+      jest.useFakeTimers();
+      ((globalThis as any).fetch as jest.Mock).mockImplementationOnce(
+        (_url: string, options: RequestInit) =>
+          Promise.resolve({
+            ok: false,
+            status: 403,
+            headers: new Headers(),
+            json: () =>
+              new Promise((_resolve, reject) => {
+                options.signal?.addEventListener("abort", () =>
+                  reject(new DOMException("Aborted", "AbortError")),
+                );
+              }),
+          }),
+      );
+
+      const resultPromise = oilpricePrice("LOCKED_COMMODITY");
+      await Promise.resolve();
+      await Promise.resolve();
+      await jest.advanceTimersByTimeAsync(15_000);
+
+      await expect(resultPromise).resolves.toBe(
+        "#TIMEOUT: OilPriceAPI did not respond in time",
+      );
+      jest.useRealTimers();
     });
 
     it("distinguishes browser/CORS failures from authentication failures", async () => {

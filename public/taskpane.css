@@ -45,7 +45,7 @@ h2 {
   margin-bottom: 12px;
   color: #1a1a1a;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0;
 }
 
 h3 {
@@ -201,6 +201,11 @@ button {
 
 .status-text.error {
   color: #ea4335;
+}
+
+.action-card code {
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 /* Diagnostics */

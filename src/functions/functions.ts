@@ -30,6 +30,7 @@ declare const CustomFunctions: {
 
 const API_ORIGIN = "https://api.oilpriceapi.com";
 const API_KEY_STORAGE = "oilpriceapi_key";
+const REQUEST_TIMEOUT_MS = 15_000;
 
 type EndpointCatalogEntry = {
   id: string;
@@ -331,104 +332,139 @@ async function apiGet(
 ): Promise<any> {
   const url = buildUrl(path, query);
   const startedAt = Date.now();
-  let response: Response;
-
-  try {
-    response = await fetch(url, {
-      headers: {
-        Authorization: `Token ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-    });
-  } catch {
-    const failure = classifyNetworkFailure(browserOnlineState());
-    await persistRuntimeDiagnostic(
-      createRuntimeDiagnostic({
-        source: "custom-function",
-        result: failure.result,
-        code: failure.code,
-        endpoint: path,
-        durationMs: Date.now() - startedAt,
-      }),
-    );
-    throw {
-      code: failure.code,
-      message: failure.message,
-    } satisfies ResponseError;
-  }
-
-  const durationMs = Date.now() - startedAt;
-  const requestId = requestIdFromResponse(response);
-
-  if (!response.ok) {
-    let responseError = parseResponseError(response);
-    // Validation errors (e.g. an invalid commodity code) arrive with a helpful
-    // "did you mean" message in the JSON body. Surface that message rather than
-    // a bare "HTTP 400" so the worksheet shows the suggestion.
-    try {
-      const errorBody = await response.json();
-      const errorData = errorBody?.data ?? errorBody;
-      if (
-        errorData &&
-        typeof errorData === "object" &&
-        typeof errorData.error === "string"
-      ) {
-        responseError = {
-          code: "INVALID_CODE",
-          message:
-            typeof errorData.message === "string" && errorData.message.trim()
-              ? errorData.message
-              : responseError.message,
-        };
-      }
-    } catch {
-      // Non-JSON error body: keep the status-derived error.
-    }
-    await persistRuntimeDiagnostic(
-      createRuntimeDiagnostic({
-        source: "custom-function",
-        result: "http-error",
-        code: responseError.code,
-        endpoint: path,
-        durationMs,
-        httpStatus: response.status,
-        requestId,
-      }),
-    );
-    throw responseError;
-  }
-
-  try {
-    const payload = await response.json();
-    await persistRuntimeDiagnostic(
-      createRuntimeDiagnostic({
-        source: "custom-function",
-        result: "success",
-        code: "OK",
-        endpoint: path,
-        durationMs,
-        httpStatus: response.status,
-        requestId,
-      }),
-    );
-    return payload;
-  } catch {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  const throwTimeout = async (): Promise<never> => {
     const responseError: ResponseError = {
-      code: "INVALID_RESPONSE",
-      message: "API returned an unreadable response",
+      code: "TIMEOUT",
+      message: "OilPriceAPI did not respond in time",
     };
     await persistRuntimeDiagnostic(
       createRuntimeDiagnostic({
         source: "custom-function",
-        result: "invalid-response",
+        result: "timeout",
         code: responseError.code,
         endpoint: path,
-        durationMs,
-        httpStatus: response.status,
-        requestId,
+        durationMs: Date.now() - startedAt,
       }),
     );
     throw responseError;
+  };
+
+  try {
+    let response: Response;
+    try {
+      response = await fetch(url, {
+        headers: {
+          Authorization: `Token ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        signal: controller.signal,
+      });
+    } catch {
+      if (controller.signal.aborted) {
+        await throwTimeout();
+      }
+      const failure = classifyNetworkFailure(browserOnlineState());
+      await persistRuntimeDiagnostic(
+        createRuntimeDiagnostic({
+          source: "custom-function",
+          result: failure.result,
+          code: failure.code,
+          endpoint: path,
+          durationMs: Date.now() - startedAt,
+        }),
+      );
+      throw {
+        code: failure.code,
+        message: failure.message,
+      } satisfies ResponseError;
+    }
+
+    const requestId = requestIdFromResponse(response);
+
+    if (!response.ok) {
+      let responseError = parseResponseError(response);
+      // Validation errors (e.g. an invalid commodity code) arrive with a helpful
+      // "did you mean" message in the JSON body. Surface that message rather than
+      // a bare "HTTP 400" so the worksheet shows the suggestion.
+      try {
+        const errorBody = await response.json();
+        const errorData = errorBody?.data ?? errorBody;
+        if (
+          (response.status === 400 || response.status === 422) &&
+          errorData &&
+          typeof errorData === "object" &&
+          typeof errorData.error === "string"
+        ) {
+          responseError = {
+            code: "INVALID_CODE",
+            message:
+              typeof errorData.message === "string" && errorData.message.trim()
+                ? errorData.message
+                : responseError.message,
+          };
+        }
+      } catch {
+        if (controller.signal.aborted) {
+          await throwTimeout();
+        }
+        // Non-JSON error body: keep the status-derived error.
+      }
+      await persistRuntimeDiagnostic(
+        createRuntimeDiagnostic({
+          source: "custom-function",
+          result: "http-error",
+          code: responseError.code,
+          endpoint: path,
+          durationMs: Date.now() - startedAt,
+          httpStatus: response.status,
+          requestId,
+        }),
+      );
+      throw responseError;
+    }
+
+    try {
+      const payload = await response.json();
+      await persistRuntimeDiagnostic(
+        createRuntimeDiagnostic({
+          source: "custom-function",
+          result: "success",
+          code: "OK",
+          endpoint: path,
+          durationMs: Date.now() - startedAt,
+          httpStatus: response.status,
+          requestId,
+        }),
+      );
+      return payload;
+    } catch (error) {
+      if (isResponseError(error)) {
+        throw error;
+      }
+      if (controller.signal.aborted) {
+        await throwTimeout();
+      }
+      const responseError: ResponseError = {
+        code: "INVALID_RESPONSE",
+        message: "API returned an unreadable response",
+      };
+      await persistRuntimeDiagnostic(
+        createRuntimeDiagnostic({
+          source: "custom-function",
+          result: "invalid-response",
+          code: responseError.code,
+          endpoint: path,
+          durationMs: Date.now() - startedAt,
+          httpStatus: response.status,
+          requestId,
+        }),
+      );
+      throw responseError;
+    }
+  } finally {
+    clearTimeout(timeoutId);
   }
 }
 
@@ -437,7 +473,9 @@ function isResponseError(error: unknown): error is ResponseError {
     typeof error === "object" &&
     error !== null &&
     "code" in error &&
-    "message" in error
+    typeof error.code === "string" &&
+    "message" in error &&
+    typeof error.message === "string"
   );
 }
 
@@ -741,9 +779,24 @@ export async function oilpricePrice(code: string): Promise<number | string> {
       `by_code=${encodeURIComponent(normalizedCode)}`,
       apiKey,
     );
-    const price = payload?.data?.price;
-    if (typeof price !== "number") {
+    const data = payload?.data;
+    if (data === null || data === undefined) {
       return cellError("NO_DATA", "No data returned");
+    }
+    if (typeof data !== "object") {
+      return cellError("INVALID_RESPONSE", "API returned a malformed price");
+    }
+    if (typeof data.error === "string") {
+      return cellError(
+        "INVALID_CODE",
+        typeof data.message === "string" && data.message.trim()
+          ? data.message
+          : "Invalid commodity code",
+      );
+    }
+    const price = data.price;
+    if (typeof price !== "number") {
+      return cellError("INVALID_RESPONSE", "API returned a malformed price");
     }
     return price;
   } catch (error) {
@@ -908,10 +961,13 @@ export async function oilpricePriceInfo(code: string): Promise<Table> {
       "currency",
       "unit",
       "formatted",
+      "source",
+      "source_description",
+      "as_of",
+      "collected_at",
       "data_status",
       "stale",
       "age_days",
-      "as_of",
     ];
     // A dimensionless index (currency INDEX / unit index) has no monetary unit,
     // so the API's "$"-prefixed `formatted` (e.g. "$4655.00") is misleading.
@@ -923,6 +979,9 @@ export async function oilpricePriceInfo(code: string): Promise<Table> {
     return [
       ["Field", "Value"],
       ...fields.map((field): Cell[] => {
+        if (field === "source_description") {
+          return [field, valueToCell(data?.metadata?.source_description)];
+        }
         if (field === "formatted" && isIndex) {
           const unit = typeof data.unit === "string" ? data.unit : "index";
           return ["formatted", `${valueToCell(data.price)} ${unit}`.trim()];

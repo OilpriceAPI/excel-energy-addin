@@ -29,6 +29,7 @@ const API_KEY_STORAGE = "oilpriceapi_key";
 const TEST_URL =
   "https://api.oilpriceapi.com/v1/prices/latest?by_code=BRENT_CRUDE_USD";
 const TEST_ENDPOINT = "/v1/prices/latest";
+const REQUEST_TIMEOUT_MS = 15_000;
 
 interface TaskpaneDiagnostics {
   version: string;
@@ -109,9 +110,9 @@ function setupEventListeners(): void {
 function hasSharedStorage(): boolean {
   return Boolean(
     typeof OfficeRuntime !== "undefined" &&
-      OfficeRuntime.storage &&
-      typeof OfficeRuntime.storage.getItem === "function" &&
-      typeof OfficeRuntime.storage.setItem === "function",
+    OfficeRuntime.storage &&
+    typeof OfficeRuntime.storage.getItem === "function" &&
+    typeof OfficeRuntime.storage.setItem === "function",
   );
 }
 
@@ -166,7 +167,10 @@ async function loadApiKeyState(): Promise<void> {
   updateDiagnostics({ storage: sharedStorageLabel() });
   try {
     const apiKey = await storageGet(API_KEY_STORAGE);
-    setConnectionStatus(apiKey ? "Key saved" : "No key saved", apiKey ? "success" : "");
+    setConnectionStatus(
+      apiKey ? "Key saved" : "No key saved",
+      apiKey ? "success" : "",
+    );
   } catch {
     setConnectionStatus("Storage unavailable", "error");
   }
@@ -185,7 +189,9 @@ async function saveApiKey(): Promise<void> {
     await storageSet(API_KEY_STORAGE, apiKey);
     updateDiagnostics({ storage: "Available" });
     if (input) input.value = "";
-    showStatus("API key saved. Use Formulas > Calculate Now to refresh formulas.");
+    showStatus(
+      "API key saved. Use Formulas > Calculate Now to refresh formulas.",
+    );
     setConnectionStatus("Key saved", "success");
   } catch {
     updateDiagnostics({ storage: "Unavailable" });
@@ -317,6 +323,8 @@ async function testConnection(): Promise<void> {
 
   setConnectionStatus("Testing...", "");
   const startedAt = Date.now();
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
   try {
     const response = await fetch(TEST_URL, {
@@ -324,6 +332,7 @@ async function testConnection(): Promise<void> {
         Authorization: `Token ${apiKey}`,
         "Content-Type": "application/json",
       },
+      signal: controller.signal,
     });
 
     const durationMs = Date.now() - startedAt;
@@ -350,7 +359,10 @@ async function testConnection(): Promise<void> {
     let payload: unknown;
     try {
       payload = await response.json();
-    } catch {
+    } catch (error) {
+      if (controller.signal.aborted) {
+        throw error;
+      }
       await recordRuntimeDiagnostic(
         createRuntimeDiagnostic({
           source: "taskpane",
@@ -363,12 +375,14 @@ async function testConnection(): Promise<void> {
         }),
       );
       setConnectionStatus("Invalid response", "error");
-      showError("OilPriceAPI returned an unreadable response. Copy diagnostics and contact support.");
+      showError(
+        "OilPriceAPI returned an unreadable response. Copy diagnostics and contact support.",
+      );
       return;
     }
 
     const price = (payload as { data?: { price?: unknown } })?.data?.price;
-    if (typeof price !== "number") {
+    if (typeof price !== "number" || !Number.isFinite(price)) {
       await recordRuntimeDiagnostic(
         createRuntimeDiagnostic({
           source: "taskpane",
@@ -381,7 +395,9 @@ async function testConnection(): Promise<void> {
         }),
       );
       setConnectionStatus("Invalid response", "error");
-      showError("OilPriceAPI connected but returned no numeric Brent price. Copy diagnostics and contact support.");
+      showError(
+        "OilPriceAPI connected but returned no numeric Brent price. Copy diagnostics and contact support.",
+      );
       return;
     }
 
@@ -399,6 +415,22 @@ async function testConnection(): Promise<void> {
     setConnectionStatus("Connected", "success");
     showStatus("Connected to OilPriceAPI.");
   } catch {
+    if (controller.signal.aborted) {
+      await recordRuntimeDiagnostic(
+        createRuntimeDiagnostic({
+          source: "taskpane",
+          result: "timeout",
+          code: "TIMEOUT",
+          endpoint: TEST_ENDPOINT,
+          durationMs: Date.now() - startedAt,
+        }),
+      );
+      setConnectionStatus("Timed out", "error");
+      showError(
+        "OilPriceAPI did not respond within 15 seconds. Try again, then check service status.",
+      );
+      return;
+    }
     const failure = classifyNetworkFailure(browserOnlineState());
     await recordRuntimeDiagnostic(
       createRuntimeDiagnostic({
@@ -414,6 +446,8 @@ async function testConnection(): Promise<void> {
       "error",
     );
     showError(`${failure.message}. ${failure.recovery}`);
+  } finally {
+    clearTimeout(timeoutId);
   }
 }
 
@@ -456,8 +490,14 @@ function updateDiagnostics(next: Partial<TaskpaneDiagnostics>): void {
   setText("diag-requirements", diagnostics.requirements);
   setText("diag-online", diagnostics.online);
   setText("diag-storage", diagnostics.storage);
-  setText("diag-last-request", formatRuntimeDiagnostic(diagnostics.lastRequest));
-  setText("diag-request-id", diagnostics.lastRequest?.requestId || "Not available");
+  setText(
+    "diag-last-request",
+    formatRuntimeDiagnostic(diagnostics.lastRequest),
+  );
+  setText(
+    "diag-request-id",
+    diagnostics.lastRequest?.requestId || "Not available",
+  );
 }
 
 function setText(id: string, text: string): void {

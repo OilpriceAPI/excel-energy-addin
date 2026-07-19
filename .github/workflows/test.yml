@@ -25,6 +25,9 @@ jobs:
       - name: Scan for committed secrets
         run: npm run scan:secrets
 
+      - name: Validate public source claims
+        run: npm run validate:claims
+
       - name: Build
         run: npm run build
 
