@@ -28,6 +28,10 @@
   "author": "OilPriceAPI",
   "license": "MIT",
   "type": "commonjs",
+  "overrides": {
+    "adm-zip": "^0.6.0",
+    "uuid": "^11.1.1"
+  },
   "engines": {
     "node": ">=20.9.0"
   },
