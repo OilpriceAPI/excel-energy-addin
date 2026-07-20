@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
-    "@types/office-js": "^1.0.599",
+    "@types/office-js": "^1.0.600",
     "copy-webpack-plugin": "^14.0.0",
     "jest": "^30.4.2",
     "office-addin-debugging": "^6.1.2",
