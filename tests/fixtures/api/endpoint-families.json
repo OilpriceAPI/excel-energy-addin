@@ -1,0 +1,248 @@
+{
+  "rig_counts": {
+    "status": "success",
+    "data": {
+      "code": "US_RIG_COUNT",
+      "count": 588,
+      "region": "United States",
+      "unit": "rigs",
+      "source": "Baker Hughes",
+      "created_at": "2026-07-24T00:00:00Z"
+    }
+  },
+  "storage": {
+    "status": "success",
+    "data": {
+      "storage": {
+        "current": {
+          "value": 20.04,
+          "units": "million_barrels",
+          "capacity_utilization": "32.86",
+          "data_date": "2026-07-10T00:00:00.000Z"
+        },
+        "analytics": {
+          "trend": "building",
+          "market_signal": "neutral"
+        },
+        "metadata": {
+          "source": "EIA",
+          "update_frequency": "weekly"
+        }
+      }
+    }
+  },
+  "oil_inventories": {
+    "data": {
+      "report_date": "2026-07-22",
+      "week_ending": "2026-07-17",
+      "source": "EIA Weekly Petroleum Status Report",
+      "inventories": [
+        {
+          "product": "crude_commercial",
+          "location": "total",
+          "name": "Crude Oil Commercial Stocks",
+          "volume_mmbbl": 411.68,
+          "week_over_week": 2.01,
+          "build_draw": "build"
+        },
+        {
+          "product": "crude_spr",
+          "location": "spr",
+          "name": "Strategic Petroleum Reserve",
+          "volume_mmbbl": 311.45,
+          "week_over_week": -5.057,
+          "build_draw": "draw"
+        }
+      ]
+    },
+    "meta": {
+      "source": "EIA WPSR"
+    }
+  },
+  "opec": {
+    "data": {
+      "report_month": "2026-05-01",
+      "source": "OPEC Monthly Oil Market Report",
+      "opec_total": 18.983,
+      "countries": [
+        {
+          "country": "saudi_arabia",
+          "name": "Saudi Arabia",
+          "production_mbpd": 6.768
+        },
+        {
+          "country": "iran",
+          "name": "Iran",
+          "production_mbpd": 2.854
+        }
+      ]
+    }
+  },
+  "bunker_fuels": {
+    "status": "success",
+    "data": {
+      "ports": {
+        "SIN": {
+          "port": {
+            "code": "SIN",
+            "name": "Singapore",
+            "country": "Singapore"
+          },
+          "prices": [
+            {
+              "grade": "HFO",
+              "price": 634.5,
+              "currency": "USD",
+              "unit": "MT",
+              "stale": false
+            },
+            {
+              "grade": "VLSFO",
+              "price": 869,
+              "currency": "USD",
+              "unit": "MT",
+              "stale": false
+            }
+          ]
+        },
+        "RTM": {
+          "port": {
+            "code": "RTM",
+            "name": "Rotterdam",
+            "country": "Netherlands"
+          },
+          "prices": [
+            {
+              "grade": "MGO",
+              "price": 1198.25,
+              "currency": "USD",
+              "unit": "MT",
+              "stale": false
+            }
+          ]
+        }
+      },
+      "metadata": {
+        "port_count": 2,
+        "currency": "USD",
+        "unit": "MT"
+      }
+    }
+  },
+  "well_production": {
+    "status": "success",
+    "data": {
+      "national": {
+        "period": "2026-07",
+        "oil_bbl": 0,
+        "gas_mcf": 0
+      },
+      "coverage": {
+        "latest_period": "2026-07",
+        "coverage_stale": false
+      },
+      "top_states": [
+        {
+          "state": "TX",
+          "period": "2026-04",
+          "oil_bbl": 174743000,
+          "oil_bpd": 5824767,
+          "gas_mcf": 1164406000,
+          "boe": 368810667
+        },
+        {
+          "state": "NM",
+          "period": "2026-04",
+          "oil_bbl": 70985000,
+          "oil_bpd": 2366167,
+          "gas_mcf": 359485000,
+          "boe": 130899167
+        }
+      ]
+    }
+  },
+  "well_permits": {
+    "status": "success",
+    "data": {
+      "meta": {
+        "state": "TX",
+        "count": 2,
+        "bounded": true
+      },
+      "preview": true,
+      "well_permits": [
+        {
+          "api_number": "42365390430000",
+          "state_code": "TX",
+          "county": "Tatum",
+          "permit_date": "2026-07-08",
+          "operator": {
+            "name": "R. LACY SERVICES, LTD.",
+            "number": "687208"
+          },
+          "well": {
+            "name": "TERLINGUA A HV C",
+            "number": "3HH",
+            "type": "oil"
+          },
+          "provenance": {
+            "source": "texas_rrc",
+            "fetched_at": "2026-07-09T21:23:24.082Z"
+          }
+        },
+        {
+          "api_number": "42365390420000",
+          "state_code": "TX",
+          "county": "Tatum",
+          "permit_date": "2026-07-08",
+          "operator": {
+            "name": "R. LACY SERVICES, LTD.",
+            "number": "687208"
+          },
+          "well": {
+            "name": "TERLINGUA A HV A",
+            "number": "1HH",
+            "type": "oil"
+          },
+          "provenance": {
+            "source": "texas_rrc",
+            "fetched_at": "2026-07-09T21:23:24.082Z"
+          }
+        }
+      ]
+    }
+  },
+  "drilling": {
+    "status": "success",
+    "data": {
+      "rig_counts": {
+        "US_RIG_COUNT": 588,
+        "CANADA_RIG_COUNT": 204
+      },
+      "frac_spread_count": 196,
+      "well_permits": {
+        "last_30d": 714,
+        "by_state": {
+          "TX": 375,
+          "CO": 130
+        }
+      },
+      "duc_wells_total": 2446,
+      "deltas": {
+        "rig_counts": 32,
+        "well_permits": -559
+      },
+      "last_updated": "2026-07-24T19:07:27.871Z"
+    }
+  },
+  "analytics": {
+    "code": "BRENT_CRUDE_USD",
+    "period": 30,
+    "statistics": {
+      "z_score": 2.02,
+      "percentile": 95.8,
+      "volatility": 3.97
+    },
+    "tier": "free"
+  }
+}

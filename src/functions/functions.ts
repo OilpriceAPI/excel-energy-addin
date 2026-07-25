@@ -107,6 +107,69 @@ const ENDPOINT_CATALOG: EndpointCatalogEntry[] = [
     description: "Diesel prices",
   },
   {
+    id: "rig-counts",
+    path: "/v1/rig-counts/{view}",
+    pattern:
+      /^\/v1\/rig-counts(\/(latest|current|historical|trends|summary))?$/,
+    description: "Baker Hughes rig counts",
+  },
+  {
+    id: "storage",
+    path: "/v1/storage/{view}",
+    pattern:
+      /^\/v1\/storage(\/(cushing|spr|regional|history\/[A-Za-z0-9_.-]+))?$/,
+    description: "Cushing, SPR, and regional storage",
+  },
+  {
+    id: "ei-oil-inventories",
+    path: "/v1/ei/oil_inventories/{view}",
+    pattern:
+      /^\/v1\/ei\/oil_inventories(\/(latest|summary|by_product|historical|cushing|[A-Za-z0-9_.-]+))?$/,
+    description: "EIA WPSR oil inventories",
+  },
+  {
+    id: "ei-opec-production",
+    path: "/v1/ei/opec_productions/{view}",
+    pattern:
+      /^\/v1\/ei\/opec_productions(\/(latest|total|by_country|historical|top_producers|[A-Za-z0-9_.-]+))?$/,
+    description: "OPEC production",
+  },
+  {
+    id: "bunker-fuels",
+    path: "/v1/bunker-fuels/{view}",
+    pattern:
+      /^\/v1\/bunker-fuels\/(all|compare|spreads\/ports|ports\/[A-Z]{3,5}|historical\/[A-Z]{3,5})$/,
+    description: "Marine bunker fuels and ports",
+  },
+  {
+    id: "well-production",
+    path: "/v1/well-production/{view}",
+    pattern:
+      /^\/v1\/well-production\/(summary|states|states\/[A-Z]{2}|pru\/[A-Za-z0-9_.-]+|wells\/[A-Za-z0-9_.-]+|top-producers|cycle-time|cycle-time\/cohorts)$/,
+    description: "Well production",
+  },
+  {
+    id: "ei-well-permits",
+    path: "/v1/ei/well-permits/{view}",
+    pattern:
+      /^\/v1\/ei\/well-permits(\/(preview|states|states\/[A-Z]{2}|latest|summary|by-state|by-operator|by-formation|search|[A-Za-z0-9_.-]+))?$/,
+    description: "Well permits",
+  },
+  {
+    id: "drilling-intelligence",
+    path: "/v1/drilling-intelligence/{view}",
+    pattern:
+      /^\/v1\/drilling-intelligence(\/(latest|summary|trends|frac-spreads|well-permits|duc-wells|completions|wells-drilled|basin\/[A-Za-z0-9_.%-]+))?$/,
+    description: "Drilling intelligence",
+  },
+  {
+    id: "analytics",
+    path: "/v1/analytics/{view}",
+    pattern:
+      /^\/v1\/analytics\/(performance|statistics|correlation|trend|spread|forecast)$/,
+    description: "Account analytics",
+  },
+  {
     id: "futures",
     path: "/v1/futures/{family}",
     pattern:
@@ -486,6 +549,42 @@ function valueToCell(value: unknown): Cell {
   return JSON.stringify(value);
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+/**
+ * Flatten nested response context into dot-addressable worksheet fields.
+ * Arrays of records are represented by a count here; a primary collection is
+ * rendered separately by primaryCollectionToTable.
+ */
+function flattenRecord(
+  value: Record<string, unknown>,
+  prefix = "",
+  target: Record<string, unknown> = {},
+): Record<string, unknown> {
+  Object.entries(value).forEach(([key, entry]) => {
+    const field = prefix ? `${prefix}.${key}` : key;
+    if (isRecord(entry)) {
+      flattenRecord(entry, field, target);
+      return;
+    }
+    if (Array.isArray(entry)) {
+      const scalarOnly = entry.every(
+        (item) =>
+          item === null ||
+          ["string", "number", "boolean"].includes(typeof item),
+      );
+      target[field] = scalarOnly
+        ? entry.map((item) => valueToCell(item)).join(", ")
+        : entry.length;
+      return;
+    }
+    target[field] = entry;
+  });
+  return target;
+}
+
 /**
  * Renders one worksheet cell for a named field. Numbers and booleans are kept
  * unwrapped so Excel does not coerce them to text. Numeric-looking STRING
@@ -503,11 +602,33 @@ function cellFor(field: string, value: unknown): Cell {
 }
 
 function objectToTable(value: Record<string, unknown>): Table {
-  const rows: Table = Object.entries(value).map(([key, entry]) => [
+  const rows: Table = Object.entries(flattenRecord(value)).map(([key, entry]) => [
     key,
     cellFor(key, entry),
   ]);
   return [["Field", "Value"], ...rows];
+}
+
+function recordsToTable(records: Array<Record<string, unknown>>): Table {
+  if (records.length === 0) return tableError("NO_DATA", "No data returned");
+
+  const headers: string[] = [];
+  const seen = new Set<string>();
+  records.forEach((record) => {
+    Object.keys(record).forEach((key) => {
+      if (!seen.has(key)) {
+        seen.add(key);
+        headers.push(key);
+      }
+    });
+  });
+
+  return [
+    headers,
+    ...records.map((record) =>
+      headers.map((header) => cellFor(header, record[header])),
+    ),
+  ];
 }
 
 function arrayToTable(data: unknown[]): Table {
@@ -516,11 +637,88 @@ function arrayToTable(data: unknown[]): Table {
     return [["Value"], ...data.map((entry) => [valueToCell(entry)])];
   }
 
-  const headers = Object.keys(data[0]);
-  const rows: Table = data.map((entry: any) =>
-    headers.map((header) => cellFor(header, entry[header])),
+  return recordsToTable(
+    data.map((entry) => flattenRecord(entry as Record<string, unknown>)),
   );
-  return [headers, ...rows];
+}
+
+function selectRecordEntries(
+  value: Record<string, unknown>,
+  include: (key: string, entry: unknown) => boolean,
+): Record<string, unknown> {
+  const selected: Record<string, unknown> = {};
+  Object.entries(value).forEach(([key, entry]) => {
+    if (include(key, entry)) selected[key] = entry;
+  });
+  return selected;
+}
+
+function primaryCollectionToTable(
+  data: Record<string, unknown>,
+): Table | undefined {
+  const preferredCollections = [
+    "inventories",
+    "countries",
+    "well_permits",
+    "top_states",
+    "data_sources",
+  ];
+  const candidates = Object.entries(data)
+    .filter(
+      ([, value]) =>
+        Array.isArray(value) &&
+        value.length > 0 &&
+        value.every((entry) => isRecord(entry)),
+    )
+    .sort(([leftKey, left], [rightKey, right]) => {
+      const leftPriority = preferredCollections.indexOf(leftKey);
+      const rightPriority = preferredCollections.indexOf(rightKey);
+      if (leftPriority !== -1 || rightPriority !== -1) {
+        if (leftPriority === -1) return 1;
+        if (rightPriority === -1) return -1;
+        return leftPriority - rightPriority;
+      }
+      return (right as unknown[]).length - (left as unknown[]).length;
+    });
+
+  if (candidates.length === 0) return undefined;
+
+  const [collectionKey, collection] = candidates[0] as [
+    string,
+    Array<Record<string, unknown>>,
+  ];
+  const contextSource = selectRecordEntries(
+    data,
+    (key, value) => key !== collectionKey && !Array.isArray(value),
+  );
+  const context = flattenRecord(contextSource, "context");
+  return recordsToTable(
+    collection.map((record) => ({
+      ...flattenRecord(record),
+      ...context,
+    })),
+  );
+}
+
+function bunkerPortsToTable(
+  ports: Record<string, unknown>,
+): Table | undefined {
+  const records: Array<Record<string, unknown>> = [];
+  Object.entries(ports).forEach(([portCode, rawPort]) => {
+    if (!isRecord(rawPort) || !Array.isArray(rawPort.prices)) return;
+    const port = isRecord(rawPort.port)
+      ? flattenRecord(rawPort.port, "port")
+      : { "port.code": portCode };
+    rawPort.prices.forEach((rawPrice) => {
+      if (isRecord(rawPrice)) {
+        records.push({
+          ...port,
+          ...flattenRecord(rawPrice),
+        });
+      }
+    });
+  });
+  return records.length > 0 ? recordsToTable(records) : undefined;
 }
 
 function pricesHashToTable(prices: Record<string, unknown>): Table {
@@ -660,6 +858,20 @@ function responseToTable(payload: any): Table {
 
   let data = payload?.data;
 
+  // Status and analytics endpoints return useful fields at the root.
+  if ((data === undefined || data === null) && isRecord(payload)) {
+    const rootData = selectRecordEntries(
+      payload,
+      (key) => key !== "data",
+    );
+    const meaningfulKeys = Object.keys(rootData).filter(
+      (key) => key !== "status",
+    );
+    if (meaningfulKeys.length > 0 || !("data" in payload)) {
+      data = rootData;
+    }
+  }
+
   // #54: /prices/all and /prices/all/health double-wrap in data.data.
   if (
     data &&
@@ -695,7 +907,15 @@ function responseToTable(payload: any): Table {
     }
 
     if (Array.isArray(data.prices)) {
-      return arrayToTable(data.prices);
+      const table = arrayToTable(data.prices);
+      if (Array.isArray(data.missing) && data.missing.length > 0) {
+        const codes = data.missing
+          .map((code: unknown) => String(code))
+          .filter(Boolean)
+          .join(", ");
+        return appendNoteRow(table, `MISSING CODES: ${codes}`);
+      }
+      return table;
     }
 
     if (
@@ -719,6 +939,14 @@ function responseToTable(payload: any): Table {
         ]),
       ];
     }
+
+    if (isRecord(data.ports)) {
+      const bunkerTable = bunkerPortsToTable(data.ports);
+      if (bunkerTable) return bunkerTable;
+    }
+
+    const collectionTable = primaryCollectionToTable(data);
+    if (collectionTable) return collectionTable;
 
     return objectToTable(data);
   }
@@ -795,6 +1023,9 @@ export async function oilpricePrice(code: string): Promise<number | string> {
       );
     }
     const price = data.price;
+    if (price === null || price === undefined) {
+      return cellError("NO_DATA", "No numeric price returned");
+    }
     if (typeof price !== "number") {
       return cellError("INVALID_RESPONSE", "API returned a malformed price");
     }

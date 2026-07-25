@@ -20,6 +20,33 @@ An OilPriceAPI account and API key are required. Dataset access, endpoint access
 
 `PRICE` intentionally returns a bare number for spreadsheet calculations. Use `INFO`, `STATUS`, or `UNIT` when the source context matters.
 
+## Supported endpoint families
+
+`OILPRICE.GET` uses an explicit read-only allowlist. In addition to spot and
+futures prices, it supports these production endpoint families:
+
+| Family | Example |
+| --- | --- |
+| EIA WPSR inventories | `=OILPRICE.GET("/v1/ei/oil_inventories/latest")` |
+| OPEC production | `=OILPRICE.GET("/v1/ei/opec_productions/latest")` |
+| Rig counts | `=OILPRICE.GET("/v1/rig-counts/latest")` |
+| Storage | `=OILPRICE.GET("/v1/storage/cushing")` |
+| Marine bunker fuels | `=OILPRICE.GET("/v1/bunker-fuels/all")` |
+| Well production | `=OILPRICE.GET("/v1/well-production/summary")` |
+| Well permits | `=OILPRICE.GET("/v1/ei/well-permits/preview")` |
+| Drilling intelligence | `=OILPRICE.GET("/v1/drilling-intelligence/summary")` |
+| Account analytics | `=OILPRICE.GET("/v1/analytics/statistics", "code=BRENT_CRUDE_USD&period=30d")` |
+
+Nested records spill into dot-named columns such as `operator.name` and
+`freshness.status`; nested summaries spill into dot-named field rows. This
+keeps worksheet cells numeric and avoids JSON blobs. Multi-code latest-price
+responses append a visible `MISSING CODES` row when the API omits a requested
+code. A null latest price returns `#NO_DATA` rather than a misleading zero or a
+malformed-response label.
+
+Endpoint access and returned data remain account-dependent. `GET` rejects
+paths outside the allowlist and rejects credentials in query strings.
+
 ## Distribution Status
 
 - Mac Excel 16.110.2 on macOS passed the sideload, authentication, formula, recalculation, and secret-free diagnostics smoke on 2026-07-03.

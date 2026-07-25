@@ -27,6 +27,19 @@ Start with these formulas:
 
 `PRICE` is numeric. `INFO` supplies the API-returned unit, source, source timestamp, and freshness fields needed to interpret that number. Refresh timing is controlled by Excel recalculation and API availability; data cadence varies by source, market hours, dataset, and account entitlement.
 
+For structured datasets, use the allowlisted `GET` helper:
+
+```excel
+=OILPRICE.GET("/v1/ei/oil_inventories/latest")
+=OILPRICE.GET("/v1/storage/cushing")
+=OILPRICE.GET("/v1/bunker-fuels/all")
+=OILPRICE.GET("/v1/ei/well-permits/preview")
+```
+
+Nested API fields become dot-named worksheet fields or columns, so values
+remain usable in formulas and charts rather than appearing as JSON blobs.
+Access to each dataset depends on the API key's current entitlements.
+
 ## Recovery
 
 - `#AUTH_REQUIRED` or `#AUTH_INVALID`: open the OilPrice pane and save a current key.
