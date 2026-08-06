@@ -12,6 +12,10 @@ import {
   requestIdFromResponse,
 } from "../utils/runtime-diagnostics";
 
+// #6167 — sent as X-Excel-Addin-Version so the server can attribute
+// this add-in (MinimalAnalyticsService maps it to client_type sdk-excel).
+const ADDIN_VERSION = "1.1.0";
+
 declare const OfficeRuntime: {
   storage: {
     getItem(key: string): Promise<string | null>;
@@ -331,6 +335,13 @@ async function testConnection(): Promise<void> {
       headers: {
         Authorization: `Token ${apiKey}`,
         "Content-Type": "application/json",
+        // Office.js locks User-Agent, so the server's client classifier is fed
+        // via X-API-Client (MinimalAnalyticsService.explicit_client_marker, which
+        // maps oilpriceapi-excel -> client_type 'sdk-excel'). Without it every
+        // call from this add-in records as client_type 'unknown' and the add-in
+        // is invisible in adoption reporting. (#6167)
+        "X-API-Client": "oilpriceapi-excel",
+        "X-Excel-Addin-Version": ADDIN_VERSION,
       },
       signal: controller.signal,
     });
