@@ -17,6 +17,10 @@ import {
   RuntimeDiagnostic,
 } from "../utils/runtime-diagnostics";
 
+// #6167 — sent as X-Excel-Addin-Version so the server can attribute
+// this add-in (MinimalAnalyticsService maps it to client_type sdk-excel).
+const ADDIN_VERSION = "1.1.0";
+
 declare const OfficeRuntime: {
   storage: {
     getItem(key: string): Promise<string | null>;
@@ -421,6 +425,10 @@ async function apiGet(
         headers: {
           Authorization: `Token ${apiKey}`,
           "Content-Type": "application/json",
+          // See taskpane.ts — Office.js locks User-Agent; X-API-Client is how
+          // the server classifies this add-in. (#6167)
+          "X-API-Client": "oilpriceapi-excel",
+          "X-Excel-Addin-Version": ADDIN_VERSION,
         },
         signal: controller.signal,
       });
