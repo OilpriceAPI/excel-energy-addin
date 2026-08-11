@@ -64,7 +64,11 @@ through **Admin Center → Settings → Integrated apps → Upload custom apps**
 | Pane reports storage unavailable | Shared runtime/storage | Reload and confirm SharedRuntime 1.1 support |
 | `NETWORK_OR_CORS` while browser is online | Browser, CORS, CSP, proxy, or extension policy | Inspect the preflight and public CORS headers; do not rotate the key |
 | HTTP 401 / `AUTH_INVALID` | Authentication | Verify or replace the key |
-| HTTP 402/403/429 | Entitlement/quota/rate limit | Check the account and recovery path |
+| HTTP 402 / `UPGRADE_REQUIRED` | Quota or entitlement | Use the trusted upgrade URL returned by the API |
+| HTTP 403 / `API_ACCESS_SUSPENDED` | Account suspension | Contact support; do not send the customer to pricing |
+| HTTP 403 / `EMAIL_CONFIRMATION_REQUIRED` | Email confirmation gate | Use the trusted resend-confirmation recovery URL |
+| HTTP 403 / `ACCESS_DENIED` | Unknown or malformed denial | Run **Test Key**, copy diagnostics, and contact support |
+| HTTP 429 / `RATE_LIMITED` | Rate limit | Follow `Retry-After` or `X-RateLimit-Reset`, then retry |
 | `#NAME?` | Custom functions not registered | Inspect `functions.json`, `functions.js`, manifest namespace, and cache |
 | `#VALUE!` after registration | Shared runtime/function exception | Refresh diagnostics and inspect the custom-function request |
 

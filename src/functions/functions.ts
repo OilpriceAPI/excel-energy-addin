@@ -20,6 +20,7 @@ import {
   requestIdFromResponse,
   RuntimeDiagnostic,
 } from "../utils/runtime-diagnostics";
+import { classifyApiErrorResponse } from "../utils/http-error";
 
 declare const OfficeRuntime: {
   storage: {
@@ -294,52 +295,6 @@ async function persistRuntimeDiagnostic(
   }
 }
 
-function parseResponseError(response: Response): ResponseError {
-  if (response.status === 401) {
-    return {
-      code: "AUTH_INVALID",
-      message:
-        "API key invalid or expired. Open the OilPrice pane and replace it",
-    };
-  }
-
-  if (response.status === 403) {
-    return {
-      code: "UPGRADE_REQUIRED",
-      message:
-        "Plan does not include this endpoint. Review https://www.oilpriceapi.com/pricing",
-    };
-  }
-
-  if (response.status === 402) {
-    return {
-      code: "UPGRADE_REQUIRED",
-      message:
-        "Quota or plan limit reached. Review https://www.oilpriceapi.com/pricing",
-    };
-  }
-
-  if (response.status === 404) {
-    return {
-      code: "NO_DATA",
-      message: "No data returned. Check the commodity code or query",
-    };
-  }
-
-  if (response.status === 429) {
-    return {
-      code: "RATE_LIMITED",
-      message: "Limit reached. Wait, then recalculate",
-    };
-  }
-
-  if (response.status >= 500) {
-    return { code: "SERVER_ERROR", message: "API temporarily unavailable" };
-  }
-
-  return { code: "ERROR", message: `HTTP ${response.status}` };
-}
-
 function normalizePath(path: string): string {
   const trimmed = (path || "").trim();
   if (!trimmed.startsWith("/v1/")) {
@@ -468,33 +423,14 @@ async function apiGet(
     const requestId = requestIdFromResponse(response);
 
     if (!response.ok) {
-      let responseError = parseResponseError(response);
-      // Validation errors (e.g. an invalid commodity code) arrive with a helpful
-      // "did you mean" message in the JSON body. Surface that message rather than
-      // a bare "HTTP 400" so the worksheet shows the suggestion.
-      try {
-        const errorBody = await response.json();
-        const errorData = errorBody?.data ?? errorBody;
-        if (
-          (response.status === 400 || response.status === 422) &&
-          errorData &&
-          typeof errorData === "object" &&
-          typeof errorData.error === "string"
-        ) {
-          responseError = {
-            code: "INVALID_CODE",
-            message:
-              typeof errorData.message === "string" && errorData.message.trim()
-                ? errorData.message
-                : responseError.message,
-          };
-        }
-      } catch {
-        if (controller.signal.aborted) {
-          await throwTimeout();
-        }
-        // Non-JSON error body: keep the status-derived error.
+      const classified = await classifyApiErrorResponse(response);
+      if (controller.signal.aborted) {
+        await throwTimeout();
       }
+      const responseError: ResponseError = {
+        code: classified.code,
+        message: classified.message,
+      };
       await persistRuntimeDiagnostic(
         createRuntimeDiagnostic({
           source: "custom-function",

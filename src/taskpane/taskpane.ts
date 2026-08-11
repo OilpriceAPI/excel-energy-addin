@@ -11,6 +11,7 @@ import {
   parseRuntimeDiagnostic,
   requestIdFromResponse,
 } from "../utils/runtime-diagnostics";
+import { classifyApiErrorResponse } from "../utils/http-error";
 
 declare const OfficeRuntime: {
   storage: {
@@ -253,64 +254,6 @@ function requirementSupportLabel(): string {
   }
 }
 
-interface HttpResult {
-  label: string;
-  code: string;
-  message: string;
-}
-
-function classifyHttpResult(status: number): HttpResult {
-  if (status === 401) {
-    return {
-      label: "Invalid key",
-      code: "AUTH_INVALID",
-      message: "API key invalid or expired. Replace it in the OilPrice pane.",
-    };
-  }
-  if (status === 402) {
-    return {
-      label: "Quota reached",
-      code: "UPGRADE_REQUIRED",
-      message:
-        "Quota or plan limit reached. Review https://www.oilpriceapi.com/pricing.",
-    };
-  }
-  if (status === 403) {
-    return {
-      label: "Upgrade required",
-      code: "UPGRADE_REQUIRED",
-      message:
-        "Your plan does not include this endpoint. Review https://www.oilpriceapi.com/pricing.",
-    };
-  }
-  if (status === 429) {
-    return {
-      label: "Rate limited",
-      code: "RATE_LIMITED",
-      message: "Rate limit reached. Wait, then try Test Key again.",
-    };
-  }
-  if (status === 404) {
-    return {
-      label: "No data",
-      code: "NO_DATA",
-      message: "No data returned. Check the commodity code or query.",
-    };
-  }
-  if (status >= 500) {
-    return {
-      label: "Server error",
-      code: "SERVER_ERROR",
-      message: "OilPriceAPI is temporarily unavailable.",
-    };
-  }
-  return {
-    label: `HTTP ${status}`,
-    code: "HTTP_ERROR",
-    message: `OilPriceAPI returned HTTP ${status}.`,
-  };
-}
-
 async function testConnection(): Promise<void> {
   let apiKey: string | null;
   try {
@@ -355,7 +298,10 @@ async function testConnection(): Promise<void> {
     const requestId = requestIdFromResponse(response);
 
     if (!response.ok) {
-      const result = classifyHttpResult(response.status);
+      const result = await classifyApiErrorResponse(response);
+      if (controller.signal.aborted) {
+        throw new Error("Request timed out while reading the error response");
+      }
       await recordRuntimeDiagnostic(
         createRuntimeDiagnostic({
           source: "taskpane",

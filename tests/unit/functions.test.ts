@@ -90,7 +90,7 @@ describe("OilPrice custom functions MVP", () => {
       });
 
       await expect(oilpricePrice("BRENT_CRUDE_USD")).resolves.toBe(
-        "#RATE_LIMITED: Limit reached. Wait, then recalculate",
+        "#RATE_LIMITED: Rate limit reached. Wait briefly, then retry.",
       );
     });
 
@@ -109,11 +109,74 @@ describe("OilPrice custom functions MVP", () => {
       ((globalThis as any).fetch as jest.Mock).mockResolvedValueOnce({
         ok: false,
         status: 403,
-        json: async () => ({ error: "commodity_locked" }),
+        headers: new Headers(),
+        json: async () => ({
+          error: {
+            code: "FORBIDDEN",
+            upgrade_url:
+              "https://www.oilpriceapi.com/pricing?feature=locked-commodity",
+          },
+        }),
       });
 
       await expect(oilpricePrice("LOCKED_COMMODITY")).resolves.toBe(
-        "#UPGRADE_REQUIRED: Plan does not include this endpoint. Review https://www.oilpriceapi.com/pricing",
+        "#UPGRADE_REQUIRED: This account does not include the requested feature. Review https://www.oilpriceapi.com/pricing?feature=locked-commodity",
+      );
+    });
+
+    it("maps a suspended account to support instead of an upgrade", async () => {
+      ((globalThis as any).fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: 403,
+        headers: new Headers(),
+        json: async () => ({
+          error: {
+            code: "API_ACCESS_SUSPENDED",
+            message: "Your API access has been suspended.",
+            upgrade_url: "https://www.oilpriceapi.com/pricing?suspended=1",
+          },
+        }),
+      });
+
+      await expect(oilpricePrice("BRENT_CRUDE_USD")).resolves.toBe(
+        "#API_ACCESS_SUSPENDED: API access is suspended. Contact support: https://www.oilpriceapi.com/support",
+      );
+    });
+
+    it("maps an unconfirmed account to the canonical confirmation recovery", async () => {
+      ((globalThis as any).fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: 403,
+        headers: new Headers(),
+        json: async () => ({
+          error: {
+            code: "EMAIL_CONFIRMATION_REQUIRED",
+            recovery_url:
+              "https://www.oilpriceapi.com/auth/resend-confirmation",
+          },
+        }),
+      });
+
+      await expect(oilpricePrice("BRENT_CRUDE_USD")).resolves.toBe(
+        "#EMAIL_CONFIRMATION_REQUIRED: Confirm your email to continue. Request a new confirmation: https://www.oilpriceapi.com/auth/resend-confirmation",
+      );
+    });
+
+    it.each([
+      ["bare", async () => ({})],
+      ["malformed", async () => {
+        throw new SyntaxError("Malformed JSON");
+      }],
+    ])("fails a %s 403 safely to support", async (_name, json) => {
+      ((globalThis as any).fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: 403,
+        headers: new Headers(),
+        json,
+      });
+
+      await expect(oilpricePrice("BRENT_CRUDE_USD")).resolves.toBe(
+        "#ACCESS_DENIED: Access was denied for a reason the add-in could not verify. Use Test Key, then contact support: https://www.oilpriceapi.com/support",
       );
     });
 

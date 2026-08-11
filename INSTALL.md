@@ -145,7 +145,10 @@ Until then, customer replies should say that we are validating the Excel add-in 
 | `#AUTH_REQUIRED` | No key is saved for formulas. | Open the OilPrice pane and save the key. |
 | `#AUTH_INVALID` | The key is invalid or expired. | Use a valid non-customer test key. |
 | `#UPGRADE_REQUIRED` | The key plan or quota does not cover the request. | Use an eligible test key or note the quota state. |
-| `#RATE_LIMITED` | The key hit a rate limit. | Wait or use a test key with available quota. |
+| `#API_ACCESS_SUSPENDED` | The account is suspended. | Contact support; do not rotate the key or infer that an upgrade will restore access. |
+| `#EMAIL_CONFIRMATION_REQUIRED` | The account must confirm its email. | Use the trusted OilPriceAPI recovery URL shown in the error. |
+| `#ACCESS_DENIED` | The API returned an unknown or unreadable 403 reason. | Run **Test Key**, copy diagnostics, and contact support if it continues. |
+| `#RATE_LIMITED` | The key hit a rate limit. | Follow `Retry-After` or `X-RateLimit-Reset` when shown, then retry. |
 | `#NO_DATA` | The API returned no matching data. | Check the code/query. |
 | `#NETWORK_ERROR` | Excel could not reach the API. | Check network and add-in connectivity. |
 | `#SERVER_ERROR` | API returned a server error. | Check production logs before retrying. |

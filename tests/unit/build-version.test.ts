@@ -70,4 +70,24 @@ describe("release version contract", () => {
       );
     }
   });
+
+  it("documents every customer-visible structured 403 recovery", () => {
+    const taskpane = fs.readFileSync(
+      path.join(root, "public", "taskpane.html"),
+      "utf8",
+    );
+    const quickstart = fs.readFileSync(
+      path.join(root, "CUSTOMER_QUICKSTART.md"),
+      "utf8",
+    );
+    for (const code of [
+      "API_ACCESS_SUSPENDED",
+      "EMAIL_CONFIRMATION_REQUIRED",
+      "ACCESS_DENIED",
+      "UPGRADE_REQUIRED",
+    ]) {
+      expect(taskpane).toContain(`#${code}`);
+      expect(quickstart).toContain(`#${code}`);
+    }
+  });
 });
