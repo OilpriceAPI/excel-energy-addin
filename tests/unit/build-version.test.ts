@@ -46,14 +46,12 @@ describe("release version contract", () => {
       path.join(root, "src", "taskpane", "taskpane.ts"),
       "utf8",
     );
-    const operatorGuides = [
+    const operatorGuideFiles = [
       "ADDIN_ACTIVATION_CHECKLIST.md",
       "DISTRIBUTION.md",
       "EXCEL_SUPPORT_RUNBOOK.md",
       "INSTALL.md",
-    ]
-      .map((file) => fs.readFileSync(path.join(root, file), "utf8"))
-      .join("\n");
+    ];
 
     for (const source of [functions, taskpane]) {
       expect(source).toContain('"X-API-Client": OILPRICEAPI_EXCEL_CLIENT');
@@ -61,12 +59,15 @@ describe("release version contract", () => {
         '"X-Excel-Addin-Version": OILPRICEAPI_EXCEL_VERSION',
       );
     }
-    expect(operatorGuides).toMatch(
-      /authorization,content-type,x-api-client,x-excel-addin-version/i,
-    );
-    expect(operatorGuides).not.toMatch(/do not request `x-api-client`/i);
-    expect(operatorGuides).not.toMatch(
-      /request shape is limited to `authorization,content-type`/i,
-    );
+    for (const file of operatorGuideFiles) {
+      const guide = fs.readFileSync(path.join(root, file), "utf8");
+      expect(guide).toMatch(
+        /authorization,content-type,x-api-client,x-excel-addin-version/i,
+      );
+      expect(guide).not.toMatch(/do not request `x-api-client`/i);
+      expect(guide).not.toMatch(
+        /request shape is limited to `authorization,content-type`/i,
+      );
+    }
   });
 });
