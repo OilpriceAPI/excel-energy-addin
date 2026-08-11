@@ -44,8 +44,8 @@ describe("OilPrice custom functions MVP", () => {
           headers: {
             Authorization: "Token test-api-key-123",
             "Content-Type": "application/json",
-            "X-API-Client": "oilpriceapi-excel/1.1.0",
-            "X-Excel-Addin-Version": "1.1.0",
+            "X-API-Client": "oilpriceapi-excel/1.1.1",
+            "X-Excel-Addin-Version": "1.1.1",
           },
           signal: expect.any(Object),
         }),

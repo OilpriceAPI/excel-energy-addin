@@ -18,6 +18,7 @@ describe("release version contract", () => {
       "utf8",
     );
 
+    expect(packageVersion).toBe("1.1.1");
     expect(manifest).toContain(`<Version>${packageVersion}.0</Version>`);
     expect(taskpane).toContain(`id="diag-version">${packageVersion}</dd>`);
     expect(attribution).toContain(
