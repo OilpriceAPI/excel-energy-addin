@@ -139,6 +139,15 @@ describe("release version contract", () => {
           (step) => step.run === "npm audit --audit-level=moderate",
         ),
       ).toBe(true);
+      if (file === "github-pages.yml") {
+        expect(steps.map((step) => step.uses)).toEqual(
+          expect.arrayContaining([
+            "actions/configure-pages@v6",
+            "actions/upload-pages-artifact@v5",
+            "actions/deploy-pages@v5",
+          ]),
+        );
+      }
     }
   });
 
