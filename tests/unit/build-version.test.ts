@@ -1,5 +1,17 @@
 import * as fs from "fs";
 import * as path from "path";
+import { parse } from "yaml";
+
+type WorkflowStep = {
+  uses?: string;
+  run?: string;
+  with?: Record<string, unknown>;
+};
+
+type Workflow = {
+  permissions?: Record<string, unknown>;
+  jobs: Record<string, { steps: WorkflowStep[] }>;
+};
 
 describe("release version contract", () => {
   const root = path.join(__dirname, "..", "..");
@@ -105,14 +117,28 @@ describe("release version contract", () => {
 
   it("keeps dependency audit in the hosted release gate", () => {
     for (const file of ["test.yml", "github-pages.yml"]) {
-      const workflow = fs.readFileSync(
-        path.join(root, ".github", "workflows", file),
-        "utf8",
+      const workflow = parse(
+        fs.readFileSync(
+          path.join(root, ".github", "workflows", file),
+          "utf8",
+        ),
+      ) as Workflow;
+      const steps = Object.values(workflow.jobs).flatMap((job) => job.steps);
+      const checkout = steps.find(
+        (step) => step.uses === "actions/checkout@v6",
       );
-      expect(workflow).toContain("npm audit --audit-level=moderate");
-      expect(workflow).toContain("actions/checkout@v6");
-      expect(workflow).toContain("actions/setup-node@v6");
-      expect(workflow).toMatch(/node-version: ["']24["']/);
+      const setupNode = steps.find(
+        (step) => step.uses === "actions/setup-node@v6",
+      );
+
+      expect(workflow.permissions?.contents).toBe("read");
+      expect(checkout?.with?.["persist-credentials"]).toBe(false);
+      expect(setupNode?.with?.["node-version"]).toBe("24");
+      expect(
+        steps.some(
+          (step) => step.run === "npm audit --audit-level=moderate",
+        ),
+      ).toBe(true);
     }
   });
 
