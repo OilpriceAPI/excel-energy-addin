@@ -64,7 +64,11 @@ through **Admin Center → Settings → Integrated apps → Upload custom apps**
 | Pane reports storage unavailable | Shared runtime/storage | Reload and confirm SharedRuntime 1.1 support |
 | `NETWORK_OR_CORS` while browser is online | Browser, CORS, CSP, proxy, or extension policy | Inspect the preflight and public CORS headers; do not rotate the key |
 | HTTP 401 / `AUTH_INVALID` | Authentication | Verify or replace the key |
-| HTTP 402/403/429 | Entitlement/quota/rate limit | Check the account and recovery path |
+| HTTP 402 / `UPGRADE_REQUIRED` | Quota or entitlement | Use the trusted upgrade URL returned by the API |
+| HTTP 403 / `API_ACCESS_SUSPENDED` | Account suspension | Contact support; do not send the customer to pricing |
+| HTTP 403 / `EMAIL_CONFIRMATION_REQUIRED` | Email confirmation gate | Use the trusted resend-confirmation recovery URL |
+| HTTP 403 / `ACCESS_DENIED` | Unknown or malformed denial | Run **Test Key**, copy diagnostics, and contact support |
+| HTTP 429 / `RATE_LIMITED` | Rate limit | Follow `Retry-After` or `X-RateLimit-Reset`, then retry |
 | `#NAME?` | Custom functions not registered | Inspect `functions.json`, `functions.js`, manifest namespace, and cache |
 | `#VALUE!` after registration | Shared runtime/function exception | Refresh diagnostics and inspect the custom-function request |
 
@@ -84,18 +88,19 @@ the OilPrice frame.
 5. For a CORS failure, inspect the `OPTIONS` request and compare
    `Access-Control-Request-Headers` with `Access-Control-Allow-Headers`.
 
-The July 17, 2026 reproduction failed because the add-in requested
-`x-api-client`, but Cloudflare's preflight response did not allow it. The browser
-therefore blocked the GET before it reached the API. This is not a bad-key or
-Excel-connectivity failure. Version 1.0.2 and later restore browser compatibility by
-keeping cross-origin request headers to the edge-approved authorization and
-content-type set. The add-in version remains available in copied diagnostics.
+The July 17, 2026 reproduction failed because the edge preflight did not allow
+the add-in's attribution headers. The production edge rule now accepts the
+add-in's exact browser request shape:
+`authorization,content-type,x-api-client,x-excel-addin-version`. A preflight
+failure is not a bad-key or Excel-connectivity failure; inspect the public edge
+response before rotating a customer's key.
 
 ## Required Production Proof
 
-- The public preflight allows `authorization` and `content-type`.
-- Version 1.0.2 and later do not request `x-api-client`, `x-client-version`, or
-  `x-excel-addin-version` from Excel Online.
+- The public preflight allows
+  `authorization,content-type,x-api-client,x-excel-addin-version`.
+- The request contains `X-API-Client` and `X-Excel-Addin-Version` attribution;
+  the values contain no customer data or API-key material.
 - **Test Key** reports **Connected** and records an HTTP 200 diagnostic.
 - `OILPRICE.PRICE` returns a number and records a custom-function diagnostic.
 - Production logs contain the request at the matching diagnostic timestamp and

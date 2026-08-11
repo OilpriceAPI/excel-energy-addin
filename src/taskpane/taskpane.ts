@@ -11,10 +11,7 @@ import {
   parseRuntimeDiagnostic,
   requestIdFromResponse,
 } from "../utils/runtime-diagnostics";
-
-// #6167 — sent as X-Excel-Addin-Version so the server can attribute
-// this add-in (MinimalAnalyticsService maps it to client_type sdk-excel).
-const ADDIN_VERSION = "1.1.0";
+import { classifyApiErrorResponse } from "../utils/http-error";
 
 declare const OfficeRuntime: {
   storage: {
@@ -257,55 +254,6 @@ function requirementSupportLabel(): string {
   }
 }
 
-interface HttpResult {
-  label: string;
-  code: string;
-  message: string;
-}
-
-function classifyHttpResult(status: number): HttpResult {
-  if (status === 401) {
-    return {
-      label: "Invalid key",
-      code: "AUTH_INVALID",
-      message: "API key invalid or expired.",
-    };
-  }
-  if (status === 402) {
-    return {
-      label: "Quota reached",
-      code: "UPGRADE_REQUIRED",
-      message: "Quota or plan limit reached.",
-    };
-  }
-  if (status === 403) {
-    return {
-      label: "Upgrade required",
-      code: "UPGRADE_REQUIRED",
-      message: "Your plan does not include this endpoint.",
-    };
-  }
-  if (status === 429) {
-    return {
-      label: "Rate limited",
-      code: "RATE_LIMITED",
-      message: "Rate limit reached. Try later.",
-    };
-  }
-  if (status >= 500) {
-    return {
-      label: "Server error",
-      code: "SERVER_ERROR",
-      message: "OilPriceAPI is temporarily unavailable.",
-    };
-  }
-  return {
-    label: `HTTP ${status}`,
-    code: "HTTP_ERROR",
-    message: `OilPriceAPI returned HTTP ${status}.`,
-  };
-}
-
 async function testConnection(): Promise<void> {
   let apiKey: string | null;
   try {
@@ -340,8 +288,8 @@ async function testConnection(): Promise<void> {
         // maps oilpriceapi-excel -> client_type 'sdk-excel'). Without it every
         // call from this add-in records as client_type 'unknown' and the add-in
         // is invisible in adoption reporting. (#6167)
-        "X-API-Client": "oilpriceapi-excel",
-        "X-Excel-Addin-Version": ADDIN_VERSION,
+        "X-API-Client": OILPRICEAPI_EXCEL_CLIENT,
+        "X-Excel-Addin-Version": OILPRICEAPI_EXCEL_VERSION,
       },
       signal: controller.signal,
     });
@@ -350,7 +298,10 @@ async function testConnection(): Promise<void> {
     const requestId = requestIdFromResponse(response);
 
     if (!response.ok) {
-      const result = classifyHttpResult(response.status);
+      const result = await classifyApiErrorResponse(response);
+      if (controller.signal.aborted) {
+        throw new Error("Request timed out while reading the error response");
+      }
       await recordRuntimeDiagnostic(
         createRuntimeDiagnostic({
           source: "taskpane",

@@ -44,8 +44,11 @@ Access to each dataset depends on the API key's current entitlements.
 
 - `#AUTH_REQUIRED` or `#AUTH_INVALID`: open the OilPrice pane and save a current key.
 - `#UPGRADE_REQUIRED`: review the account's dataset and endpoint entitlement.
-- `#RATE_LIMITED`: wait before recalculating.
+- `#API_ACCESS_SUSPENDED`: contact [OilPriceAPI support](https://www.oilpriceapi.com/support); do not rotate the key or assume an upgrade will restore access.
+- `#EMAIL_CONFIRMATION_REQUIRED`: use the trusted OilPriceAPI confirmation recovery link shown in the formula error.
+- `#ACCESS_DENIED`: run **Test Key**, then contact support if the reason remains unknown.
+- `#RATE_LIMITED`: follow the retry time in the formula error, then retry.
 - `#TIMEOUT`, `#NETWORK_OR_CORS`, or `#SERVER_ERROR`: check [OilPriceAPI status](https://status.oilpriceapi.com), retry once, then copy diagnostics from the pane.
 - `#NO_DATA` or `#INVALID_RESPONSE`: copy diagnostics and contact [support@oilpriceapi.com](mailto:support@oilpriceapi.com). Never send the API key.
 
-Current product scope and mutable facts are published in the [reviewed product-facts contract](https://api.oilpriceapi.com/product-facts.json).
+Current product scope and mutable facts are published in the [product-facts contract](https://api.oilpriceapi.com/product-facts.json).

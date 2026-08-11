@@ -44,6 +44,8 @@ describe("OilPrice custom functions MVP", () => {
           headers: {
             Authorization: "Token test-api-key-123",
             "Content-Type": "application/json",
+            "X-API-Client": "oilpriceapi-excel/1.1.1",
+            "X-Excel-Addin-Version": "1.1.1",
           },
           signal: expect.any(Object),
         }),
@@ -77,7 +79,7 @@ describe("OilPrice custom functions MVP", () => {
       });
 
       await expect(oilpricePrice("BRENT_CRUDE_USD")).resolves.toBe(
-        "#AUTH_INVALID: API key invalid or expired",
+        "#AUTH_INVALID: API key invalid or expired. Open the OilPrice pane and replace it",
       );
     });
 
@@ -88,7 +90,7 @@ describe("OilPrice custom functions MVP", () => {
       });
 
       await expect(oilpricePrice("BRENT_CRUDE_USD")).resolves.toBe(
-        "#RATE_LIMITED: Limit reached. Try later",
+        "#RATE_LIMITED: Rate limit reached. Wait briefly, then retry.",
       );
     });
 
@@ -99,7 +101,7 @@ describe("OilPrice custom functions MVP", () => {
       });
 
       await expect(oilpricePrice("BRENT_CRUDE_USD")).resolves.toBe(
-        "#UPGRADE_REQUIRED: Quota or plan limit reached",
+        "#UPGRADE_REQUIRED: Quota or plan limit reached. Review https://www.oilpriceapi.com/pricing",
       );
     });
 
@@ -107,11 +109,87 @@ describe("OilPrice custom functions MVP", () => {
       ((globalThis as any).fetch as jest.Mock).mockResolvedValueOnce({
         ok: false,
         status: 403,
-        json: async () => ({ error: "commodity_locked" }),
+        headers: new Headers(),
+        json: async () => ({
+          error: {
+            code: "FORBIDDEN",
+            upgrade_url:
+              "https://www.oilpriceapi.com/pricing?feature=locked-commodity",
+          },
+        }),
       });
 
       await expect(oilpricePrice("LOCKED_COMMODITY")).resolves.toBe(
-        "#UPGRADE_REQUIRED: Plan does not include this endpoint",
+        "#UPGRADE_REQUIRED: This account does not include the requested feature. Review https://www.oilpriceapi.com/pricing?feature=locked-commodity",
+      );
+    });
+
+    it("maps a suspended account to support instead of an upgrade", async () => {
+      ((globalThis as any).fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: 403,
+        headers: new Headers(),
+        json: async () => ({
+          error: {
+            code: "API_ACCESS_SUSPENDED",
+            message: "Your API access has been suspended.",
+            upgrade_url: "https://www.oilpriceapi.com/pricing?suspended=1",
+          },
+        }),
+      });
+
+      await expect(oilpricePrice("BRENT_CRUDE_USD")).resolves.toBe(
+        "#API_ACCESS_SUSPENDED: API access is suspended. Contact support: https://www.oilpriceapi.com/support",
+      );
+    });
+
+    it("maps an unconfirmed account to the canonical confirmation recovery", async () => {
+      ((globalThis as any).fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: 403,
+        headers: new Headers(),
+        json: async () => ({
+          error: {
+            code: "EMAIL_CONFIRMATION_REQUIRED",
+            recovery_url:
+              "https://www.oilpriceapi.com/auth/resend-confirmation",
+          },
+        }),
+      });
+
+      await expect(oilpricePrice("BRENT_CRUDE_USD")).resolves.toBe(
+        "#EMAIL_CONFIRMATION_REQUIRED: Confirm your email to continue. Request a new confirmation: https://www.oilpriceapi.com/auth/resend-confirmation",
+      );
+    });
+
+    it.each([
+      ["bare", async () => ({})],
+      ["malformed", async () => {
+        throw new SyntaxError("Malformed JSON");
+      }],
+    ])("fails a %s 403 safely to support", async (_name, json) => {
+      ((globalThis as any).fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: 403,
+        headers: new Headers(),
+        json,
+      });
+
+      await expect(oilpricePrice("BRENT_CRUDE_USD")).resolves.toBe(
+        "#ACCESS_DENIED: Access was denied for a reason the add-in could not verify. Use Test Key, then contact support: https://www.oilpriceapi.com/support",
+      );
+    });
+
+    it("maps a missing API record to a recoverable NO_DATA error", async () => {
+      ((globalThis as any).fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: 404,
+        headers: new Headers(),
+        json: async () => ({}),
+      });
+
+      await expect(oilpricePrice("MISSING_CODE")).resolves.toBe(
+        "#NO_DATA: No data returned. Check the commodity code or query",
       );
     });
 
@@ -124,7 +202,7 @@ describe("OilPrice custom functions MVP", () => {
       });
 
       await expect(oilpricePrice("BRENT_CRUDE_USD")).resolves.toBe(
-        "#NO_DATA: No data returned",
+        "#NO_DATA: No data returned. Check the commodity code or query",
       );
     });
 
@@ -178,7 +256,7 @@ describe("OilPrice custom functions MVP", () => {
       await jest.advanceTimersByTimeAsync(15_000);
 
       await expect(resultPromise).resolves.toBe(
-        "#TIMEOUT: OilPriceAPI did not respond in time",
+        "#TIMEOUT: OilPriceAPI did not respond in time. Retry, then use Test Key after checking service status",
       );
       const [, rawDiagnostic] =
         mockStorage.setItem.mock.calls[
@@ -212,7 +290,7 @@ describe("OilPrice custom functions MVP", () => {
       await jest.advanceTimersByTimeAsync(15_000);
 
       await expect(resultPromise).resolves.toBe(
-        "#TIMEOUT: OilPriceAPI did not respond in time",
+        "#TIMEOUT: OilPriceAPI did not respond in time. Retry, then use Test Key after checking service status",
       );
       jest.useRealTimers();
     });
@@ -240,7 +318,7 @@ describe("OilPrice custom functions MVP", () => {
       await jest.advanceTimersByTimeAsync(15_000);
 
       await expect(resultPromise).resolves.toBe(
-        "#TIMEOUT: OilPriceAPI did not respond in time",
+        "#TIMEOUT: OilPriceAPI did not respond in time. Retry, then use Test Key after checking service status",
       );
       jest.useRealTimers();
     });
@@ -251,7 +329,7 @@ describe("OilPrice custom functions MVP", () => {
       );
 
       await expect(oilpricePrice("BRENT_CRUDE_USD")).resolves.toBe(
-        "#NETWORK_OR_CORS: The browser or CORS policy blocked the API request",
+        "#NETWORK_OR_CORS: The browser or CORS policy blocked the API request. Copy diagnostics and contact support. Do not replace the API key unless the pane reports AUTH_INVALID.",
       );
 
       const [, rawDiagnostic] =

@@ -79,7 +79,7 @@
         <dl class="diagnostics-list">
           <div>
             <dt>Version</dt>
-            <dd id="diag-version">1.1.0</dd>
+            <dd id="diag-version">1.1.1</dd>
           </div>
           <div>
             <dt>Excel</dt>
@@ -134,15 +134,27 @@
               <strong>#AUTH_INVALID</strong>: check or replace your API key.
             </p>
             <p>
-              <strong>#RATE_LIMITED</strong>: wait for quota reset, then
-              recalculate.
+              <strong>#RATE_LIMITED</strong>: follow the retry time shown, then
+              retry.
             </p>
             <p>
               <strong>#TIMEOUT</strong>: retry once, then check service status.
             </p>
             <p>
-              <strong>#UPGRADE_REQUIRED</strong>: your plan does not include
-              that endpoint.
+              <strong>#UPGRADE_REQUIRED</strong>: quota or account entitlement
+              does not cover that request; use the trusted pricing link shown.
+            </p>
+            <p>
+              <strong>#API_ACCESS_SUSPENDED</strong>: contact support; replacing
+              the key or upgrading may not restore a suspended account.
+            </p>
+            <p>
+              <strong>#EMAIL_CONFIRMATION_REQUIRED</strong>: use the confirmation
+              recovery link shown in the formula error.
+            </p>
+            <p>
+              <strong>#ACCESS_DENIED</strong>: run Test Key, then contact support
+              if the reason remains unknown.
             </p>
             <p><strong>#NO_DATA</strong>: the API returned no matching data.</p>
             <p>
@@ -185,10 +197,10 @@
 
       <p class="diagnostics-note">
         <a
-          href="https://api.oilpriceapi.com/product-facts.json"
-          target="_blank"
-          rel="noopener"
-          >Product facts reviewed July 18, 2026</a
+              href="https://api.oilpriceapi.com/product-facts.json"
+              target="_blank"
+              rel="noopener"
+              >Current product facts contract</a
         >. Data cadence and access vary by source, market hours, dataset, and
         account entitlement.
       </p>

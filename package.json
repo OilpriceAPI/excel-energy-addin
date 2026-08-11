@@ -1,6 +1,6 @@
 {
   "name": "excel-energy-addin",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Excel add-in for refreshable OilPriceAPI formulas",
   "main": "dist/index.js",
   "scripts": {

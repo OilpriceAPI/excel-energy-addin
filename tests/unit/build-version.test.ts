@@ -18,6 +18,7 @@ describe("release version contract", () => {
       "utf8",
     );
 
+    expect(packageVersion).toBe("1.1.1");
     expect(manifest).toContain(`<Version>${packageVersion}.0</Version>`);
     expect(taskpane).toContain(`id="diag-version">${packageVersion}</dd>`);
     expect(attribution).toContain(
@@ -34,5 +35,96 @@ describe("release version contract", () => {
     expect(stampScript).not.toContain("return `1.0.${runNumber.trim()}.0`");
     expect(stampScript).toContain("parts[0]");
     expect(stampScript).toContain("parts[1]");
+  });
+
+  it("keeps browser attribution source and operator guidance aligned", () => {
+    const functions = fs.readFileSync(
+      path.join(root, "src", "functions", "functions.ts"),
+      "utf8",
+    );
+    const taskpane = fs.readFileSync(
+      path.join(root, "src", "taskpane", "taskpane.ts"),
+      "utf8",
+    );
+    const operatorGuideFiles = [
+      "ADDIN_ACTIVATION_CHECKLIST.md",
+      "DISTRIBUTION.md",
+      "EXCEL_SUPPORT_RUNBOOK.md",
+      "INSTALL.md",
+    ];
+
+    for (const source of [functions, taskpane]) {
+      expect(source).toContain('"X-API-Client": OILPRICEAPI_EXCEL_CLIENT');
+      expect(source).toContain(
+        '"X-Excel-Addin-Version": OILPRICEAPI_EXCEL_VERSION',
+      );
+    }
+    for (const file of operatorGuideFiles) {
+      const guide = fs.readFileSync(path.join(root, file), "utf8");
+      expect(guide).toMatch(
+        /authorization,content-type,x-api-client,x-excel-addin-version/i,
+      );
+      expect(guide).not.toMatch(/do not request `x-api-client`/i);
+      expect(guide).not.toMatch(
+        /request shape is limited to `authorization,content-type`/i,
+      );
+    }
+  });
+
+  it("documents every customer-visible structured 403 recovery", () => {
+    const taskpane = fs.readFileSync(
+      path.join(root, "public", "taskpane.html"),
+      "utf8",
+    );
+    const quickstart = fs.readFileSync(
+      path.join(root, "CUSTOMER_QUICKSTART.md"),
+      "utf8",
+    );
+    for (const code of [
+      "API_ACCESS_SUSPENDED",
+      "EMAIL_CONFIRMATION_REQUIRED",
+      "ACCESS_DENIED",
+      "UPGRADE_REQUIRED",
+    ]) {
+      expect(taskpane).toContain(`#${code}`);
+      expect(quickstart).toContain(`#${code}`);
+    }
+    expect(taskpane).toMatch(
+      /#UPGRADE_REQUIRED<\/strong>: (?:your )?quota or account entitlement/i,
+    );
+    const productFactSurfaces = [
+      taskpane,
+      quickstart,
+      fs.readFileSync(path.join(root, "README.md"), "utf8"),
+      fs.readFileSync(path.join(root, "APPSOURCE_METADATA.md"), "utf8"),
+    ].join("\n");
+    expect(productFactSurfaces).not.toMatch(
+      /(?:product facts|product-facts)[^\n]{0,120}(?:reviewed|2026-0[67]|schema `1\.0\.0`)/i,
+    );
+  });
+
+  it("keeps dependency audit in the hosted release gate", () => {
+    for (const file of ["test.yml", "github-pages.yml"]) {
+      const workflow = fs.readFileSync(
+        path.join(root, ".github", "workflows", file),
+        "utf8",
+      );
+      expect(workflow).toContain("npm audit --audit-level=moderate");
+    }
+  });
+
+  it("distinguishes the semantic release from the submitted manifest build", () => {
+    const distribution = fs.readFileSync(
+      path.join(root, "DISTRIBUTION.md"),
+      "utf8",
+    );
+    const metadata = fs.readFileSync(
+      path.join(root, "APPSOURCE_METADATA.md"),
+      "utf8",
+    );
+    expect(distribution).toMatch(/semantic add-in version/i);
+    expect(distribution).toMatch(/built manifest\s+version/i);
+    expect(metadata).toMatch(/exact submitted manifest/i);
+    expect(metadata).toMatch(/sha-256/i);
   });
 });
