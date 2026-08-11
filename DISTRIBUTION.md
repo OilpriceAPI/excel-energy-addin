@@ -12,6 +12,20 @@ Do not send this document to customers. Do not claim AppSource, Marketplace, cus
 - Customer distribution tracker: `excel-energy-addin#16`.
 - Public self-serve install is not available until Microsoft distribution is complete.
 
+## Release Identity
+
+- The semantic add-in version is the package version and the value sent in
+  `X-Excel-Addin-Version` (candidate `1.1.1`).
+- Source `manifest.xml` is a template whose four-part version follows that
+  semantic release (`1.1.1.0` for this candidate).
+- `npm run build` stamps `dist/manifest.xml` with a distinct built manifest
+  version and cache token. A local build of this candidate produces `1.1.2.0`;
+  the Pages workflow uses `1.1.<GITHUB_RUN_NUMBER>.0`. This Office update
+  version does not change the semantic attribution header.
+- AppSource or centralized deployment must use one exact built manifest. Record
+  its source commit, workflow run, actual `<Version>`, hosted URL, and SHA-256
+  checksum. Never report the source template version as the submitted artifact.
+
 ## Release Gates
 
 All gates must be green before support or marketing sends customer install instructions.

@@ -51,4 +51,4 @@ Access to each dataset depends on the API key's current entitlements.
 - `#TIMEOUT`, `#NETWORK_OR_CORS`, or `#SERVER_ERROR`: check [OilPriceAPI status](https://status.oilpriceapi.com), retry once, then copy diagnostics from the pane.
 - `#NO_DATA` or `#INVALID_RESPONSE`: copy diagnostics and contact [support@oilpriceapi.com](mailto:support@oilpriceapi.com). Never send the API key.
 
-Current product scope and mutable facts are published in the [reviewed product-facts contract](https://api.oilpriceapi.com/product-facts.json).
+Current product scope and mutable facts are published in the [product-facts contract](https://api.oilpriceapi.com/product-facts.json).

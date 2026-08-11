@@ -5,7 +5,7 @@
 
 This repository contains the preview OilPrice Excel add-in for refreshable OilPriceAPI formulas. It is not yet listed in Microsoft AppSource.
 
-Product facts are governed by the [versioned OilPriceAPI contract](https://api.oilpriceapi.com/product-facts.json), reviewed 2026-07-18. Latest available values include source timestamps; cadence varies by source, market hours, dataset, and account entitlement.
+Product facts are governed by the [versioned OilPriceAPI contract](https://api.oilpriceapi.com/product-facts.json). Latest available values include source timestamps; cadence varies by source, market hours, dataset, and account entitlement.
 
 ## Formula Contract
 

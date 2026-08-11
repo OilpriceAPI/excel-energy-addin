@@ -2,7 +2,7 @@
 
 Status: internal submission candidate; not submitted and not available in AppSource.
 
-Reviewed against the [OilPriceAPI product-facts contract](https://api.oilpriceapi.com/product-facts.json) on 2026-07-19. Contract version `2026-07-18`, schema `1.0.0`.
+Recheck all mutable listing claims against the currently published typed [OilPriceAPI product-facts contract](https://api.oilpriceapi.com/product-facts.json) immediately before submission. Record the observed contract version in the submission receipt rather than hardcoding it in customer copy.
 
 ## Listing Copy
 
@@ -33,7 +33,7 @@ Mac Excel 16.110.2 on macOS passed preview sideload, key save/test, `PRICE`, `GE
 
 Before submission, attach:
 
-1. A release-candidate manifest validation receipt.
+1. The exact submitted manifest, its actual `<Version>`, source commit, build workflow run, and SHA-256 checksum, plus a manifest validation receipt. The source `manifest.xml` version is a semantic template; it is not proof of the cache-busted `dist/manifest.xml` version.
 2. Hosted asset HTTP checks for the exact release SHA.
 3. Screenshots from a smoke-proven platform with no API key or customer data.
 4. A restricted non-customer reviewer key delivered only through the private Partner Center field.

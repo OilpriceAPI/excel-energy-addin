@@ -89,5 +89,42 @@ describe("release version contract", () => {
       expect(taskpane).toContain(`#${code}`);
       expect(quickstart).toContain(`#${code}`);
     }
+    expect(taskpane).toMatch(
+      /#UPGRADE_REQUIRED<\/strong>: (?:your )?quota or account entitlement/i,
+    );
+    const productFactSurfaces = [
+      taskpane,
+      quickstart,
+      fs.readFileSync(path.join(root, "README.md"), "utf8"),
+      fs.readFileSync(path.join(root, "APPSOURCE_METADATA.md"), "utf8"),
+    ].join("\n");
+    expect(productFactSurfaces).not.toMatch(
+      /(?:product facts|product-facts)[^\n]{0,120}(?:reviewed|2026-0[67]|schema `1\.0\.0`)/i,
+    );
+  });
+
+  it("keeps dependency audit in the hosted release gate", () => {
+    for (const file of ["test.yml", "github-pages.yml"]) {
+      const workflow = fs.readFileSync(
+        path.join(root, ".github", "workflows", file),
+        "utf8",
+      );
+      expect(workflow).toContain("npm audit --audit-level=moderate");
+    }
+  });
+
+  it("distinguishes the semantic release from the submitted manifest build", () => {
+    const distribution = fs.readFileSync(
+      path.join(root, "DISTRIBUTION.md"),
+      "utf8",
+    );
+    const metadata = fs.readFileSync(
+      path.join(root, "APPSOURCE_METADATA.md"),
+      "utf8",
+    );
+    expect(distribution).toMatch(/semantic add-in version/i);
+    expect(distribution).toMatch(/built manifest\s+version/i);
+    expect(metadata).toMatch(/exact submitted manifest/i);
+    expect(metadata).toMatch(/sha-256/i);
   });
 });
