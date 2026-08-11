@@ -110,6 +110,9 @@ describe("release version contract", () => {
         "utf8",
       );
       expect(workflow).toContain("npm audit --audit-level=moderate");
+      expect(workflow).toContain("actions/checkout@v6");
+      expect(workflow).toContain("actions/setup-node@v6");
+      expect(workflow).toMatch(/node-version: ["']24["']/);
     }
   });
 
