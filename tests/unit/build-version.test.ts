@@ -35,4 +35,37 @@ describe("release version contract", () => {
     expect(stampScript).toContain("parts[0]");
     expect(stampScript).toContain("parts[1]");
   });
+
+  it("keeps browser attribution source and operator guidance aligned", () => {
+    const functions = fs.readFileSync(
+      path.join(root, "src", "functions", "functions.ts"),
+      "utf8",
+    );
+    const taskpane = fs.readFileSync(
+      path.join(root, "src", "taskpane", "taskpane.ts"),
+      "utf8",
+    );
+    const operatorGuides = [
+      "ADDIN_ACTIVATION_CHECKLIST.md",
+      "DISTRIBUTION.md",
+      "EXCEL_SUPPORT_RUNBOOK.md",
+      "INSTALL.md",
+    ]
+      .map((file) => fs.readFileSync(path.join(root, file), "utf8"))
+      .join("\n");
+
+    for (const source of [functions, taskpane]) {
+      expect(source).toContain('"X-API-Client": OILPRICEAPI_EXCEL_CLIENT');
+      expect(source).toContain(
+        '"X-Excel-Addin-Version": OILPRICEAPI_EXCEL_VERSION',
+      );
+    }
+    expect(operatorGuides).toMatch(
+      /authorization,content-type,x-api-client,x-excel-addin-version/i,
+    );
+    expect(operatorGuides).not.toMatch(/do not request `x-api-client`/i);
+    expect(operatorGuides).not.toMatch(
+      /request shape is limited to `authorization,content-type`/i,
+    );
+  });
 });

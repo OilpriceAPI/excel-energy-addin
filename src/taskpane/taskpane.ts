@@ -12,10 +12,6 @@ import {
   requestIdFromResponse,
 } from "../utils/runtime-diagnostics";
 
-// #6167 — sent as X-Excel-Addin-Version so the server can attribute
-// this add-in (MinimalAnalyticsService maps it to client_type sdk-excel).
-const ADDIN_VERSION = "1.1.0";
-
 declare const OfficeRuntime: {
   storage: {
     getItem(key: string): Promise<string | null>;
@@ -268,28 +264,37 @@ function classifyHttpResult(status: number): HttpResult {
     return {
       label: "Invalid key",
       code: "AUTH_INVALID",
-      message: "API key invalid or expired.",
+      message: "API key invalid or expired. Replace it in the OilPrice pane.",
     };
   }
   if (status === 402) {
     return {
       label: "Quota reached",
       code: "UPGRADE_REQUIRED",
-      message: "Quota or plan limit reached.",
+      message:
+        "Quota or plan limit reached. Review https://www.oilpriceapi.com/pricing.",
     };
   }
   if (status === 403) {
     return {
       label: "Upgrade required",
       code: "UPGRADE_REQUIRED",
-      message: "Your plan does not include this endpoint.",
+      message:
+        "Your plan does not include this endpoint. Review https://www.oilpriceapi.com/pricing.",
     };
   }
   if (status === 429) {
     return {
       label: "Rate limited",
       code: "RATE_LIMITED",
-      message: "Rate limit reached. Try later.",
+      message: "Rate limit reached. Wait, then try Test Key again.",
+    };
+  }
+  if (status === 404) {
+    return {
+      label: "No data",
+      code: "NO_DATA",
+      message: "No data returned. Check the commodity code or query.",
     };
   }
   if (status >= 500) {
@@ -340,8 +345,8 @@ async function testConnection(): Promise<void> {
         // maps oilpriceapi-excel -> client_type 'sdk-excel'). Without it every
         // call from this add-in records as client_type 'unknown' and the add-in
         // is invisible in adoption reporting. (#6167)
-        "X-API-Client": "oilpriceapi-excel",
-        "X-Excel-Addin-Version": ADDIN_VERSION,
+        "X-API-Client": OILPRICEAPI_EXCEL_CLIENT,
+        "X-Excel-Addin-Version": OILPRICEAPI_EXCEL_VERSION,
       },
       signal: controller.signal,
     });

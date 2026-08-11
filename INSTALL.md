@@ -122,7 +122,8 @@ Confirm the production API saw the add-in request:
 
 - expected endpoint: `/v1/prices/latest`;
 - expected code: `BRENT_CRUDE_USD`;
-- expected browser request headers: `authorization,content-type`;
+- expected browser request headers:
+  `authorization,content-type,x-api-client,x-excel-addin-version`;
 - expected user/key: the non-customer test account;
 - no raw API key exposure.
 

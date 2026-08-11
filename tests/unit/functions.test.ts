@@ -44,6 +44,8 @@ describe("OilPrice custom functions MVP", () => {
           headers: {
             Authorization: "Token test-api-key-123",
             "Content-Type": "application/json",
+            "X-API-Client": "oilpriceapi-excel/1.1.0",
+            "X-Excel-Addin-Version": "1.1.0",
           },
           signal: expect.any(Object),
         }),
@@ -77,7 +79,7 @@ describe("OilPrice custom functions MVP", () => {
       });
 
       await expect(oilpricePrice("BRENT_CRUDE_USD")).resolves.toBe(
-        "#AUTH_INVALID: API key invalid or expired",
+        "#AUTH_INVALID: API key invalid or expired. Open the OilPrice pane and replace it",
       );
     });
 
@@ -88,7 +90,7 @@ describe("OilPrice custom functions MVP", () => {
       });
 
       await expect(oilpricePrice("BRENT_CRUDE_USD")).resolves.toBe(
-        "#RATE_LIMITED: Limit reached. Try later",
+        "#RATE_LIMITED: Limit reached. Wait, then recalculate",
       );
     });
 
@@ -99,7 +101,7 @@ describe("OilPrice custom functions MVP", () => {
       });
 
       await expect(oilpricePrice("BRENT_CRUDE_USD")).resolves.toBe(
-        "#UPGRADE_REQUIRED: Quota or plan limit reached",
+        "#UPGRADE_REQUIRED: Quota or plan limit reached. Review https://www.oilpriceapi.com/pricing",
       );
     });
 
@@ -111,7 +113,20 @@ describe("OilPrice custom functions MVP", () => {
       });
 
       await expect(oilpricePrice("LOCKED_COMMODITY")).resolves.toBe(
-        "#UPGRADE_REQUIRED: Plan does not include this endpoint",
+        "#UPGRADE_REQUIRED: Plan does not include this endpoint. Review https://www.oilpriceapi.com/pricing",
+      );
+    });
+
+    it("maps a missing API record to a recoverable NO_DATA error", async () => {
+      ((globalThis as any).fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: 404,
+        headers: new Headers(),
+        json: async () => ({}),
+      });
+
+      await expect(oilpricePrice("MISSING_CODE")).resolves.toBe(
+        "#NO_DATA: No data returned. Check the commodity code or query",
       );
     });
 
@@ -124,7 +139,7 @@ describe("OilPrice custom functions MVP", () => {
       });
 
       await expect(oilpricePrice("BRENT_CRUDE_USD")).resolves.toBe(
-        "#NO_DATA: No data returned",
+        "#NO_DATA: No data returned. Check the commodity code or query",
       );
     });
 
@@ -178,7 +193,7 @@ describe("OilPrice custom functions MVP", () => {
       await jest.advanceTimersByTimeAsync(15_000);
 
       await expect(resultPromise).resolves.toBe(
-        "#TIMEOUT: OilPriceAPI did not respond in time",
+        "#TIMEOUT: OilPriceAPI did not respond in time. Retry, then use Test Key after checking service status",
       );
       const [, rawDiagnostic] =
         mockStorage.setItem.mock.calls[
@@ -212,7 +227,7 @@ describe("OilPrice custom functions MVP", () => {
       await jest.advanceTimersByTimeAsync(15_000);
 
       await expect(resultPromise).resolves.toBe(
-        "#TIMEOUT: OilPriceAPI did not respond in time",
+        "#TIMEOUT: OilPriceAPI did not respond in time. Retry, then use Test Key after checking service status",
       );
       jest.useRealTimers();
     });
@@ -240,7 +255,7 @@ describe("OilPrice custom functions MVP", () => {
       await jest.advanceTimersByTimeAsync(15_000);
 
       await expect(resultPromise).resolves.toBe(
-        "#TIMEOUT: OilPriceAPI did not respond in time",
+        "#TIMEOUT: OilPriceAPI did not respond in time. Retry, then use Test Key after checking service status",
       );
       jest.useRealTimers();
     });
@@ -251,7 +266,7 @@ describe("OilPrice custom functions MVP", () => {
       );
 
       await expect(oilpricePrice("BRENT_CRUDE_USD")).resolves.toBe(
-        "#NETWORK_OR_CORS: The browser or CORS policy blocked the API request",
+        "#NETWORK_OR_CORS: The browser or CORS policy blocked the API request. Copy diagnostics and contact support. Do not replace the API key unless the pane reports AUTH_INVALID.",
       );
 
       const [, rawDiagnostic] =

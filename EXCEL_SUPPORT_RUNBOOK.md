@@ -84,18 +84,19 @@ the OilPrice frame.
 5. For a CORS failure, inspect the `OPTIONS` request and compare
    `Access-Control-Request-Headers` with `Access-Control-Allow-Headers`.
 
-The July 17, 2026 reproduction failed because the add-in requested
-`x-api-client`, but Cloudflare's preflight response did not allow it. The browser
-therefore blocked the GET before it reached the API. This is not a bad-key or
-Excel-connectivity failure. Version 1.0.2 and later restore browser compatibility by
-keeping cross-origin request headers to the edge-approved authorization and
-content-type set. The add-in version remains available in copied diagnostics.
+The July 17, 2026 reproduction failed because the edge preflight did not allow
+the add-in's attribution headers. The production edge rule now accepts the
+add-in's exact browser request shape:
+`authorization,content-type,x-api-client,x-excel-addin-version`. A preflight
+failure is not a bad-key or Excel-connectivity failure; inspect the public edge
+response before rotating a customer's key.
 
 ## Required Production Proof
 
-- The public preflight allows `authorization` and `content-type`.
-- Version 1.0.2 and later do not request `x-api-client`, `x-client-version`, or
-  `x-excel-addin-version` from Excel Online.
+- The public preflight allows
+  `authorization,content-type,x-api-client,x-excel-addin-version`.
+- The request contains `X-API-Client` and `X-Excel-Addin-Version` attribution;
+  the values contain no customer data or API-key material.
 - **Test Key** reports **Connected** and records an HTTP 200 diagnostic.
 - `OILPRICE.PRICE` returns a number and records a custom-function diagnostic.
 - Production logs contain the request at the matching diagnostic timestamp and

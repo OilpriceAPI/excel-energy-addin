@@ -397,7 +397,7 @@ describe("Helper edge cases and error handling", () => {
       status: 401,
     });
     await expect(oilpricePriceStatus("BRENT_CRUDE_USD")).resolves.toBe(
-      "#AUTH_INVALID: API key invalid or expired",
+      "#AUTH_INVALID: API key invalid or expired. Open the OilPrice pane and replace it",
     );
   });
 
@@ -424,7 +424,7 @@ describe("Helper edge cases and error handling", () => {
       new TypeError("Failed to fetch"),
     );
     await expect(oilpricePriceUnit("BRENT_CRUDE_USD")).resolves.toBe(
-      "#NETWORK_OR_CORS: The browser or CORS policy blocked the API request",
+      "#NETWORK_OR_CORS: The browser or CORS policy blocked the API request. Copy diagnostics and contact support. Do not replace the API key unless the pane reports AUTH_INVALID.",
     );
   });
 

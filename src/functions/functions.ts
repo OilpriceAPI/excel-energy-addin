@@ -10,16 +10,16 @@
 /// <reference types="@types/office-js" />
 
 import {
+  OILPRICEAPI_EXCEL_CLIENT,
+  OILPRICEAPI_EXCEL_VERSION,
+} from "../utils/client-attribution";
+import {
   RUNTIME_DIAGNOSTIC_STORAGE_KEY,
   classifyNetworkFailure,
   createRuntimeDiagnostic,
   requestIdFromResponse,
   RuntimeDiagnostic,
 } from "../utils/runtime-diagnostics";
-
-// #6167 — sent as X-Excel-Addin-Version so the server can attribute
-// this add-in (MinimalAnalyticsService maps it to client_type sdk-excel).
-const ADDIN_VERSION = "1.1.0";
 
 declare const OfficeRuntime: {
   storage: {
@@ -296,29 +296,41 @@ async function persistRuntimeDiagnostic(
 
 function parseResponseError(response: Response): ResponseError {
   if (response.status === 401) {
-    return { code: "AUTH_INVALID", message: "API key invalid or expired" };
+    return {
+      code: "AUTH_INVALID",
+      message:
+        "API key invalid or expired. Open the OilPrice pane and replace it",
+    };
   }
 
   if (response.status === 403) {
     return {
       code: "UPGRADE_REQUIRED",
-      message: "Plan does not include this endpoint",
+      message:
+        "Plan does not include this endpoint. Review https://www.oilpriceapi.com/pricing",
     };
   }
 
   if (response.status === 402) {
     return {
       code: "UPGRADE_REQUIRED",
-      message: "Quota or plan limit reached",
+      message:
+        "Quota or plan limit reached. Review https://www.oilpriceapi.com/pricing",
     };
   }
 
   if (response.status === 404) {
-    return { code: "NO_DATA", message: "No data returned" };
+    return {
+      code: "NO_DATA",
+      message: "No data returned. Check the commodity code or query",
+    };
   }
 
   if (response.status === 429) {
-    return { code: "RATE_LIMITED", message: "Limit reached. Try later" };
+    return {
+      code: "RATE_LIMITED",
+      message: "Limit reached. Wait, then recalculate",
+    };
   }
 
   if (response.status >= 500) {
@@ -404,7 +416,8 @@ async function apiGet(
   const throwTimeout = async (): Promise<never> => {
     const responseError: ResponseError = {
       code: "TIMEOUT",
-      message: "OilPriceAPI did not respond in time",
+      message:
+        "OilPriceAPI did not respond in time. Retry, then use Test Key after checking service status",
     };
     await persistRuntimeDiagnostic(
       createRuntimeDiagnostic({
@@ -427,8 +440,8 @@ async function apiGet(
           "Content-Type": "application/json",
           // See taskpane.ts — Office.js locks User-Agent; X-API-Client is how
           // the server classifies this add-in. (#6167)
-          "X-API-Client": "oilpriceapi-excel",
-          "X-Excel-Addin-Version": ADDIN_VERSION,
+          "X-API-Client": OILPRICEAPI_EXCEL_CLIENT,
+          "X-Excel-Addin-Version": OILPRICEAPI_EXCEL_VERSION,
         },
         signal: controller.signal,
       });
@@ -448,7 +461,7 @@ async function apiGet(
       );
       throw {
         code: failure.code,
-        message: failure.message,
+        message: `${failure.message}. ${failure.recovery}`,
       } satisfies ResponseError;
     }
 
@@ -1017,7 +1030,10 @@ export async function oilpricePrice(code: string): Promise<number | string> {
     );
     const data = payload?.data;
     if (data === null || data === undefined) {
-      return cellError("NO_DATA", "No data returned");
+      return cellError(
+        "NO_DATA",
+        "No data returned. Check the commodity code or query",
+      );
     }
     if (typeof data !== "object") {
       return cellError("INVALID_RESPONSE", "API returned a malformed price");
@@ -1119,7 +1135,10 @@ async function fetchLatestQuote(code: string): Promise<Record<string, any>> {
   );
   const data = payload?.data;
   if (!data || typeof data !== "object") {
-    throw { code: "NO_DATA", message: "No data returned" } as ResponseError;
+    throw {
+      code: "NO_DATA",
+      message: "No data returned. Check the commodity code or query",
+    } as ResponseError;
   }
   // Belt-and-suspenders: if the API ever returns HTTP 200 with an error body
   // (e.g. { data: { error: "invalid_code", message: "Did you mean ..." } }),
