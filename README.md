@@ -65,6 +65,12 @@ npm run build
 npx office-addin-manifest validate manifest.xml
 ```
 
+These audit, source-claim, secret, build, unit-test, and manifest gates also run
+every Monday in GitHub Actions so newly disclosed dependency issues are found
+when the repository is otherwise quiet. This package has no production npm
+dependencies: its dependency graph is development/build tooling, and the
+deployed add-in is the generated static browser bundle.
+
 ## Runtime Design
 
 - `manifest.xml` wires a long-lived shared runtime.

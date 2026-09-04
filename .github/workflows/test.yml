@@ -5,6 +5,9 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  schedule:
+    - cron: "17 13 * * 1"
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -39,5 +42,20 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Validate manifest
+        run: npx office-addin-manifest validate manifest.xml
+
       - name: Run tests
         run: npm test
+
+      - name: Report scheduled validation failure
+        if: ${{ failure() && github.event_name == 'schedule' }}
+        run: |
+          echo "::error title=Weekly Excel add-in validation failed::Review the failed gate and dependency audit in this workflow run."
+          {
+            echo "## Weekly Excel add-in validation failed"
+            echo
+            echo "Review the failing step, reproduce with \`npm ci && npm audit --audit-level=moderate && npm run scan:secrets && npm run validate:claims && npm run build && npm test\`, and patch or suppress only with documented evidence."
+            echo
+            echo "[Open this workflow run]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID)"
+          } >> "$GITHUB_STEP_SUMMARY"
