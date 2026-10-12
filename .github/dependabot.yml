@@ -1,6 +1,12 @@
 version: 2
+# Cooldown (2026-10-12, Karl): version updates wait until a release is
+# 28 days old. Broken or malicious releases are usually yanked within
+# days; a month-old release has been run by everyone else first.
+# Security updates ignore cooldown and still open immediately.
 updates:
   - package-ecosystem: npm
+    cooldown:
+      default-days: 28
     directory: /
     schedule:
       interval: weekly
