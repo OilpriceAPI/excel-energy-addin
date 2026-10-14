@@ -4,6 +4,7 @@
   "description": "Excel add-in for refreshable OilPriceAPI formulas",
   "main": "dist/index.js",
   "scripts": {
+    "audit:ci": "npm audit --omit=dev --audit-level=moderate && npm audit --audit-level=critical",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",

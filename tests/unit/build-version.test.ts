@@ -134,11 +134,9 @@ describe("release version contract", () => {
       expect(workflow.permissions?.contents).toBe("read");
       expect(checkout?.with?.["persist-credentials"]).toBe(false);
       expect(setupNode?.with?.["node-version"]).toBe("24");
-      expect(
-        steps.some(
-          (step) => step.run === "npm audit --audit-level=moderate",
-        ),
-      ).toBe(true);
+      expect(steps.some((step) => step.run === "npm run audit:ci")).toBe(
+        true,
+      );
       if (file === "github-pages.yml") {
         expect(steps.map((step) => step.uses)).toEqual(
           expect.arrayContaining([
@@ -149,6 +147,15 @@ describe("release version contract", () => {
         );
       }
     }
+  });
+
+  it("gates runtime advisories at moderate and every critical in CI", () => {
+    const pkg = JSON.parse(
+      fs.readFileSync(path.join(root, "package.json"), "utf8"),
+    ) as { scripts: Record<string, string> };
+    expect(pkg.scripts["audit:ci"]).toBe(
+      "npm audit --omit=dev --audit-level=moderate && npm audit --audit-level=critical",
+    );
   });
 
   it("distinguishes the semantic release from the submitted manifest build", () => {

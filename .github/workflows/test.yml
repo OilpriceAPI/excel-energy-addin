@@ -31,7 +31,7 @@ jobs:
         run: npm ci
 
       - name: Audit dependencies
-        run: npm audit --audit-level=moderate
+        run: npm run audit:ci
 
       - name: Scan for committed secrets
         run: npm run scan:secrets
@@ -55,7 +55,7 @@ jobs:
           {
             echo "## Weekly Excel add-in validation failed"
             echo
-            echo "Review the failing step, reproduce with \`npm ci && npm audit --audit-level=moderate && npm run scan:secrets && npm run validate:claims && npm run build && npm test\`, and patch or suppress only with documented evidence."
+            echo "Review the failing step, reproduce with \`npm ci && npm run audit:ci && npm run scan:secrets && npm run validate:claims && npm run build && npm test\`, and patch or suppress only with documented evidence."
             echo
             echo "[Open this workflow run]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID)"
           } >> "$GITHUB_STEP_SUMMARY"
