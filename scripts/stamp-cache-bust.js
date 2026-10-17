@@ -71,9 +71,9 @@ function stampUrls(content, token, filenames) {
   let out = content;
   for (const name of filenames) {
     const escaped = name.replace(/[.]/g, "\\.");
-    // Match the filename only when it is the end of the ref (immediately
-    // followed by the closing quote) and not already stamped.
-    const re = new RegExp(`${escaped}(?=")`, "g");
+    // Production HTML may omit attribute quotes. Match an attribute boundary
+    // for quoted and unquoted URLs while leaving existing queries untouched.
+    const re = new RegExp(`${escaped}(?=["'\\s>])`, "g");
     out = out.replace(re, `${name}?v=${token}`);
   }
   return out;
