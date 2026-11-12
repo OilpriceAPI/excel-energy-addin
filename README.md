@@ -73,14 +73,10 @@ dependencies: its dependency graph is development/build tooling, and the
 deployed add-in is the generated static browser bundle.
 
 `npm run audit:ci` blocks any runtime advisory at moderate or above and any
-critical advisory anywhere in the tree. As of 2026-10-14 the full tree has 0
-critical and 12 high advisories, all in local dev-server and dev-certificate
-tooling: `braces` via `webpack-dev-server` (GHSA-vfj7-8cjw-p6xm) and
-`node-forge` via `office-addin-dev-certs` / `office-addin-debugging`
-(GHSA-86w9-cpqp-85rv). Every published release of both packages is affected
-(latest `braces` 3.0.3, `node-forge` 1.4.0), so no upgrade or override clears
-them, and neither package ships in the static bundle. Return to a full-tree
-moderate gate once either publishes a fix.
+high or critical advisory anywhere in the tree. The local certificate is
+generated with OpenSSL (`npm run cert:dev`), so it does not bring an unpatched `node-forge`
+dependency into the development toolchain. Review remaining moderate and low
+development-tool advisories separately from the static browser bundle.
 
 ## Runtime Design
 
