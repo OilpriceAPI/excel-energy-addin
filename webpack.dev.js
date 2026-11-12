@@ -52,8 +52,7 @@ module.exports = {
       type: 'https',
       options: {
         key: fs.readFileSync(path.join(certPath, 'localhost.key')),
-        cert: fs.readFileSync(path.join(certPath, 'localhost.crt')),
-        ca: fs.readFileSync(path.join(certPath, 'ca.crt'))
+        cert: fs.readFileSync(path.join(certPath, 'localhost.crt'))
       }
     },
     headers: {

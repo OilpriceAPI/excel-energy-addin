@@ -8,6 +8,7 @@ Other install procedures remain internal validation paths until their runtime re
 
 - Node.js 20.9+
 - npm
+- OpenSSL (for the local HTTPS certificate)
 - Microsoft Excel (for testing)
 
 ## Setup
@@ -21,6 +22,7 @@ npm ci
 ## Development Server
 
 ```bash
+npm run cert:dev
 npm run dev
 ```
 
@@ -28,15 +30,11 @@ This starts a webpack dev server at `https://localhost:3000`. Reload manually af
 
 ### Self-Signed Certificate
 
-The dev server uses a self-signed HTTPS certificate (required by Office.js). On first run, your browser will show a security warning — click "Advanced" > "Proceed to localhost" to accept it.
-
-To install the certificate system-wide:
-
-```bash
-sudo npx office-addin-dev-certs install --machine
-```
-
-Certificate files are stored in `~/.office-addin-dev-certs/`.
+`npm run cert:dev` creates a one-year self-signed localhost certificate with
+OpenSSL. The dev server uses it for HTTPS, as Office.js requires. On first run,
+your browser will show a security warning; accept the localhost certificate for
+local development. Certificate files are stored in `~/.office-addin-dev-certs/`.
+Run `npm run cert:dev` again when the certificate expires.
 
 ## Sideloading for Development
 

@@ -149,12 +149,12 @@ describe("release version contract", () => {
     }
   });
 
-  it("gates runtime advisories at moderate and every critical in CI", () => {
+  it("gates runtime advisories at moderate and every high or critical in CI", () => {
     const pkg = JSON.parse(
       fs.readFileSync(path.join(root, "package.json"), "utf8"),
     ) as { scripts: Record<string, string> };
     expect(pkg.scripts["audit:ci"]).toBe(
-      "npm audit --omit=dev --audit-level=moderate && npm audit --audit-level=critical",
+      "npm audit --omit=dev --audit-level=moderate && npm audit --audit-level=high",
     );
   });
 
