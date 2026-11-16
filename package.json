@@ -47,7 +47,7 @@
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
-    "@types/office-js": "^1.0.612",
+    "@types/office-js": "^1.0.613",
     "copy-webpack-plugin": "^14.0.0",
     "fs-extra": "^11.4.1",
     "jest": "^30.5.0",
@@ -58,7 +58,7 @@
     "typescript": "^5.9.3",
     "webpack": "^5.111.0",
     "webpack-cli": "^7.2.3",
-    "webpack-dev-server": "^6.0.0",
+    "webpack-dev-server": "^6.1.0",
     "yaml": "^2.9.1"
   }
 }
